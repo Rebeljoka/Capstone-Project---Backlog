@@ -7,7 +7,6 @@ For more information on this file, see
 https://docs.djangoproject.com/en/5.2/howto/deployment/asgi/
 """
 
-import env  # Ensure environment variables are set before anything else
 import os
 
 from django.core.asgi import get_asgi_application
