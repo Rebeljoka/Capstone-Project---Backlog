@@ -10,9 +10,9 @@ def game_list(request):
     tags = Tag.objects.all()
     games = Game.objects.all()
     if genre_id:
-        games = games.filter(genres__id=genre_id)
+        games = games.filter(genres__genre_id=genre_id)
     if tag_id:
-        games = games.filter(tags__id=tag_id)
+        games = games.filter(tags__tag_id=tag_id)
     return render(
         request,
         'games/game_list.html',
@@ -32,6 +32,6 @@ def game_detail(request, pk):
 
 
 def genre_games(request, genre_id):
-    genre = get_object_or_404(Genre, id=genre_id)
+    genre = get_object_or_404(Genre, genre_id=genre_id)
     games = genre.games.all()
     return render(request, 'games/genre_games.html', {'genre': genre, 'games': games})
