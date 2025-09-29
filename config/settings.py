@@ -31,6 +31,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Read SECRET_KEY from environment, fallback to a default for development only
 SECRET_KEY = os.environ.get('SECRET_KEY')
 STEAM_API_KEY = os.environ.get('STEAM_API_KEY')
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
+}
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", True)
 
@@ -57,9 +62,14 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.openid',
     'allauth.socialaccount.providers.steam',
+    'cloudinary',
+    'cloudinary_storage',
     'games',
     'wishlist',
 ]
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
 SITE_ID = 1
 
 
@@ -144,6 +154,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+MEDIA_URL = '/media/'
+STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
