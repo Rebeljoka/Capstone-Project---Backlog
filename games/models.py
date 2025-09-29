@@ -8,10 +8,11 @@ class Game(models.Model):
     submitted_by = models.IntegerField()  # Will be a ForeignKey to User later
     title = models.CharField(max_length=255)
     image = models.CharField(max_length=255, blank=True)
-    description = models.TextField(blank=True)
+    short_description = models.TextField(blank=True)
+    long_description = models.TextField(blank=True)
     release_date = models.DateField(null=True, blank=True)
     developer = models.CharField(max_length=255, blank=True)
-    average_rating = models.DecimalField(max_digits=3, decimal_places=1, null=True, blank=True)
+    age_rating = models.CharField(max_length=20, null=True, blank=True)
     platform = models.CharField(max_length=255, blank=True)
     # ManyToManyField allows each game to have multiple tags and each tag to be linked to multiple games.
     # related_name='games' lets you access all games for a tag using tag.games.all()

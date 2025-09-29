@@ -27,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 STEAM_API_KEY = os.environ.get('STEAM_API_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DEBUG", False)
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'https://*.herokuapp.com']
 
@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'games',
+    'wishlist',
 ]
 
 MIDDLEWARE = [
