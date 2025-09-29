@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Game Catalog</title>
+</head>
+<body>
+    <nav>
+        <a href="{% url 'game_list' %}">All Games</a>
+        <!-- Add more links as you build more features -->
+    </nav>
+    <hr>
+    {% block content %}{% endblock %}
+</body>
+</html>

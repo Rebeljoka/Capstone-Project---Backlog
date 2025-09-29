@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>All Games</h1>
+<form method="get">
+  <label for="genre">Filter by genre:</label>
+  <select name="genre" id="genre" onchange="this.form.submit()">
+    <option value="">All</option>
+    {% for genre in genres %}
+      <option value="{{ genre.genre_id }}" {% if genre.genre_id|stringformat:'s' == selected_genre %}selected{% endif %}>{{ genre.genre }}</option>
+    {% endfor %}
+  </select>
+  <label for="tag">Filter by tag:</label>
+  <select name="tag" id="tag" onchange="this.form.submit()">
+    <option value="">All</option>
+    {% for tag in tags %}
+      <option value="{{ tag.tag_id }}" {% if tag.tag_id|stringformat:'s' == selected_tag %}selected{% endif %}>{{ tag.name }}</option>
+    {% endfor %}
+  </select>
+</form>
+<ul>
+  {% for game in games %}
+    <li>
+      <a href="{% url 'game_detail' game.pk %}">{{ game.title }}</a> - {{ game.developer }}
+    </li>
+  {% empty %}
+    <li>No games found.</li>
+  {% endfor %}
+</ul>
+{% endblock %}
