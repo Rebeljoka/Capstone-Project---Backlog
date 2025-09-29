@@ -14,7 +14,7 @@ class Wishlist(models.Model):
 class WishlistItem(models.Model):
     wishlist = models.ForeignKey(Wishlist, on_delete=models.CASCADE, related_name='items')
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
-    order = models.PositiveIntegerField(null=True, blank=True)
+    order = models.PositiveIntegerField(default=0, null=True, blank=True)
     added_on = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -23,4 +23,3 @@ class WishlistItem(models.Model):
 
     def __str__(self):
         return f"{self.game.title} in {self.wishlist.name} ({self.wishlist.user.username})"
-        return f"{self.user.username} - {self.game.title}"
