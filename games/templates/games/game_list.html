@@ -17,13 +17,20 @@
     {% endfor %}
   </select>
 </form>
-<ul>
+<section class="game-list">
   {% for game in games %}
-    <li>
-      <a href="{% url 'game_detail' game.pk %}">{{ game.title }}</a> - {{ game.developer }}
-    </li>
+    <div class="game-card" style="border:1px solid #ccc; border-radius:8px; padding:1em; margin-bottom:1em; box-shadow:0 2px 6px #eee;">
+      <h2><a href="{% url 'game_detail' game.pk %}">{{ game.title }}</a></h2>
+      <p><strong>Developer:</strong> {{ game.developer }}</p>
+      {% if game.image %}
+        <img src="{{ game.image }}" alt="{{ game.title }} cover" style="max-width:150px; display:block; margin-bottom:0.5em;" />
+      {% endif %}
+      <p>{{ game.short_description }}</p>
+      <p><strong>Genres:</strong> {% for genre in game.genres.all %}{{ genre.genre }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+      <p><strong>Tags:</strong> {% for tag in game.tags.all %}{{ tag.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+    </div>
   {% empty %}
-    <li>No games found.</li>
+    <div>No games found.</div>
   {% endfor %}
-</ul>
+</section>
 {% endblock %}
