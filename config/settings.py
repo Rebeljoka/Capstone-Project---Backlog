@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os  # Add this import to use environment variables
-
 import dj_database_url  # Add this import to parse the database URL
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
