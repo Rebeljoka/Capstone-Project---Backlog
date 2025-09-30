@@ -22,4 +22,5 @@ urlpatterns = [
     path('games/', include('games.urls')),
     path('accounts/', include('allauth.urls')),
     path('wishlist/', include('wishlist.urls')),
+    path('', include('home.urls')),
 ]

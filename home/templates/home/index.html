@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block content %}
+    <section class="text-center mt-20">
+        <h1 class="text-4xl font-bold mb-4">Welcome to Backlog</h1>
+        <p class="text-lg mb-4">Your one-stop solution for managing your game backlog.</p>
+        <a href="{% url 'wishlist:index' %}" class="btn btn-primary">View Wishlist</a>
+    </section>
+{% endblock %}

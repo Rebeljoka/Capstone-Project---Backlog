@@ -64,8 +64,11 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.steam',
     'cloudinary',
     'cloudinary_storage',
+    'tailwind',
+    'theme',
     'games',
     'wishlist',
+    'home',
 ]
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
@@ -157,8 +160,12 @@ STATIC_URL = 'static/'
 MEDIA_URL = '/media/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+TAILWIND_APP_NAME = 'theme'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Node.js and NPM configuration for Tailwind CSS
+NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"
