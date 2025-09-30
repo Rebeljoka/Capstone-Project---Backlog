@@ -1,8 +1,28 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1>{{ game.title }}</h1>
-<p><strong>Developer:</strong> {{ game.developer }}</p>
-<p><strong>Release Date:</strong> {{ game.release_date }}</p>
-<p><strong>Description:</strong> {{ game.description }}</p>
-<a href="{% url 'game_list' %}">Back to all games</a>
+<div class="max-w-2xl mx-auto bg-white rounded shadow p-6 mt-8">
+	<h1 class="text-3xl font-bold mb-2">{{ game.title }}</h1>
+	{% if game.image %}
+		<img src="{{ game.image }}" alt="{{ game.title }} header" class="mb-4 rounded">
+	{% endif %}
+	<p class="mb-2"><strong>Developer:</strong> {{ game.developer }}</p>
+	<p class="mb-2"><strong>Release Date:</strong> {{ game.release_date }}</p>
+	<p class="mb-4"><strong>Description:</strong> {{ game.description }}</p>
+	{% if game.genres %}
+		<p class="mb-2"><strong>Genres:</strong>
+			{% for genre in game.genres %}
+				<span class="inline-block bg-gray-200 rounded px-2 py-1 text-sm mr-1">{{ genre.description }}</span>
+			{% endfor %}
+		</p>
+	{% endif %}
+	{% if game.tags %}
+		<p class="mb-2"><strong>Tags:</strong>
+			{% for tag in game.tags %}
+				<span class="inline-block bg-blue-100 rounded px-2 py-1 text-sm mr-1">{{ tag.description }}</span>
+			{% endfor %}
+		</p>
+	{% endif %}
+	<a href="https://store.steampowered.com/app/{{ game.appid }}/" target="_blank" class="text-blue-600 underline mr-4">View on Steam</a>
+	<a href="{% url 'game_list' %}" class="text-gray-600 underline">Back to all games</a>
+</div>
 {% endblock %}

@@ -1,4 +1,5 @@
 import requests
+from django.core.cache import cache
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
@@ -10,15 +11,18 @@ def game_list(request):
     # Initialize error and results
     steam_error = None
     steam_games = []
-    # 1. Fetch the full Steam app list (appid and name only)
-    app_list_url = "https://api.steampowered.com/ISteamApps/GetAppList/v2/"
-    try:
-        app_list_resp = requests.get(app_list_url, timeout=10)
-        app_list_data = app_list_resp.json()
-        all_apps = app_list_data.get('applist', {}).get('apps', [])
-    except Exception as e:
-        steam_error = f"Error fetching Steam app list: {e}"
-        all_apps = []
+    # 1. Fetch the full Steam app list (appid and name only) from cache or API
+    all_apps = cache.get('steam_all_apps')
+    if all_apps is None:
+        app_list_url = "https://api.steampowered.com/ISteamApps/GetAppList/v2/"
+        try:
+            app_list_resp = requests.get(app_list_url, timeout=10)
+            app_list_data = app_list_resp.json()
+            all_apps = app_list_data.get('applist', {}).get('apps', [])
+            cache.set('steam_all_apps', all_apps, timeout=3600)  # Cache for 1 hour
+        except Exception as e:
+            steam_error = f"Error fetching Steam app list: {e}"
+            all_apps = []
 
     # 2. Search feature: filter app list by name if search query is provided
     search_query = request.GET.get('search', '').strip()
@@ -52,14 +56,25 @@ def game_list(request):
                 info = app_data['data']
                 genres = info.get('genres', [])
                 tags = info.get('categories', [])
+                # DLC filter: skip games with 'DLC' in name or in genres/tags
+                name = info.get('name', '')
+                if 'dlc' in name.lower() or 'DLC' in name.upper():
+                    continue
+                if any('dlc' in genre['description'].lower() for genre in genres):
+                    continue
+                if any('dlc' in tag['description'].lower() for tag in tags):
+                    continue
                 # 6. Collect all genres/tags for filter dropdowns
                 for genre in genres:
                     genre_set.add((genre['id'], genre['description']))
                 for tag in tags:
                     tag_set.add((tag['id'], tag['description']))
                 # 7. Apply genre/tag filter if set (only show games matching selected genre/tag)
-                if (selected_genre and not any(str(genre['id']) == selected_genre for genre in genres)) or \
-                   (selected_tag and not any(str(tag['id']) == selected_tag for tag in tags)):
+                if (
+                    selected_genre and not any(str(genre['id']) == selected_genre for genre in genres)
+                ) or (
+                    selected_tag and not any(str(tag['id']) == selected_tag for tag in tags)
+                ):
                     continue
                 # 8. Add game details to steam_games list for display
                 steam_games.append({
@@ -96,8 +111,29 @@ def game_list(request):
 
 
 def game_detail(request, pk):
-    game = get_object_or_404(Game, pk=pk)
-    return render(request, 'games/game_detail.html', {'game': game})
+    url = f"https://store.steampowered.com/api/appdetails?appids={pk}"
+    try:
+        response = requests.get(url, timeout=10)
+        data = response.json()
+        app_data = data.get(str(pk), {})
+        if app_data.get('success'):
+            info = app_data['data']
+            game = {
+                'appid': info.get('steam_appid'),
+                'title': info.get('name', 'Unknown'),
+                'developer': ', '.join(info.get('developers', [])),
+                'release_date': info.get('release_date', {}).get('date', ''),
+                'description': info.get('short_description', ''),
+                'image': info.get('header_image'),
+                'genres': info.get('genres', []),
+                'tags': info.get('categories', []),
+            }
+            return render(request, 'games/game_detail.html', {'game': game})
+        else:
+            error = 'Could not fetch game info from Steam.'
+    except Exception as e:
+        error = f'Error fetching game info: {e}'
+    return render(request, 'games/game_detail.html', {'error': error})
 
 
 def genre_games(request, genre_id):

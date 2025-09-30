@@ -25,7 +25,9 @@
 <section class="steam-game-list">
   {% for game in steam_games %}
     <div class="game-card rounded-lg shadow p-4 mb-4" style="background-color: var(--color-card-bg); color: var(--color-text-main);">
-      <h2 class="text-xl font-bold mb-2">{{ game.title }}</h2>
+      <h2 class="text-xl font-bold mb-2">
+        <a href="{% url 'game_detail' game.appid %}" class="text-blue-600 underline">{{ game.title }}</a>
+      </h2>
       <p class="mb-1"><span class="font-semibold">Developer:</span> {{ game.developer }}</p>
       {% if game.image %}
         <img src="{{ game.image }}" alt="{{ game.title }} cover" class="max-w-xs mb-2 rounded" />
