@@ -14,6 +14,7 @@ defusedxml==0.7.1
 dj-database-url==3.0.1
 Django==5.2
 django-allauth==65.11.2
+django-browser-reload==1.21.0
 django-cloudinary-storage==0.3.0
 django-tailwind==4.2.0
 gunicorn==23.0.0

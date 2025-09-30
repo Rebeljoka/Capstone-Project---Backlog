@@ -1,0 +1,24 @@
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Alegreya+Sans+SC:ital,wght@0,100;0,300;0,400;0,500;0,700;0,800;0,900;1,100;1,300;1,400;1,500;1,700;1,800;1,900&family=Cairo:wght@200..1000&family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Maven+Pro:wght@400..900&family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+:root {
+    /* Font variables */
+    --font-h1: 'Josefin Sans', sans-serif;
+    --font-h2-h6: 'Cairo', sans-serif;
+    --font-body: 'Maven Pro', sans-serif;
+    --font-ui: 'Alegreya Sans SC', sans-serif;
+    --font-accent: 'Montserrat Alternates', sans-serif;
+
+    /* Color variables */
+    --color-error: #ffadac;
+    --color-secondary-cta: #ffd6a5;
+    --color-info: #fdffb6;
+    --color-success: #caffbf;
+    --color-primary-accent: #9bf6ff;
+    --color-primary-btn-bg: #a0c4ff;
+    --color-card-bg: #bdb2ff;
+    --color-decorative: #ffc6ff;
+    --color-bg-main: #fffffc;
+    --color-text-main: #2c2c2c;
+    --shadow: black;
+}

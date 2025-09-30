@@ -1,36 +1,53 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1>All Games</h1>
-<form method="get">
-  <label for="genre">Filter by genre:</label>
-  <select name="genre" id="genre" onchange="this.form.submit()">
+<h1>Steam Games</h1>
+{% if steam_error %}
+  <div class="bg-red-100 text-red-800 p-4 rounded mb-4">{{ steam_error }}</div>
+{% endif %}
+<form method="get" class="mb-4 flex flex-wrap gap-4 items-center">
+  <input type="text" name="search" value="{{ search_query }}" placeholder="Search games..." class="border rounded px-2 py-1" />
+  <label for="genre">Genre:</label>
+  <select name="genre" id="genre" onchange="this.form.submit()" class="border rounded px-2 py-1">
     <option value="">All</option>
-    {% for genre in genres %}
-      <option value="{{ genre.genre_id }}" {% if genre.genre_id|stringformat:'s' == selected_genre %}selected{% endif %}>{{ genre.genre }}</option>
+    {% for genre_id, genre_name in genres %}
+      <option value="{{ genre_id }}" {% if genre_id|stringformat:'s' == selected_genre %}selected{% endif %}>{{ genre_name }}</option>
     {% endfor %}
   </select>
-  <label for="tag">Filter by tag:</label>
-  <select name="tag" id="tag" onchange="this.form.submit()">
+  <label for="tag">Tag:</label>
+  <select name="tag" id="tag" onchange="this.form.submit()" class="border rounded px-2 py-1">
     <option value="">All</option>
-    {% for tag in tags %}
-      <option value="{{ tag.tag_id }}" {% if tag.tag_id|stringformat:'s' == selected_tag %}selected{% endif %}>{{ tag.name }}</option>
+    {% for tag_id, tag_name in tags %}
+      <option value="{{ tag_id }}" {% if tag_id|stringformat:'s' == selected_tag %}selected{% endif %}>{{ tag_name }}</option>
     {% endfor %}
   </select>
+  <button type="submit" class="bg-blue-500 text-white px-4 py-1 rounded">Filter</button>
 </form>
-<section class="game-list">
-  {% for game in games %}
-    <div class="game-card" style="border:1px solid #ccc; border-radius:8px; padding:1em; margin-bottom:1em; box-shadow:0 2px 6px #eee;">
-      <h2><a href="{% url 'game_detail' game.pk %}">{{ game.title }}</a></h2>
-      <p><strong>Developer:</strong> {{ game.developer }}</p>
+<section class="steam-game-list">
+  {% for game in steam_games %}
+    <div class="game-card rounded-lg shadow p-4 mb-4" style="background-color: var(--color-card-bg); color: var(--color-text-main);">
+      <h2 class="text-xl font-bold mb-2">{{ game.title }}</h2>
+      <p class="mb-1"><span class="font-semibold">Developer:</span> {{ game.developer }}</p>
       {% if game.image %}
-        <img src="{{ game.image }}" alt="{{ game.title }} cover" style="max-width:150px; display:block; margin-bottom:0.5em;" />
+        <img src="{{ game.image }}" alt="{{ game.title }} cover" class="max-w-xs mb-2 rounded" />
       {% endif %}
-      <p>{{ game.short_description }}</p>
-      <p><strong>Genres:</strong> {% for genre in game.genres.all %}{{ genre.genre }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
-      <p><strong>Tags:</strong> {% for tag in game.tags.all %}{{ tag.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+      <p class="mb-2">{{ game.short_description }}</p>
+      <p class="mb-1"><span class="font-semibold">Genres:</span> {% for genre in game.genres %}<span class="inline-block px-2 py-1 rounded" style="background-color: var(--color-decorative);">{{ genre.description }}</span>{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+      <p><span class="font-semibold">Tags:</span> {% for tag in game.tags %}<span class="inline-block px-2 py-1 rounded" style="background-color: var(--color-decorative);">{{ tag.description }}</span>{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+      <!-- Add to Wishlist button will go here -->
     </div>
   {% empty %}
-    <div>No games found.</div>
+    <div>No Steam games found.</div>
   {% endfor %}
 </section>
+<div class="flex justify-center mt-6">
+  <nav class="inline-flex gap-2">
+    {% if page_obj.has_previous %}
+      <a href="?{% if search_query %}search={{ search_query }}&{% endif %}{% if selected_genre %}genre={{ selected_genre }}&{% endif %}{% if selected_tag %}tag={{ selected_tag }}&{% endif %}page={{ page_obj.previous_page_number }}" class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">Previous</a>
+    {% endif %}
+    <span class="px-3 py-1 bg-gray-100 rounded">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+      <a href="?{% if search_query %}search={{ search_query }}&{% endif %}{% if selected_genre %}genre={{ selected_genre }}&{% endif %}{% if selected_tag %}tag={{ selected_tag }}&{% endif %}page={{ page_obj.next_page_number }}" class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">Next</a>
+    {% endif %}
+  </nav>
+</div>
 {% endblock %}
