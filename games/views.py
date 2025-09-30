@@ -1,17 +1,19 @@
+"""
+Views for Steam game browsing, details, and wishlist management.
+Handles fetching Steam data, filtering, and rendering templates.
+"""
 import requests
 from django.core.cache import cache
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from .models import Game, Genre, Tag, map_steam_to_game, set_game_genres_and_tags
+from .models import Genre, Game, map_steam_to_game, set_game_genres_and_tags
 
 
-# Create your views here.
 def game_list(request):
     # Initialize error and results
     steam_error = None
-    steam_games = []
-    # 1. Fetch the full Steam app list (appid and name only) from cache or API
+    # 1. Fetch the full Steam app list (appid and name only) from cache or API, then limit to first 1000 games for performance
     all_apps = cache.get('steam_all_apps')
     if all_apps is None:
         app_list_url = "https://api.steampowered.com/ISteamApps/GetAppList/v2/"
@@ -19,32 +21,42 @@ def game_list(request):
             app_list_resp = requests.get(app_list_url, timeout=10)
             app_list_data = app_list_resp.json()
             all_apps = app_list_data.get('applist', {}).get('apps', [])
-            cache.set('steam_all_apps', all_apps, timeout=3600)  # Cache for 1 hour
         except Exception as e:
             steam_error = f"Error fetching Steam app list: {e}"
             all_apps = []
+    # Limit to first 1000 games for performance
+    all_apps = all_apps[:1000]
 
-    # 2. Search feature: filter app list by name if search query is provided
+    # 2. Get search, genre, and tag filter parameters from request
     search_query = request.GET.get('search', '').strip()
-    if search_query:
-        filtered_apps = [app for app in all_apps if search_query.lower() in app['name'].lower()]
-    else:
-        filtered_apps = all_apps
-
-    # 3. Paginate the filtered app list (20 games per page)
-    paginator = Paginator(filtered_apps, 20)  # 20 games per page
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-
-    # 4. Get selected genre/tag from GET params for filtering
     selected_genre = request.GET.get('genre', '')
     selected_tag = request.GET.get('tag', '')
-    genre_set = set()  # Collect unique genres for dropdown
-    tag_set = set()    # Collect unique tags for dropdown
+    from .models import Genre
+    tag_set = set()    # Collect unique tags for the dropdown
+    genres_list = [(str(g.genre_id), g.genre) for g in Genre.objects.all()]  # All genres for dropdown
 
-    # 5. For each game on the current page, fetch details from Steam API
-    for app in page_obj:
-        appid = app['appid']
+    # 3. Build a list of appids to fetch details for:
+    #    - If search is set, filter app list by name
+    #    - If genre/tag filter is set, fetch details for all filtered apps to check genre/tag
+    #    - If no genre/tag filter, paginate first and only fetch details for current page
+    filtered_apps = all_apps
+    if search_query:
+        filtered_apps = [app for app in filtered_apps if search_query.lower() in app['name'].lower()]
+
+    appids_to_fetch = []
+    if selected_genre or selected_tag:
+        # Need to check all filtered_apps for genre/tag match, so fetch details for all
+        appids_to_fetch = [app['appid'] for app in filtered_apps]
+    else:
+        # No genre/tag filter, just paginate and fetch details for current page
+        paginator = Paginator(filtered_apps, 20)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        appids_to_fetch = [app['appid'] for app in page_obj]
+
+    # 4. Fetch details for each appid, exclude DLCs, collect tags, and apply genre/tag filter if set
+    filtered_steam_games = []
+    for appid in appids_to_fetch:
         url = f"https://store.steampowered.com/api/appdetails?appids={appid}"
         try:
             response = requests.get(url, timeout=5)
@@ -56,28 +68,23 @@ def game_list(request):
                 info = app_data['data']
                 genres = info.get('genres', [])
                 tags = info.get('categories', [])
-                # DLC filter: skip games with 'DLC' in name or in genres/tags
                 name = info.get('name', '')
+                # Exclude games with 'DLC' in name, genres, or tags
                 if 'dlc' in name.lower() or 'DLC' in name.upper():
                     continue
                 if any('dlc' in genre['description'].lower() for genre in genres):
                     continue
                 if any('dlc' in tag['description'].lower() for tag in tags):
                     continue
-                # 6. Collect all genres/tags for filter dropdowns
-                for genre in genres:
-                    genre_set.add((genre['id'], genre['description']))
+                # Collect all tags for dropdowns
                 for tag in tags:
                     tag_set.add((tag['id'], tag['description']))
-                # 7. Apply genre/tag filter if set (only show games matching selected genre/tag)
-                if (
-                    selected_genre and not any(str(genre['id']) == selected_genre for genre in genres)
-                ) or (
-                    selected_tag and not any(str(tag['id']) == selected_tag for tag in tags)
-                ):
+                # If genre/tag filter is set, only include games that match
+                if selected_genre and not any(str(genre['id']) == selected_genre for genre in genres):
                     continue
-                # 8. Add game details to steam_games list for display
-                steam_games.append({
+                if selected_tag and not any(str(tag['id']) == selected_tag for tag in tags):
+                    continue
+                filtered_steam_games.append({
                     'appid': info.get('steam_appid'),
                     'title': info.get('name', 'Unknown'),
                     'developer': ', '.join(info.get('developers', [])),
@@ -89,11 +96,16 @@ def game_list(request):
         except Exception:
             continue
 
-    # 9. Sort genres/tags for dropdowns
-    genres_list = sorted(list(genre_set), key=lambda x: x[1])
+    # 5. Paginate the filtered steam games (20 games per page)
+    paginator = Paginator(filtered_steam_games, 20)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    steam_games = list(page_obj)
+
+    # 6. Sort tags for dropdowns alphabetically
     tags_list = sorted(list(tag_set), key=lambda x: x[1])
 
-    # 10. Render the template with all context variables
+    # 7. Render the template with all context variables
     return render(
         request,
         'games/game_list.html',
