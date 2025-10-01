@@ -1,165 +1,313 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block content %}
-<div class="container mx-auto px-4 py-6">
+<div class="mx-auto px-4 py-6 max-w-screen-2xl">
   <div class="mb-6">
-    <h1 class="text-3xl font-bold text-gray-800 mb-2">Steam Games</h1>
-    <p class="text-gray-600">Quick browse view - click "View Details" for full game information</p>
+    <h1 class="text-3xl font-bold mb-2">Steam Games</h1>
+    <p class="text-base-content/70">Discover and explore thousands of games from Steam</p>
   </div>
 
   {% if steam_error %}
-    <div class="bg-red-100 text-red-800 p-4 rounded mb-4">{{ steam_error }}</div>
-  {% endif %}
-<form method="get" class="mb-4 flex flex-wrap gap-4 items-center">
-  <input type="text" name="search" value="{{ search_query }}" placeholder="Search games..." class="border rounded px-2 py-1" />
-  <label for="genre">Genre:</label>
-  <select name="genre" id="genre" onchange="this.form.submit()" class="border rounded px-2 py-1">
-    <option value="">All</option>
-    {% for genre_id, genre_name in genres %}
-      <option value="{{ genre_id }}" {% if genre_id|stringformat:'s' == selected_genre %}selected{% endif %}>{{ genre_name }}</option>
-    {% endfor %}
-  </select>
-  <label for="tag">Tag:</label>
-  <select name="tag" id="tag" onchange="this.form.submit()" class="border rounded px-2 py-1">
-    <option value="">All</option>
-    {% for tag_id, tag_name in tags %}
-      <option value="{{ tag_id }}" {% if tag_id|stringformat:'s' == selected_tag %}selected{% endif %}>{{ tag_name }}</option>
-    {% endfor %}
-  </select>
-  <button type="submit" class="bg-blue-500 text-white px-4 py-1 rounded">Filter</button>
-</form>
-<section class="steam-game-list grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-  {% for game in steam_games %}
-    <div class="game-card bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
-      <!-- Game Image -->
-      <div class="relative">
-        {% if game.image %}
-          <img src="{{ game.image }}" alt="{{ game.title }} header" class="w-full h-48 object-cover">
-        {% else %}
-          <div class="w-full h-48 bg-gray-200 flex items-center justify-center">
-            <span class="text-gray-400 text-sm">No Image</span>
-          </div>
-        {% endif %}
-        
-        <!-- Platform Icons Overlay -->
-        <div class="absolute top-2 right-2 flex gap-1">
-          {% if game.platforms.windows %}
-            <span class="text-xs bg-black bg-opacity-70 text-white px-2 py-1 rounded" title="Windows">🖥️</span>
-          {% endif %}
-          {% if game.platforms.mac %}
-            <span class="text-xs bg-black bg-opacity-70 text-white px-2 py-1 rounded" title="Mac">🍎</span>
-          {% endif %}
-          {% if game.platforms.linux %}
-            <span class="text-xs bg-black bg-opacity-70 text-white px-2 py-1 rounded" title="Linux">🐧</span>
-          {% endif %}
-        </div>
-      </div>
-      
-      <!-- Game Info -->
-      <div class="p-4">
-        <h2 class="text-lg font-bold mb-2 leading-tight">
-          <a href="{% url 'game_detail' game.appid %}" class="text-blue-600 hover:text-blue-800 underline">
-            {{ game.title }}
-          </a>
-        </h2>
-        
-        <!-- Genres (max 2) -->
-        <div class="mb-2">
-          <span class="text-sm font-semibold text-gray-600">Genres:</span>
-          {% for genre in game.genres|slice:":2" %}
-            <span class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded mr-1">
-              {{ genre.description|default:genre }}
-            </span>
-          {% empty %}
-            <span class="text-xs text-gray-400">Unknown</span>
-          {% endfor %}
-        </div>
-        
-        <!-- Tags (max 2) -->
-        <div class="mb-3">
-          <span class="text-sm font-semibold text-gray-600">Tags:</span>
-          {% for tag in game.tags|slice:":2" %}
-            <span class="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded mr-1">
-              {{ tag.description|default:tag }}
-            </span>
-          {% empty %}
-            <span class="text-xs text-gray-400">None</span>
-          {% endfor %}
-        </div>
-        
-        <!-- Action buttons -->
-        <div class="flex gap-2">
-          <a href="{% url 'game_detail' game.appid %}" 
-             class="flex-1 text-center bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded text-sm font-medium transition-colors">
-            View Details
-          </a>
-          {% if user.is_authenticated %}
-            <a href="{% url 'add_steam_game_to_wishlist' game.appid %}" 
-               class="bg-green-500 hover:bg-green-600 text-white px-3 py-2 rounded text-sm font-medium transition-colors">
-              + Wishlist
-            </a>
-          {% endif %}
-        </div>
-      </div>
+    <div class="alert alert-error mb-4">
+      <span class="icon-[tabler--exclamation-circle]"></span>
+      <span>{{ steam_error }}</span>
     </div>
-  {% empty %}
-    <div class="text-center py-8 text-gray-500">
-      <p>No Steam games found.</p>
-      {% if search_query %}
-        <p class="text-sm mt-2">Try adjusting your search terms.</p>
+  {% endif %}
+
+  <!-- Enhanced Filters -->
+  <div class="card bg-base-100 shadow-lg mb-6">
+    <div class="card-body">
+      <form method="get" class="flex flex-wrap gap-4 items-end">
+        <!-- Search Input -->
+        <div class="form-control flex-1 min-w-64">
+          <label class="label" for="searchInput">
+            <span class="label-text font-medium">Search Games</span>
+          </label>
+          <div class="input-group">
+            <input 
+              type="text" 
+              id="searchInput"
+              name="search" 
+              value="{{ search_query }}" 
+              placeholder="Search by game title..." 
+              class="input input-bordered flex-1" 
+            />
+            <button type="submit" class="btn btn-square btn-primary">
+                <i class="nf nf-oct-search"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Genre Filter -->
+        <div class="form-control">
+          <label class="label" for="genre">
+            <span class="label-text font-medium">Genre</span>
+          </label>
+          <select name="genre" id="genre" class="select select-bordered w-full max-w-xs" onchange="this.form.submit()">
+            <option value="">All Genres</option>
+            {% for genre_id, genre_name in genres %}
+              <option value="{{ genre_id }}" {% if genre_id|stringformat:'s' == selected_genre %}selected{% endif %}>
+                {{ genre_name }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Tag Filter -->
+        <div class="form-control">
+          <label class="label" for="tag">
+            <span class="label-text font-medium">Category</span>
+          </label>
+          <select name="tag" id="tag" class="select select-bordered w-full max-w-xs" onchange="this.form.submit()">
+            <option value="">All Categories</option>
+            {% for tag_id, tag_name in tags %}
+              <option value="{{ tag_id }}" {% if tag_id|stringformat:'s' == selected_tag %}selected{% endif %}>
+                {{ tag_name }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+      </form>
+
+      <!-- Active Filters Display -->
+      {% if search_query or selected_genre or selected_tag %}
+        <div class="flex flex-wrap gap-2 mt-4 pt-4 border-t">
+          <span class="text-sm font-medium">Active filters:</span>
+          {% if search_query %}
+            <div class="badge badge-primary gap-2">
+              <span class="icon-[tabler--search]"></span>
+              "{{ search_query }}"
+            </div>
+          {% endif %}
+          {% if selected_genre %}
+            <div class="badge badge-secondary gap-2">
+              <span class="icon-[tabler--category]"></span>
+              Genre: {{ selected_genre }}
+            </div>
+          {% endif %}
+          {% if selected_tag %}
+            <div class="badge badge-accent gap-2">
+              <span class="icon-[tabler--tag]"></span>
+              Tag: {{ selected_tag }}
+            </div>
+          {% endif %}
+          <a href="{% url 'game_list' %}" class="badge badge-ghost gap-2 hover:badge-error">
+            <span class="icon-[tabler--x]"></span>
+            Clear all
+          </a>
+        </div>
       {% endif %}
     </div>
-  {% endfor %}
-</section>
-<div class="flex justify-center mt-6">
-  <div class="join">
-    <!-- Previous Button -->
-    {% if page_obj.has_previous %}
-      <a href="?{% if search_query %}search={{ search_query }}&{% endif %}{% if selected_genre %}genre={{ selected_genre }}&{% endif %}{% if selected_tag %}tag={{ selected_tag }}&{% endif %}page={{ page_obj.previous_page_number }}" class="join-item btn">«</a>
-    {% else %}
-      <button class="join-item btn btn-disabled">«</button>
-    {% endif %}
-
-    <!-- Page Numbers -->
-    {% with page_obj.paginator.num_pages as total_pages %}
-      {% with page_obj.number as current_page %}
-        
-        <!-- First page -->
-        {% if current_page > 3 %}
-          <a href="?{% if search_query %}search={{ search_query }}&{% endif %}{% if selected_genre %}genre={{ selected_genre }}&{% endif %}{% if selected_tag %}tag={{ selected_tag }}&{% endif %}page=1" class="join-item btn">1</a>
-          {% if current_page > 4 %}
-            <button class="join-item btn btn-disabled">...</button>
-          {% endif %}
-        {% endif %}
-
-        <!-- Page numbers around current page -->
-        {% for page_num in page_obj.paginator.page_range %}
-          {% if page_num >= current_page|add:"-2" and page_num <= current_page|add:"2" %}
-            {% if page_num == current_page %}
-              <button class="join-item btn btn-active">{{ page_num }}</button>
-            {% else %}
-              <a href="?{% if search_query %}search={{ search_query }}&{% endif %}{% if selected_genre %}genre={{ selected_genre }}&{% endif %}{% if selected_tag %}tag={{ selected_tag }}&{% endif %}page={{ page_num }}" class="join-item btn">{{ page_num }}</a>
-            {% endif %}
-          {% endif %}
-        {% endfor %}
-
-        <!-- Last page -->
-        {% if current_page < total_pages|add:"-2" %}
-          {% if current_page < total_pages|add:"-3" %}
-            <button class="join-item btn btn-disabled">...</button>
-          {% endif %}
-          <a href="?{% if search_query %}search={{ search_query }}&{% endif %}{% if selected_genre %}genre={{ selected_genre }}&{% endif %}{% if selected_tag %}tag={{ selected_tag }}&{% endif %}page={{ total_pages }}" class="join-item btn">{{ total_pages }}</a>
-        {% endif %}
-
-      {% endwith %}
-    {% endwith %}
-
-    <!-- Next Button -->
-    {% if page_obj.has_next %}
-      <a href="?{% if search_query %}search={{ search_query }}&{% endif %}{% if selected_genre %}genre={{ selected_genre }}&{% endif %}{% if selected_tag %}tag={{ selected_tag }}&{% endif %}page={{ page_obj.next_page_number }}" class="join-item btn">»</a>
-    {% else %}
-      <button class="join-item btn btn-disabled">»</button>
-    {% endif %}
   </div>
+
+  <!-- Games Grid -->
+  <section id="game-container" class="games-grid grid gap-6 min-h-screen" style="grid-template-columns: repeat(1, 1fr);">
+    {% for game in steam_games %}
+      <div class="game-card bg-base-100 shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300 group">
+        <a href="{% url 'game_detail' game.appid %}" class="block">
+          <!-- Game Image -->
+          <div class="aspect-video bg-base-200 relative overflow-hidden">
+            {% if game.image %}
+              <img src="{{ game.image }}" 
+                   alt="{{ game.title }}" 
+                   class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                   loading="lazy">
+            {% else %}
+              <div class="w-full h-full flex items-center justify-center text-base-content/50">
+                <iconify-icon icon="tabler:device-gamepad-2" class="text-4xl"></iconify-icon>
+              </div>
+            {% endif %}
+            
+            <!-- Platform Icons Overlay -->
+            <div class="absolute top-2 right-2 flex gap-1">
+              {% if game.platforms.windows %}
+                <span class="badge badge-neutral badge-sm" title="Windows">
+                  <iconify-icon icon="simple-icons:windows"></iconify-icon>
+                </span>
+              {% endif %}
+              {% if game.platforms.mac %}
+                <span class="badge badge-neutral badge-sm" title="Mac">
+                  <iconify-icon icon="simple-icons:apple"></iconify-icon>
+                </span>
+              {% endif %}
+              {% if game.platforms.linux %}
+                <span class="badge badge-neutral badge-sm" title="Linux">
+                  <iconify-icon icon="simple-icons:linux"></iconify-icon>
+                </span>
+              {% endif %}
+            </div>
+          </div>
+          
+          <!-- Game Info -->
+          <div class="p-4">
+            <h3 class="font-semibold text-lg mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+              {{ game.title }}
+            </h3>
+            
+            <!-- Genres -->
+            <div class="flex gap-1 flex-wrap mb-3">
+              {% for genre in game.genres|slice:":2" %}
+                <span class="badge badge-outline badge-sm">
+                  {{ genre.description|default:genre }}
+                </span>
+              {% empty %}
+                <span class="badge badge-ghost badge-sm">Unknown Genre</span>
+              {% endfor %}
+            </div>
+            
+            <!-- Action buttons -->
+            <div class="flex gap-2 mt-4">
+              <div class="btn btn-primary btn-sm flex-1">
+                <iconify-icon icon="tabler:eye"></iconify-icon>
+                View Details
+              </div>
+              {% if user.is_authenticated %}
+                <a href="{% url 'add_steam_game_to_wishlist' game.appid %}" 
+                   class="btn btn-outline btn-sm"
+                   onclick="event.stopPropagation();">
+                  <iconify-icon icon="tabler:heart"></iconify-icon>
+                </a>
+              {% endif %}
+            </div>
+          </div>
+        </a>
+      </div>
+    {% empty %}
+      <div class="col-span-full">
+        <div class="text-center py-12">
+          <div class="mb-4">
+            <span class="icon-[tabler--search-off] text-6xl text-base-content/30"></span>
+          </div>
+          <h3 class="text-xl font-semibold mb-2">No games found</h3>
+          {% if search_query %}
+            <p class="text-base-content/70 mb-4">
+              No results for "<strong>{{ search_query }}</strong>"
+            </p>
+            <a href="{% url 'game_list' %}" class="btn btn-outline">
+              <span class="icon-[tabler--arrow-left]"></span>
+              Browse All Games
+            </a>
+          {% else %}
+            <p class="text-base-content/70">Try adjusting your filters or check back later.</p>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  </section>
+
+  <!-- Load More Button (fallback for screens without scrolling) -->
+  <div id="load-more-container" class="flex justify-center py-8" style="display: none;">
+    <button id="load-more-btn" class="btn btn-primary btn-lg gap-2">
+      <iconify-icon icon="tabler:chevron-down"></iconify-icon>
+      Load More Games
+    </button>
+  </div>
+
+  <!-- Loading Indicator (will be managed by JavaScript) -->
+  <div id="loading-indicator" class="hidden">
+    <div class="flex justify-center items-center py-8">
+      <div class="flex flex-col items-center gap-4">
+        <div class="loading loading-spinner loading-lg"></div>
+        <p class="text-base-content/70">Loading more games...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fallback pagination (for users with JavaScript disabled) -->
+  <noscript>
+    <div class="flex justify-center mt-8">
+      <div class="join">
+        {% if page_obj.has_previous %}
+          <a href="?{% if search_query %}search={{ search_query }}&{% endif %}{% if selected_genre %}genre={{ selected_genre }}&{% endif %}{% if selected_tag %}tag={{ selected_tag }}&{% endif %}page={{ page_obj.previous_page_number }}" 
+             class="join-item btn">
+            <span class="icon-[tabler--chevron-left]"></span>
+          </a>
+        {% endif %}
+        
+        <span class="join-item btn btn-active">
+          Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </span>
+        
+        {% if page_obj.has_next %}
+          <a href="?{% if search_query %}search={{ search_query }}&{% endif %}{% if selected_genre %}genre={{ selected_genre }}&{% endif %}{% if selected_tag %}tag={{ selected_tag }}&{% endif %}page={{ page_obj.next_page_number }}" 
+             class="join-item btn">
+            <span class="icon-[tabler--chevron-right]"></span>
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </noscript>
 </div>
-</div>
+
+<!-- Add some custom CSS for smooth animations -->
+<style>
+.games-grid {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  display: grid !important; /* Ensure grid layout is maintained */
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.game-card {
+  transform: translateY(0);
+  transition: all 0.3s ease;
+  /* Ensure each card maintains proper structure */
+  width: 100%;
+  min-height: fit-content;
+}
+
+.game-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Force icon rendering for dynamically created elements */
+.game-card .icon-\[simple-icons--windows\],
+.game-card .icon-\[simple-icons--apple\],
+.game-card .icon-\[simple-icons--linux\],
+.game-card .icon-\[tabler--device-gamepad-2\],
+.game-card .icon-\[tabler--eye\],
+.game-card .icon-\[tabler--heart\] {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+}
+
+@media (max-width: 639px) {
+  .games-grid {
+    grid-template-columns: repeat(1, 1fr) !important;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 767px) {
+  .games-grid {
+    grid-template-columns: repeat(1, 1fr) !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1279px) {
+  .games-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+
+@media (min-width: 1280px) {
+  .games-grid {
+    grid-template-columns: repeat(5, 1fr) !important;
+  }
+}
+</style>
+
+<!-- Pass user authentication status to JavaScript -->
+<script>
+window.userAuthenticated = {% if user.is_authenticated %}true{% else %}false{% endif %};
+</script>
+
+<!-- Infinite Scroll JavaScript -->
+<script src="{% static 'js/infinite-scroll.js' %}"></script>
+
 {% endblock %}

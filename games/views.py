@@ -8,6 +8,8 @@ from django.core.cache import cache
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
 from .models import Genre, Tag, Game, map_steam_to_game, set_game_genres_and_tags
 
 
@@ -200,11 +202,13 @@ def game_list(request):
     else:
         # No genre/tag filtering - use simple pagination
         games_per_page = 20
+        # Request extra games to account for API failures
+        games_to_request = 30  # Request 30 to get ~20 successful ones
         page_number = int(request.GET.get('page', 1))
 
         # Calculate start and end indices for this page
-        start_index = (page_number - 1) * games_per_page
-        end_index = start_index + games_per_page
+        start_index = (page_number - 1) * games_to_request
+        end_index = start_index + games_to_request
 
         # Get games for current page
         games_for_page = filtered_apps[start_index:end_index]
@@ -213,10 +217,10 @@ def game_list(request):
         appids_for_page = [app['appid'] for app in games_for_page]
         all_game_details = fetch_multiple_game_minimal(appids_for_page)
 
-        # 6. No additional filtering needed
+        # 6. Filter successful games and limit to games_per_page
         filtered_steam_games = []
         for game_data in all_game_details:
-            if game_data:  # Only skip if completely failed to fetch
+            if game_data and len(filtered_steam_games) < games_per_page:  # Only add up to games_per_page
                 filtered_steam_games.append(game_data)
 
         # 7. Create proper pagination for non-filtered results
@@ -273,3 +277,108 @@ def add_game_from_steam(request, appid):
         return redirect('game_detail', pk=game.pk)
     else:
         return render(request, 'games/game_error.html', {'error': 'Could not fetch game info from Steam.'})
+
+
+@require_http_methods(["GET"])
+def game_list_api(request):
+    """API endpoint for infinite scroll - returns JSON game data"""
+    page = int(request.GET.get('page', 1))
+    search_query = request.GET.get('search', '').strip()
+    selected_genre = request.GET.get('genre', '')
+    selected_tag = request.GET.get('tag', '')
+
+    # Determine games per page based on whether it's first load or subsequent
+    games_per_page = 50 if page == 1 else 25
+
+    try:
+        if search_query:
+            # Search functionality - same as original but optimized for API
+            steam_data = cache.get('steam_app_list')
+            if not steam_data:
+                response = requests.get("https://api.steampowered.com/ISteamApps/GetAppList/v2/")
+                if response.status_code == 200:
+                    steam_data = response.json()
+                    cache.set('steam_app_list', steam_data, 21600)  # 6 hours
+                else:
+                    return JsonResponse({'error': 'Failed to fetch Steam data'}, status=500)
+
+            all_apps = steam_data['applist']['apps']
+            filtered_apps = [
+                app for app in all_apps
+                if search_query.lower() in app['name'].lower()
+            ][:500]  # Limit search results
+
+            # Paginate search results
+            start_index = (page - 1) * games_per_page
+            end_index = start_index + games_per_page
+            paginated_apps = filtered_apps[start_index:end_index]
+
+            has_more = end_index < len(filtered_apps)
+
+        elif selected_genre or selected_tag:
+            # Genre/tag filtering - simplified for API
+            steam_data = cache.get('steam_app_list')
+            if not steam_data:
+                response = requests.get("https://api.steampowered.com/ISteamApps/GetAppList/v2/")
+                if response.status_code == 200:
+                    steam_data = response.json()
+                    cache.set('steam_app_list', steam_data, 21600)
+                else:
+                    return JsonResponse({'error': 'Failed to fetch Steam data'}, status=500)
+
+            all_apps = steam_data['applist']['apps'][:1000]  # Limit for performance
+
+            # Get first batch for filtering
+            start_index = (page - 1) * games_per_page
+            end_index = start_index + games_per_page
+            paginated_apps = all_apps[start_index:end_index]
+
+            has_more = end_index < len(all_apps)
+
+        else:
+            # Default listing - no filters
+            steam_data = cache.get('steam_app_list')
+            if not steam_data:
+                response = requests.get("https://api.steampowered.com/ISteamApps/GetAppList/v2/")
+                if response.status_code == 200:
+                    steam_data = response.json()
+                    cache.set('steam_app_list', steam_data, 21600)
+                else:
+                    return JsonResponse({'error': 'Failed to fetch Steam data'}, status=500)
+
+            all_apps = steam_data['applist']['apps'][:1000]  # First 1000 games
+
+            start_index = (page - 1) * games_per_page
+            end_index = start_index + games_per_page
+            paginated_apps = all_apps[start_index:end_index]
+
+            has_more = end_index < len(all_apps)
+
+        # Fetch game details for the paginated apps
+        games = []
+        with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+            future_to_appid = {
+                executor.submit(get_cached_game_minimal, app['appid']): app['appid']
+                for app in paginated_apps
+            }
+
+            for future in concurrent.futures.as_completed(future_to_appid):
+                game_data = future.result()
+                if game_data and game_data.get('title'):
+                    games.append({
+                        'appid': game_data.get('appid'),
+                        'title': game_data.get('title'),
+                        'image': game_data.get('image'),
+                        'platforms': game_data.get('platforms', {}),
+                        'genres': game_data.get('genres', [])[:2],  # Limit to 2 genres
+                    })
+
+        return JsonResponse({
+            'games': games,
+            'has_more': has_more,
+            'total_count': len(games),
+            'page': page
+        })
+
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
