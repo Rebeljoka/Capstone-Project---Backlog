@@ -31,7 +31,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Read SECRET_KEY from environment, fallback to a default for development only
 SECRET_KEY = os.environ.get('SECRET_KEY')
 STEAM_API_KEY = os.environ.get('STEAM_API_KEY')
-CLOUDINARY_STORAGE = {
+CLOUDINARY_URL = {
     'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
     'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
     'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
