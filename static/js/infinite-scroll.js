@@ -5,8 +5,9 @@ class GameListManager {
         this.loading = false;
         this.hasMore = true;
         this.searchQuery = '';
-        this.selectedGenre = '';
-        this.selectedTag = '';
+        this.selectedGenres = [];
+        this.selectedTags = [];
+        this.selectedPlatform = '';
         
         // Only initialize if we're on the game list page
         if (this.isGameListPage()) {
@@ -28,8 +29,17 @@ class GameListManager {
             // Get current search parameters from URL
             const urlParams = new URLSearchParams(window.location.search);
             this.searchQuery = urlParams.get('search') || '';
-            this.selectedGenre = urlParams.get('genre') || '';
-            this.selectedTag = urlParams.get('tag') || '';
+            this.selectedGenres = urlParams.getAll('genres') || [];
+            this.selectedTags = urlParams.getAll('tags') || [];
+            this.selectedPlatform = urlParams.get('platform') || '';
+            
+            // Backward compatibility with single-select filters
+            if (this.selectedGenres.length === 0 && urlParams.get('genre')) {
+                this.selectedGenres = [urlParams.get('genre')];
+            }
+            if (this.selectedTags.length === 0 && urlParams.get('tag')) {
+                this.selectedTags = [urlParams.get('tag')];
+            }
             
             this.setupInfiniteScroll();
             this.setupSearch();
@@ -164,11 +174,19 @@ class GameListManager {
         this.showLoadingSpinner();
         
         try {
-            const params = new URLSearchParams({
-                page: this.currentPage + 1,
-                search: this.searchQuery,
-                genre: this.selectedGenre,
-                tag: this.selectedTag
+            const params = new URLSearchParams();
+            params.append('page', this.currentPage + 1);
+            params.append('search', this.searchQuery);
+            params.append('platform', this.selectedPlatform);
+            
+            // Add multi-select genres
+            this.selectedGenres.forEach(genre => {
+                params.append('genres', genre);
+            });
+            
+            // Add multi-select tags  
+            this.selectedTags.forEach(tag => {
+                params.append('tags', tag);
             });
             
             console.log(`Loading page ${this.currentPage + 1} with params:`, params.toString());
@@ -377,4 +395,294 @@ class GameListManager {
 // Initialize infinite scroll when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
     new GameListManager();
+});
+
+
+//  Search function
+// Enhanced Search JavaScript
+// Search functionality with debouncing and suggestions
+let searchTimeout;
+let searchCache = new Map();
+let currentSuggestionIndex = -1;
+
+function handleSearchInput(input) {
+  clearTimeout(searchTimeout);
+  const query = input.value.trim();
+  
+  // Clear suggestions if query is too short
+  if (query.length < 2) {
+    hideSearchSuggestions();
+    return;
+  }
+  
+  // Debounced search - wait 300ms after user stops typing
+  searchTimeout = setTimeout(() => {
+    fetchSearchSuggestions(query);
+  }, 300);
+}
+
+function handleSearchKeydown(event) {
+  const suggestions = document.querySelectorAll('#suggestions-list .suggestion-item');
+  
+  if (event.key === 'ArrowDown') {
+    event.preventDefault();
+    currentSuggestionIndex = Math.min(currentSuggestionIndex + 1, suggestions.length - 1);
+    updateSuggestionHighlight(suggestions);
+  } else if (event.key === 'ArrowUp') {
+    event.preventDefault();
+    currentSuggestionIndex = Math.max(currentSuggestionIndex - 1, -1);
+    updateSuggestionHighlight(suggestions);
+  } else if (event.key === 'Enter') {
+    if (currentSuggestionIndex >= 0 && suggestions[currentSuggestionIndex]) {
+      event.preventDefault();
+      selectSuggestion(suggestions[currentSuggestionIndex]);
+    }
+    // Otherwise let form submit normally
+  } else if (event.key === 'Escape') {
+    hideSearchSuggestions();
+    document.getElementById('searchInput').blur();
+  }
+}
+
+function updateSuggestionHighlight(suggestions) {
+  suggestions.forEach((item, index) => {
+    if (index === currentSuggestionIndex) {
+      item.classList.add('active');
+    } else {
+      item.classList.remove('active');
+    }
+  });
+}
+
+async function fetchSearchSuggestions(query) {
+  // Check cache first
+  if (searchCache.has(query)) {
+    displaySuggestions(searchCache.get(query), query);
+    return;
+  }
+  
+  // Show loading state
+  showSearchLoading();
+  
+  try {
+    const response = await fetch(`/games/api/search-suggestions/?q=${encodeURIComponent(query)}`);
+    const data = await response.json();
+    
+    if (response.ok) {
+      // Cache the results
+      searchCache.set(query, data.suggestions);
+      displaySuggestions(data.suggestions, query);
+    } else {
+      hideSearchSuggestions();
+    }
+  } catch (error) {
+    console.error('Search suggestions error:', error);
+    hideSearchSuggestions();
+  }
+}
+
+function displaySuggestions(suggestions, query) {
+  const suggestionsList = document.getElementById('suggestions-list');
+  const noSuggestions = document.getElementById('no-suggestions');
+  const dropdown = document.getElementById('search-suggestions');
+  
+  hideSearchLoading();
+  
+  if (!suggestions || suggestions.length === 0) {
+    suggestionsList.innerHTML = '';
+    noSuggestions.classList.remove('hidden');
+    dropdown.classList.remove('hidden');
+    return;
+  }
+  
+  noSuggestions.classList.add('hidden');
+  currentSuggestionIndex = -1;
+  
+  // Create clean suggestion items with highlighted text
+  suggestionsList.innerHTML = suggestions.map((game, index) => `
+    <div class="suggestion-item cursor-pointer flex items-center gap-3" 
+         data-appid="${game.appid}" 
+         data-title="${game.name}"
+         onclick="selectSuggestion(this)">
+      <iconify-icon icon="tabler:device-gamepad-2" class="text-base-content/50 flex-shrink-0"></iconify-icon>
+      <span class="text-sm truncate">${highlightMatch(game.name, query)}</span>
+    </div>
+  `).join('');
+  
+  dropdown.classList.remove('hidden');
+}
+
+function highlightMatch(text, query) {
+  const regex = new RegExp(`(${escapeRegex(query)})`, 'gi');
+  return text.replace(regex, '<mark class="bg-primary/20 text-primary font-medium">$1</mark>');
+}
+
+function escapeRegex(string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function selectSuggestion(element) {
+  const title = element.dataset.title;
+  const input = document.getElementById('searchInput');
+  
+  input.value = title;
+  hideSearchSuggestions();
+  
+  // Submit the form
+  document.querySelector('form').submit();
+}
+
+function showSearchLoading() {
+  document.getElementById('search-loading').classList.remove('hidden');
+  document.getElementById('search-suggestions').classList.remove('hidden');
+}
+
+function hideSearchLoading() {
+  document.getElementById('search-loading').classList.add('hidden');
+}
+
+function hideSearchSuggestions() {
+  document.getElementById('search-suggestions').classList.add('hidden');
+  currentSuggestionIndex = -1;
+}
+
+// Close suggestions when clicking outside
+document.addEventListener('click', function(event) {
+  const searchInput = document.getElementById('searchInput');
+  const searchSuggestions = document.getElementById('search-suggestions');
+  
+  if (!searchInput.contains(event.target) && !searchSuggestions.contains(event.target)) {
+    hideSearchSuggestions();
+  }
+});
+
+// Show suggestions when input is focused and has content
+document.getElementById('searchInput').addEventListener('focus', function() {
+  if (this.value.trim().length >= 2) {
+    const query = this.value.trim();
+    if (searchCache.has(query)) {
+      displaySuggestions(searchCache.get(query), query);
+    }
+  }
+});
+
+// Clear search cache periodically (every 5 minutes)
+setInterval(() => {
+  searchCache.clear();
+}, 300000);
+
+
+// Multi-Select Filter JavaScript
+// Genre filter functions
+function toggleAllGenres(checkbox) {
+  const genreCheckboxes = document.querySelectorAll('.genre-checkbox');
+  genreCheckboxes.forEach(cb => cb.checked = checkbox.checked);
+  updateGenreSelection();
+}
+
+function updateGenreSelection() {
+  const allCheckbox = document.getElementById('genre-all');
+  const genreCheckboxes = document.querySelectorAll('.genre-checkbox');
+  const checkedGenres = document.querySelectorAll('.genre-checkbox:checked');
+  const display = document.getElementById('genre-display');
+  
+  // Update "All" checkbox state
+  allCheckbox.checked = checkedGenres.length === genreCheckboxes.length;
+  allCheckbox.indeterminate = checkedGenres.length > 0 && checkedGenres.length < genreCheckboxes.length;
+  
+  // Update display text
+  if (checkedGenres.length === 0 || allCheckbox.checked) {
+    display.textContent = 'All Genres';
+  } else {
+    display.textContent = `${checkedGenres.length} genre${checkedGenres.length === 1 ? '' : 's'} selected`;
+  }
+}
+
+// Tag filter functions
+function toggleAllTags(checkbox) {
+  const tagCheckboxes = document.querySelectorAll('.tag-checkbox');
+  tagCheckboxes.forEach(cb => cb.checked = checkbox.checked);
+  updateTagSelection();
+}
+
+function updateTagSelection() {
+  const allCheckbox = document.getElementById('tag-all');
+  const tagCheckboxes = document.querySelectorAll('.tag-checkbox');
+  const checkedTags = document.querySelectorAll('.tag-checkbox:checked');
+  const display = document.getElementById('tag-display');
+  
+  // Update "All" checkbox state
+  allCheckbox.checked = checkedTags.length === tagCheckboxes.length;
+  allCheckbox.indeterminate = checkedTags.length > 0 && checkedTags.length < tagCheckboxes.length;
+  
+  // Update display text
+  if (checkedTags.length === 0 || allCheckbox.checked) {
+    display.textContent = 'All Categories';
+  } else {
+    display.textContent = `${checkedTags.length} categor${checkedTags.length === 1 ? 'y' : 'ies'} selected`;
+  }
+}
+
+// Filter pill removal functions
+function removeGenre(genreId) {
+  const checkbox = document.querySelector(`input[name="genres"][value="${genreId}"]`);
+  if (checkbox) {
+    checkbox.checked = false;
+    updateGenreSelection();
+    document.querySelector('form').submit();
+  }
+}
+
+function removeTag(tagId) {
+  const checkbox = document.querySelector(`input[name="tags"][value="${tagId}"]`);
+  if (checkbox) {
+    checkbox.checked = false;
+    updateTagSelection();
+    document.querySelector('form').submit();
+  }
+}
+
+function clearSearch() {
+  document.querySelector('input[name="search"]').value = '';
+  document.querySelector('form').submit();
+}
+
+function clearPlatform() {
+  document.querySelector('select[name="platform"]').value = '';
+  document.querySelector('form').submit();
+}
+
+function clearAllFilters() {
+  // Clear search
+  document.querySelector('input[name="search"]').value = '';
+  
+  // Clear platform
+  document.querySelector('select[name="platform"]').value = '';
+  
+  // Clear all genre checkboxes
+  document.querySelectorAll('.genre-checkbox').forEach(cb => cb.checked = false);
+  document.getElementById('genre-all').checked = true;
+  updateGenreSelection();
+  
+  // Clear all tag checkboxes
+  document.querySelectorAll('.tag-checkbox').forEach(cb => cb.checked = false);
+  document.getElementById('tag-all').checked = true;
+  updateTagSelection();
+  
+  // Submit form
+  document.querySelector('form').submit();
+}
+
+// Show loading spinner during filter operations
+document.querySelector('form').addEventListener('submit', function() {
+  const loadingSpinner = document.getElementById('filter-loading');
+  if (loadingSpinner) {
+    loadingSpinner.classList.remove('hidden');
+  }
+});
+
+// Initialize filter states on page load
+document.addEventListener('DOMContentLoaded', function() {
+  updateGenreSelection();
+  updateTagSelection();
 });
