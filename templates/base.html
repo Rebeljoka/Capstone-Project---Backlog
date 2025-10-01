@@ -28,7 +28,11 @@
                           </label>
                           <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
                             <li><a href="{% url 'game_list' %}">All Games</a></li>
-                            <li><a href="#">Wishlist</a></li>
+                            {% if user.is_authenticated %}
+                              <li><a href="{% url 'wishlist_list' %}">My Wishlists</a></li>
+                            {% else %}
+                              <li><a href="{% url 'account_login' %}">Login to see Wishlists</a></li>
+                            {% endif %}
                           </ul>
                         </div>
                     </div>
