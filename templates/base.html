@@ -9,13 +9,9 @@
         <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}" />
 
         <!-- Tailwind CSS -->
-        {% if DEBUG %}
-            {% tailwind_css %}
-        {% else %}
-            <link rel="stylesheet" href="{% static 'css/dist/styles.css' %}" />
-        {% endif %}
+        <link rel="stylesheet" href="{% static 'css/dist/styles.css' %}" />
 
-        <!-- custom styles -->
+        <!-- Custom styles (loaded in both dev and production) -->
         <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
 
         <!-- NerdFonts -->
