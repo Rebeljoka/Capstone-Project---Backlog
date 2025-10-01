@@ -79,14 +79,54 @@
   {% endfor %}
 </section>
 <div class="flex justify-center mt-6">
-  <nav class="inline-flex gap-2">
+  <div class="join">
+    <!-- Previous Button -->
     {% if page_obj.has_previous %}
-      <a href="?{% if search_query %}search={{ search_query }}&{% endif %}{% if selected_genre %}genre={{ selected_genre }}&{% endif %}{% if selected_tag %}tag={{ selected_tag }}&{% endif %}page={{ page_obj.previous_page_number }}" class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">Previous</a>
+      <a href="?{% if search_query %}search={{ search_query }}&{% endif %}{% if selected_genre %}genre={{ selected_genre }}&{% endif %}{% if selected_tag %}tag={{ selected_tag }}&{% endif %}page={{ page_obj.previous_page_number }}" class="join-item btn">«</a>
+    {% else %}
+      <button class="join-item btn btn-disabled">«</button>
     {% endif %}
-    <span class="px-3 py-1 bg-gray-100 rounded">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+
+    <!-- Page Numbers -->
+    {% with page_obj.paginator.num_pages as total_pages %}
+      {% with page_obj.number as current_page %}
+        
+        <!-- First page -->
+        {% if current_page > 3 %}
+          <a href="?{% if search_query %}search={{ search_query }}&{% endif %}{% if selected_genre %}genre={{ selected_genre }}&{% endif %}{% if selected_tag %}tag={{ selected_tag }}&{% endif %}page=1" class="join-item btn">1</a>
+          {% if current_page > 4 %}
+            <button class="join-item btn btn-disabled">...</button>
+          {% endif %}
+        {% endif %}
+
+        <!-- Page numbers around current page -->
+        {% for page_num in page_obj.paginator.page_range %}
+          {% if page_num >= current_page|add:"-2" and page_num <= current_page|add:"2" %}
+            {% if page_num == current_page %}
+              <button class="join-item btn btn-active">{{ page_num }}</button>
+            {% else %}
+              <a href="?{% if search_query %}search={{ search_query }}&{% endif %}{% if selected_genre %}genre={{ selected_genre }}&{% endif %}{% if selected_tag %}tag={{ selected_tag }}&{% endif %}page={{ page_num }}" class="join-item btn">{{ page_num }}</a>
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+
+        <!-- Last page -->
+        {% if current_page < total_pages|add:"-2" %}
+          {% if current_page < total_pages|add:"-3" %}
+            <button class="join-item btn btn-disabled">...</button>
+          {% endif %}
+          <a href="?{% if search_query %}search={{ search_query }}&{% endif %}{% if selected_genre %}genre={{ selected_genre }}&{% endif %}{% if selected_tag %}tag={{ selected_tag }}&{% endif %}page={{ total_pages }}" class="join-item btn">{{ total_pages }}</a>
+        {% endif %}
+
+      {% endwith %}
+    {% endwith %}
+
+    <!-- Next Button -->
     {% if page_obj.has_next %}
-      <a href="?{% if search_query %}search={{ search_query }}&{% endif %}{% if selected_genre %}genre={{ selected_genre }}&{% endif %}{% if selected_tag %}tag={{ selected_tag }}&{% endif %}page={{ page_obj.next_page_number }}" class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">Next</a>
+      <a href="?{% if search_query %}search={{ search_query }}&{% endif %}{% if selected_genre %}genre={{ selected_genre }}&{% endif %}{% if selected_tag %}tag={{ selected_tag }}&{% endif %}page={{ page_obj.next_page_number }}" class="join-item btn">»</a>
+    {% else %}
+      <button class="join-item btn btn-disabled">»</button>
     {% endif %}
-  </nav>
+  </div>
 </div>
 {% endblock %}

@@ -55,13 +55,13 @@ def game_list(request):
         # Need to check all filtered_apps for genre/tag match, so fetch details for all
         appids_to_fetch = [app['appid'] for app in filtered_apps]
     else:
-        # No genre/tag filter, just paginate and fetch details for current page
-        paginator = Paginator(filtered_apps, 20)
-        page_number = request.GET.get('page')
-        page_obj = paginator.get_page(page_number)
-        appids_to_fetch = [app['appid'] for app in page_obj]
+        # No genre/tag filter, use all filtered apps for fetching
+        appids_to_fetch = [app['appid'] for app in filtered_apps]
 
-    # 4. Fetch details for each appid, exclude DLCs, collect tags, and apply genre/tag filter if set
+    # 4. Fetch details for each appid, exclude DLCs, and apply genre/tag filter if set
+    # Limit API calls to prevent timeouts
+    appids_to_fetch = appids_to_fetch[:200]  # Limit to 200 API calls max
+
     filtered_steam_games = []
     for appid in appids_to_fetch:
         url = f"https://store.steampowered.com/api/appdetails?appids={appid}"
@@ -150,12 +150,6 @@ def game_detail(request, pk):
     except Exception as e:
         error = f'Error fetching game info: {e}'
     return render(request, 'games/game_detail.html', {'error': error})
-
-
-def genre_games(request, genre_id):
-    genre = get_object_or_404(Genre, genre_id=genre_id)
-    games = genre.games.all()
-    return render(request, 'games/genre_games.html', {'genre': genre, 'games': games})
 
 
 @login_required
