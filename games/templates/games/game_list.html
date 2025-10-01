@@ -33,8 +33,33 @@
         <img src="{{ game.image }}" alt="{{ game.title }} cover" class="max-w-xs mb-2 rounded" />
       {% endif %}
       <p class="mb-2">{{ game.short_description }}</p>
-      <p class="mb-1"><span class="font-semibold">Genres:</span> {% for genre in game.genres %}<span class="inline-block px-2 py-1 rounded" style="background-color: var(--color-decorative);">{{ genre.description }}</span>{% if not forloop.last %}, {% endif %}{% endfor %}</p>
-      <p><span class="font-semibold">Tags:</span> {% for tag in game.tags %}<span class="inline-block px-2 py-1 rounded" style="background-color: var(--color-decorative);">{{ tag.description }}</span>{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+      
+      <!-- Debug: Show raw genres data -->
+      <div class="mb-2 text-xs text-gray-500">
+        Debug genres: {{ game.genres|length }} items - {{ game.genres }}
+      </div>
+      
+      <p class="mb-1">
+        <span class="font-semibold">Genres:</span> 
+        {% for genre in game.genres %}
+          <span class="inline-block px-2 py-1 rounded mr-1" style="background-color: var(--color-decorative);">
+            {{ genre.description|default:genre }}
+          </span>
+        {% empty %}
+          <span class="text-gray-500">No genres</span>
+        {% endfor %}
+      </p>
+      
+      <p class="mb-1">
+        <span class="font-semibold">Tags:</span> 
+        {% for tag in game.tags %}
+          <span class="inline-block px-2 py-1 rounded mr-1" style="background-color: var(--color-decorative);">
+            {{ tag.description|default:tag }}
+          </span>
+        {% empty %}
+          <span class="text-gray-500">No tags</span>
+        {% endfor %}
+      </p>
       
       <div class="flex gap-2 mt-4">
         <a href="{% url 'game_detail' game.appid %}" 

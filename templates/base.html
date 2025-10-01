@@ -42,9 +42,6 @@
                         </a>
                     </div>
                     <div class="navbar-end flex items-center gap-4">
-                        <button class="btn btn-sm btn-text btn-circle size-8.5 md:hidden">
-                            <span class="icon-[tabler--search] size-5.5"></span>
-                        </button>
                         {% if user.is_authenticated %}
                             <!-- Authenticated User Avatar Dropdown -->
                             <div class="dropdown dropdown-end">
@@ -96,11 +93,12 @@
     <div class="w-full max-w-xs mx-auto mt-2 hidden peer-checked:flex flex-col items-center order-2 peer-checked:order-1">
       <div class="relative w-full flex justify-center">
   <div class="absolute -top-2 left-1/2 -translate-x-1/2 w-64 h-14 rounded-b-2xl shadow-lg z-10 border border-base-300 search-bg"></div>
-        <div class="input rounded-full max-w-56 flex items-center mx-auto relative z-20" style="background:transparent; background-color: #fffffc;">
+        <form method="get" action="{% url 'game_list' %}" class="input rounded-full max-w-56 flex items-center mx-auto relative z-20" style="background:transparent; background-color: #fffffc;">
           <span class="icon-[tabler--search] text-base-content/80 my-auto me-3 size-5 shrink-0"></span>
           <label class="sr-only" for="searchInput">Search</label>
-          <input type="search" class="grow bg-white" placeholder="Search" id="searchInput" />
-        </div>
+          <input type="search" name="search" class="grow bg-white border-0 outline-none" placeholder="Search games..." id="searchInput" value="{{ search_query|default:'' }}" />
+          <button type="submit" class="sr-only">Search</button>
+        </form>
       </div>
     </div>
         </div>
