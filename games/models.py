@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from datetime import datetime
 
 # Game model represents a Steam game in the database.
 # It includes all relevant fields, and links to User, Tag, and Genre.
@@ -53,17 +54,54 @@ def map_steam_to_game(info, user=None):
     info: dict from Steam appdetails API
     user: User instance for submitted_by
     Returns: dict suitable for Game.objects.create(**fields)
+
+    Mapping according to Steam API structure:
+    title > name
+    image > header_image
+    short_description > short_description
+    release_date > release_date.date
+    developer > developers (array, joined)
+    age_rating > ratings.usk
+    platform > platforms (object, extract true values)
     """
+    # Handle release_date parsing - could be a string
+    release_date = None
+    if info.get('release_date') and info.get('release_date').get('date'):
+        date_str = info.get('release_date').get('date')
+        if date_str and date_str != 'Coming soon':
+            try:
+                # Try different date formats
+                for fmt in ['%b %d, %Y', '%d %b, %Y', '%Y-%m-%d']:
+                    try:
+                        release_date = datetime.strptime(date_str, fmt).date()
+                        break
+                    except ValueError:
+                        continue
+            except (ValueError, TypeError):
+                pass  # Keep as None if parsing fails
+
+    # Handle platforms - extract platform names where value is True
+    platforms = []
+    if info.get('platforms'):
+        for platform, available in info.get('platforms', {}).items():
+            if available:
+                platforms.append(platform.capitalize())
+
+    # Handle age rating safely
+    age_rating = None
+    if info.get('ratings') and isinstance(info.get('ratings'), dict):
+        age_rating = info.get('ratings').get('usk')
+
     return {
         'submitted_by': user,
-        'title': info.get('name'),
-        'image': info.get('header_image'),
-        'short_description': info.get('short_description'),
+        'title': info.get('name', ''),
+        'image': info.get('header_image', ''),
+        'short_description': info.get('short_description', ''),
         'long_description': info.get('detailed_description', ''),
-        'release_date': info.get('release_date', {}).get('date'),
+        'release_date': release_date,
         'developer': ', '.join(info.get('developers', [])),
-        'age_rating': info.get('ratings', {}).get('usk'),
-        'platform': ', '.join([k for k, v in info.get('platforms', {}).items() if v]),
+        'age_rating': age_rating,
+        'platform': ', '.join(platforms),
     }
 
 
@@ -71,24 +109,41 @@ def map_steam_to_game(info, user=None):
 def set_game_genres_and_tags(game, info):
     """
     Given a Game instance and Steam API info dict,
-    map and set genres and tags using composite keys.
+    map and set genres and tags using Steam API structure.
+
+    Genres mapping:
+    - genre_id > genres[0].id, genres[1].id, etc.
+    - genre > genres[0].description, genres[1].description, etc.
+
+    Tags mapping:
+    - tag_id > categories[0].id, categories[1].id, etc.
+    - name > categories[0].description, categories[1].description, etc.
     """
-    from .models import Genre, Tag
-    # Genres
+
+    # Genres - Steam API: genres array with id and description
     genre_objs = []
     for genre in info.get('genres', []):
-        genre_obj, _ = Genre.objects.get_or_create(
-            genre_id=genre['id'],
-            defaults={'genre': genre['description']}
-        )
-        genre_objs.append(genre_obj)
+        if 'id' in genre and 'description' in genre:
+            try:
+                genre_obj, _ = Genre.objects.get_or_create(
+                    genre_id=genre['id'],
+                    defaults={'genre': genre['description']}
+                )
+                genre_objs.append(genre_obj)
+            except (ValueError, TypeError, KeyError):
+                continue  # Skip malformed genre data
     game.genres.set(genre_objs)
-    # Tags
+
+    # Tags - Steam API: categories array with id and description
     tag_objs = []
     for tag in info.get('categories', []):
-        tag_obj, _ = Tag.objects.get_or_create(
-            tag_id=tag['id'],
-            defaults={'name': tag['description']}
-        )
-        tag_objs.append(tag_obj)
+        if 'id' in tag and 'description' in tag:
+            try:
+                tag_obj, _ = Tag.objects.get_or_create(
+                    tag_id=tag['id'],
+                    defaults={'name': tag['description']}
+                )
+                tag_objs.append(tag_obj)
+            except (ValueError, TypeError, KeyError):
+                continue  # Skip malformed tag data
     game.tags.set(tag_objs)
