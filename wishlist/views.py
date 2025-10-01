@@ -158,7 +158,16 @@ def add_steam_game_to_wishlist(request, appid):
             return redirect('game_list')
 
     # Show wishlist selection form
+    # Check which wishlists already contain this game
+    wishlists_with_status = []
+    for wishlist in user_wishlists:
+        has_game = WishlistItem.objects.filter(wishlist=wishlist, game=game).exists()
+        wishlists_with_status.append({
+            'wishlist': wishlist,
+            'has_game': has_game
+        })
+
     return render(request, 'wishlist/add_to_wishlist.html', {
         'game': game,
-        'wishlists': user_wishlists
+        'wishlists_with_status': wishlists_with_status
     })
