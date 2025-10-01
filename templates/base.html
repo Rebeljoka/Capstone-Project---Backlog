@@ -9,7 +9,11 @@
         <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}" />
 
         <!-- Tailwind CSS -->
-        {% tailwind_css %}
+        {% if DEBUG %}
+            {% tailwind_css %}
+        {% else %}
+            <link rel="stylesheet" href="{% static 'css/dist/styles.css' %}" />
+        {% endif %}
 
         <!-- custom styles -->
         <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
