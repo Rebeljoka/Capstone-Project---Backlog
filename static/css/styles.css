@@ -9,7 +9,7 @@
     --font-ui: 'Alegreya Sans SC', sans-serif;
     --font-accent: 'Montserrat Alternates', sans-serif;
 
-    /* Color variables */
+    /* Light theme color variables */
     --color-error: #ffadac;
     --color-secondary-cta: #ffd6a5;
     --color-info: #fdffb6;
@@ -22,6 +22,23 @@
     --color-text-main: #2c2c2c;
     --shadow: black 0px 4px 6px -1px, black 0px 2px 4px -1px;
     --reverse-shadow: black 0px -4px 6px -1px, black 0px -2px 4px -1px;
+}
+
+/* Dark theme overrides */
+[data-theme="dark"] {
+    /* Dark theme color variables */
+    --color-error: #cc4040;
+    --color-secondary-cta: #cc8800;
+    --color-info: #cccc44;
+    --color-success: #40aa40;
+    --color-primary-accent: #00aacc;
+    --color-primary-btn-bg: #4477cc;
+    --color-card-bg: #6644cc;
+    --color-decorative: #cc44cc;
+    --color-bg-main: #1a1a1a;
+    --color-text-main: #e5e5e5;
+    --shadow: white 0px 4px 6px -1px, white 0px 2px 4px -1px;
+    --reverse-shadow: white 0px -4px 6px -1px, white 0px -2px 4px -1px;
 }
 
 html, body {

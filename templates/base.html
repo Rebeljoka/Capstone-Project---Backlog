@@ -65,6 +65,35 @@
                                 <li><a href="#"><span class="icon-[tabler--user]"></span>My Profile</a></li>
                                 <li><a href="{% url 'wishlist_list' %}"><span class="icon-[tabler--heart]"></span>My Wishlists</a></li>
                                 <li><a href="#"><span class="icon-[tabler--settings]"></span>Settings</a></li>
+                                
+                                <!-- Dark Mode Toggle -->
+                                <li>
+                                  <div class="flex items-center justify-between w-full">
+                                    <span class="flex items-center gap-2">
+                                      <span class="icon-[tabler--moon]"></span>Dark Mode
+                                    </span>
+                                    <input type="checkbox" class="toggle toggle-sm" id="theme-toggle" />
+                                  </div>
+                                </li>
+                                
+                                <!-- Language Selector -->
+                                <li>
+                                  <div class="flex items-center justify-between w-full">
+                                    <span class="flex items-center gap-2">
+                                      <span class="icon-[tabler--language]"></span><svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m13 19 3.5-9 3.5 9m-6.125-2h5.25M3 7h7m0 0h2m-2 0c0 1.63-.793 3.926-2.239 5.655M7.5 6.818V5m.261 7.655C6.79 13.82 5.521 14.725 4 15m3.761-2.345L5 10m2.761 2.655L10.2 15"/>
+</svg>
+ Language</span>
+                                    <select class="select select-sm w-20" id="language-select">
+                                      <option value="en">EN</option>
+                                      <option value="es">ES</option>
+                                      <option value="fr">FR</option>
+                                      <option value="de">DE</option>
+                                      <option value="ja">JP</option>
+                                    </select>
+                                  </div>
+                                </li>
+                                
                                 <li><a class="btn btn-error btn-soft btn-block" href="{% url 'account_logout' %}"><span class="icon-[tabler--logout]"></span>Sign out</a></li>
                               </ul>
                             </div>
@@ -131,6 +160,6 @@
         <p>&copy; 2025 Backlog. All rights reserved.</p>
     </footer>
 
-    <script src="{% static 'js/scripts.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
     </body>
 </html>
