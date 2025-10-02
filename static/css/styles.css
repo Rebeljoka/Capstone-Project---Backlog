@@ -73,6 +73,38 @@ a, button, input, select, textarea {
     font-family: var(--font-ui);
 }
 
+nav > h1 > span:nth-child(1) {
+    color: var(--color-error);
+}
+
+nav > h1 > span:nth-child(2) {
+    color: var(--color-secondary-cta);
+}
+
+nav > h1 > span:nth-child(3) {
+    color: var(--color-info);
+}
+
+nav > h1 > span:nth-child(4) {
+    color: var(--color-success);
+}
+
+nav > h1 > span:nth-child(5) {
+    color: var(--color-primary-accent);
+}
+
+nav > h1 > span:nth-child(6) {
+    color: var(--color-primary-btn-bg);
+}
+
+nav > h1 > span:nth-child(7) {
+    color: var(--color-card-bg);
+}
+
+nav > h1 > span:nth-child(8) {
+    color: var(--color-decorative);
+}
+
 .search-bg {
     background-color: var(--color-bg-main);
     border: none;

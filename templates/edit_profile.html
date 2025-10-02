@@ -1,0 +1,490 @@
+{% extends "base.html" %}
+{% load static %}
+{% load profile_extras %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-base-200 to-base-300">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="flex items-center gap-4 mb-8">
+            <a href="{% url 'profile' %}" class="btn btn-ghost">
+                <iconify-icon icon="tabler:arrow-left"></iconify-icon>
+                Back to Profile
+            </a>
+            <h1 class="text-4xl font-bold text-base-content">Edit Profile</h1>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left Column - Navigation -->
+            <div class="lg:col-span-1">
+                <div class="card bg-base-100 shadow-xl border border-base-300 sticky top-8">
+                    <div class="card-body">
+                        <h2 class="card-title text-primary mb-4">Settings</h2>
+                        <ul class="menu menu-vertical w-full">
+                            <li>
+                                <a href="#basic-info" class="menu-item active" onclick="showSection('basic-info')">
+                                    <iconify-icon icon="tabler:user"></iconify-icon>
+                                    Basic Information
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#email-settings" class="menu-item" onclick="showSection('email-settings')">
+                                    <iconify-icon icon="tabler:mail"></iconify-icon>
+                                    Email Settings
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#password-change" class="menu-item" onclick="showSection('password-change')">
+                                    <iconify-icon icon="tabler:lock"></iconify-icon>
+                                    Change Password
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#danger-zone" class="menu-item text-error" onclick="showSection('danger-zone')">
+                                    <iconify-icon icon="tabler:alert-triangle"></iconify-icon>
+                                    Danger Zone
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Forms -->
+            <div class="lg:col-span-2 space-y-8">
+                
+                <!-- Basic Information Section -->
+                <div id="basic-info" class="section-content">
+                    <div class="card bg-base-100 shadow-xl border border-base-300">
+                        <div class="card-body">
+                            <h2 class="card-title flex items-center gap-2 mb-6">
+                                <iconify-icon icon="tabler:user" class="text-primary"></iconify-icon>
+                                Basic Information
+                            </h2>
+                            
+                            <!-- Profile Picture Section -->
+                            <div class="mb-8">
+                                <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                                    <iconify-icon icon="tabler:camera" class="text-secondary"></iconify-icon>
+                                    Profile Picture
+                                </h3>
+                                
+                                <form method="post" action="{% url 'edit_profile' %}" enctype="multipart/form-data" class="mb-6">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="form_type" value="profile_picture">
+                                    
+                                    <div class="flex flex-col lg:flex-row items-center gap-6">
+                                        <!-- Current Avatar Display -->
+                                        <div class="avatar">
+                                            <div class="w-24 h-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+                                                <img src="{{ user|profile_picture_url }}" alt="Current Profile Picture" id="current-avatar" 
+                                                     onerror="this.src='https://ui-avatars.com/api/?name={{ user|user_initials }}&background=667eea&color=ffffff&size=200&bold=true'" />
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Upload Section -->
+                                        <div class="flex-1">
+                                            <div class="form-control">
+                                                <label class="label">
+                                                    <span class="label-text font-semibold">Choose new profile picture</span>
+                                                    <span class="label-text-alt text-info">JPG, PNG or GIF (max 5MB)</span>
+                                                </label>
+                                                <input type="file" name="profile_picture" accept="image/*" 
+                                                       class="file-input file-input-bordered file-input-primary w-full"
+                                                       onchange="previewImage(this)">
+                                                <label class="label">
+                                                    <span class="label-text-alt text-base-content/60">
+                                                        Your profile picture will be visible to other users
+                                                    </span>
+                                                </label>
+                                            </div>
+                                            
+                                            <div class="mt-4">
+                                                <button type="submit" class="btn btn-secondary">
+                                                    <iconify-icon icon="tabler:upload"></iconify-icon>
+                                                    Upload Picture
+                                                </button>
+                                                {% if user.profile.profile_picture %}
+                                                    <button type="button" class="btn btn-outline btn-error ml-2" 
+                                                            onclick="removeProfilePicture()">
+                                                        <iconify-icon icon="tabler:trash"></iconify-icon>
+                                                        Remove
+                                                    </button>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                                
+                                <!-- Remove Profile Picture Form (hidden) -->
+                                <form method="post" action="{% url 'edit_profile' %}" id="remove-picture-form" style="display: none;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="form_type" value="remove_profile_picture">
+                                </form>
+                                
+                                <div class="divider"></div>
+                            </div>
+                            
+                            <form method="post" action="{% url 'edit_profile' %}" class="space-y-6">
+                                {% csrf_token %}
+                                <input type="hidden" name="form_type" value="basic_info">
+                                
+                                <!-- Username -->
+                                <div class="form-control">
+                                    <label class="label">
+                                        <span class="label-text font-semibold">Username</span>
+                                        <span class="label-text-alt text-info">This is how others will see you</span>
+                                    </label>
+                                    <input type="text" name="username" value="{{ user.username }}" 
+                                           class="input input-bordered w-full lg:input-lg" required>
+                                </div>
+                                
+                                <!-- First Name -->
+                                <div class="form-control">
+                                    <label class="label">
+                                        <span class="label-text font-semibold">First Name</span>
+                                    </label>
+                                    <input type="text" name="first_name" value="{{ user.first_name }}" 
+                                           class="input input-bordered w-full lg:input-lg">
+                                </div>
+                                
+                                <!-- Last Name -->
+                                <div class="form-control">
+                                    <label class="label">
+                                        <span class="label-text font-semibold">Last Name</span>
+                                    </label>
+                                    <input type="text" name="last_name" value="{{ user.last_name }}" 
+                                           class="input input-bordered w-full lg:input-lg">
+                                </div>
+                                
+                                <!-- Bio -->
+                                <div class="form-control">
+                                    <label class="label">
+                                        <span class="label-text font-semibold">Bio</span>
+                                        <span class="label-text-alt">Optional</span>
+                                    </label>
+                                    <textarea name="bio" class="textarea textarea-bordered w-full lg:textarea-lg" 
+                                              rows="3" placeholder="Tell others about yourself...">{{ user.profile.bio }}</textarea>
+                                    <label class="label">
+                                        <span class="label-text-alt text-base-content/60">
+                                            Share your gaming interests or anything about yourself
+                                        </span>
+                                    </label>
+                                </div>
+                                
+                                <div class="card-actions justify-between">
+                                    <a href="{% url 'profile' %}" class="btn btn-outline lg:btn-lg">
+                                        <iconify-icon icon="tabler:arrow-left"></iconify-icon>
+                                        Back to Profile
+                                    </a>
+                                    <button type="submit" class="btn btn-primary lg:btn-lg">
+                                        <iconify-icon icon="tabler:check"></iconify-icon>
+                                        Update Information
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Email Settings Section -->
+                <div id="email-settings" class="section-content" style="display: none;">
+                    <div class="card bg-base-100 shadow-xl border border-base-300">
+                        <div class="card-body">
+                            <h2 class="card-title flex items-center gap-2 mb-6">
+                                <iconify-icon icon="tabler:mail" class="text-primary"></iconify-icon>
+                                Email Settings
+                            </h2>
+                            
+                            <!-- Current Email Display -->
+                            <div class="alert alert-info mb-6">
+                                <iconify-icon icon="tabler:info-circle"></iconify-icon>
+                                <div>
+                                    <div class="font-semibold">Current Email</div>
+                                    <div class="text-sm">{{ user.email|default:"No email set" }}</div>
+                                </div>
+                            </div>
+                            
+                            <form method="post" action="{% url 'edit_profile' %}" class="space-y-6">
+                                {% csrf_token %}
+                                <input type="hidden" name="form_type" value="email_change">
+                                
+                                <!-- New Email -->
+                                <div class="form-control">
+                                    <label class="label">
+                                        <span class="label-text font-semibold">New Email Address</span>
+                                        <span class="label-text-alt text-warning">Email verification required</span>
+                                    </label>
+                                    <input type="email" name="email" value="{{ user.email }}" 
+                                           class="input input-bordered w-full lg:input-lg" required>
+                                    <label class="label">
+                                        <span class="label-text-alt text-base-content/60">
+                                            You'll receive a verification email at this address
+                                        </span>
+                                    </label>
+                                </div>
+                                
+                                <!-- Current Password for Verification -->
+                                <div class="form-control">
+                                    <label class="label">
+                                        <span class="label-text font-semibold">Current Password</span>
+                                        <span class="label-text-alt text-error">Required for security</span>
+                                    </label>
+                                    <input type="password" name="current_password" 
+                                           class="input input-bordered w-full lg:input-lg" required
+                                           placeholder="Enter your current password">
+                                </div>
+                                
+                                <div class="card-actions justify-end">
+                                    <button type="submit" class="btn btn-secondary lg:btn-lg">
+                                        <iconify-icon icon="tabler:mail-check"></iconify-icon>
+                                        Update Email
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Password Change Section -->
+                <div id="password-change" class="section-content" style="display: none;">
+                    <div class="card bg-base-100 shadow-xl border border-base-300">
+                        <div class="card-body">
+                            <h2 class="card-title flex items-center gap-2 mb-6">
+                                <iconify-icon icon="tabler:lock" class="text-primary"></iconify-icon>
+                                Change Password
+                            </h2>
+                            
+                            <form method="post" action="{% url 'edit_profile' %}" class="space-y-6">
+                                {% csrf_token %}
+                                <input type="hidden" name="form_type" value="password_change">
+                                
+                                <!-- Current Password -->
+                                <div class="form-control">
+                                    <label class="label">
+                                        <span class="label-text font-semibold">Current Password</span>
+                                    </label>
+                                    <input type="password" name="old_password" 
+                                           class="input input-bordered w-full lg:input-lg" required
+                                           placeholder="Enter your current password">
+                                </div>
+                                
+                                <!-- New Password -->
+                                <div class="form-control">
+                                    <label class="label">
+                                        <span class="label-text font-semibold">New Password</span>
+                                    </label>
+                                    <input type="password" name="new_password1" 
+                                           class="input input-bordered w-full lg:input-lg" required
+                                           placeholder="Enter your new password">
+                                    <label class="label">
+                                        <span class="label-text-alt text-base-content/60">
+                                            Password must be at least 8 characters long
+                                        </span>
+                                    </label>
+                                </div>
+                                
+                                <!-- Confirm New Password -->
+                                <div class="form-control">
+                                    <label class="label">
+                                        <span class="label-text font-semibold">Confirm New Password</span>
+                                    </label>
+                                    <input type="password" name="new_password2" 
+                                           class="input input-bordered w-full lg:input-lg" required
+                                           placeholder="Confirm your new password">
+                                </div>
+                                
+                                <div class="card-actions justify-end">
+                                    <button type="submit" class="btn btn-warning lg:btn-lg">
+                                        <iconify-icon icon="tabler:shield-check"></iconify-icon>
+                                        Change Password
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Danger Zone Section -->
+                <div id="danger-zone" class="section-content" style="display: none;">
+                    <div class="card bg-base-100 shadow-xl border border-error">
+                        <div class="card-body">
+                            <h2 class="card-title flex items-center gap-2 mb-6 text-error">
+                                <iconify-icon icon="tabler:alert-triangle"></iconify-icon>
+                                Danger Zone
+                            </h2>
+                            
+                            <div class="alert alert-error mb-6">
+                                <iconify-icon icon="tabler:alert-octagon"></iconify-icon>
+                                <div>
+                                    <div class="font-semibold">Warning: Account Deletion</div>
+                                    <div class="text-sm">
+                                        This action cannot be undone. All your data, wishlists, and activity will be permanently deleted.
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Account Deletion -->
+                            <div class="border border-error rounded-lg p-6">
+                                <h3 class="text-lg font-semibold text-error mb-4">Delete Your Account</h3>
+                                <p class="text-base-content/70 mb-6">
+                                    Once you delete your account, there is no going back. Please be certain.
+                                    All your wishlists, games, and personal data will be permanently removed.
+                                </p>
+                                
+                                <form method="post" action="{% url 'edit_profile' %}" class="space-y-4" 
+                                      onsubmit="return confirmDeletion()">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="form_type" value="account_deletion">
+                                    
+                                    <!-- Password Confirmation -->
+                                    <div class="form-control">
+                                        <label class="label">
+                                            <span class="label-text font-semibold">Enter your password to confirm</span>
+                                        </label>
+                                        <input type="password" name="password_confirm" 
+                                               class="input input-bordered input-error w-full lg:input-lg" required
+                                               placeholder="Enter your password">
+                                    </div>
+                                    
+                                    <!-- Confirmation Text -->
+                                    <div class="form-control">
+                                        <label class="label">
+                                            <span class="label-text font-semibold">
+                                                Type "DELETE MY ACCOUNT" to confirm
+                                            </span>
+                                        </label>
+                                        <input type="text" name="deletion_confirm" 
+                                               class="input input-bordered input-error w-full lg:input-lg" required
+                                               placeholder="Type exactly: DELETE MY ACCOUNT">
+                                    </div>
+                                    
+                                    <div class="card-actions justify-end">
+                                        <button type="submit" class="btn btn-error lg:btn-lg">
+                                            <iconify-icon icon="tabler:trash"></iconify-icon>
+                                            Delete Account Permanently
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Section navigation
+    function showSection(sectionId) {
+        // Hide all sections
+        document.querySelectorAll('.section-content').forEach(section => {
+            section.style.display = 'none';
+        });
+        
+        // Remove active class from all menu items
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        
+        // Show selected section
+        document.getElementById(sectionId).style.display = 'block';
+        
+        // Add active class to clicked menu item
+        event.target.closest('.menu-item').classList.add('active');
+        
+        // Update URL hash
+        window.location.hash = sectionId;
+    }
+    
+    // Handle page load with hash
+    document.addEventListener('DOMContentLoaded', function() {
+        const hash = window.location.hash.substring(1);
+        if (hash && document.getElementById(hash)) {
+            showSection(hash);
+        }
+    });
+    
+    // Account deletion confirmation
+    function confirmDeletion() {
+        const confirmText = document.querySelector('input[name="deletion_confirm"]').value;
+        const password = document.querySelector('input[name="password_confirm"]').value;
+        
+        if (confirmText !== 'DELETE MY ACCOUNT') {
+            alert('Please type "DELETE MY ACCOUNT" exactly as shown to confirm deletion.');
+            return false;
+        }
+        
+        if (!password) {
+            alert('Please enter your password to confirm deletion.');
+            return false;
+        }
+        
+        return confirm(
+            'This is your final warning!\n\n' +
+            'Are you absolutely sure you want to delete your account?\n' +
+            'This action cannot be undone and all your data will be lost forever.\n\n' +
+            'Click OK to proceed with deletion, or Cancel to keep your account.'
+        );
+    }
+    
+    // Profile picture preview
+    function previewImage(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('current-avatar').src = e.target.result;
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+    
+    // Remove profile picture
+    function removeProfilePicture() {
+        if (confirm('Are you sure you want to remove your profile picture?')) {
+            document.getElementById('remove-picture-form').submit();
+        }
+    }
+</script>
+
+<style>
+    .menu-item.active {
+        background-color: hsl(var(--p) / 0.1);
+        color: hsl(var(--p));
+        font-weight: 600;
+    }
+    
+    .menu-item:hover {
+        background-color: hsl(var(--b2));
+    }
+    
+    .section-content {
+        animation: fadeIn 0.3s ease-in-out;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Avatar fallback styling */
+    .avatar img {
+        object-fit: cover;
+    }
+    
+    .avatar img:not([src]), .avatar img[src=""] {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        font-size: 1.5rem;
+    }
+    
+    .avatar img:not([src])::before, .avatar img[src=""]::before {
+        content: "{{ user|user_initials }}";
+    }
+</style>
+{% endblock %}

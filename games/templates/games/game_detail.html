@@ -84,10 +84,10 @@
               View on Steam
             </a>
             {% if user.is_authenticated %}
-              <button class="btn btn-outline btn-secondary w-full gap-2">
+              <a href="{% url 'add_steam_game_to_wishlist' game.appid %}" class="btn btn-outline btn-secondary w-full gap-2">
                 <iconify-icon icon="tabler:heart"></iconify-icon>
                 Add to Wishlist
-              </button>
+              </a>
             {% endif %}
             <a href="{% url 'game_list' %}" class="btn btn-ghost w-full gap-2">
               <iconify-icon icon="tabler:arrow-left"></iconify-icon>

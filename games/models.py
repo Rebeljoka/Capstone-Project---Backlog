@@ -15,7 +15,7 @@ class Game(models.Model):
     long_description = models.TextField(blank=True)
     release_date = models.DateField(null=True, blank=True)
     developer = models.CharField(max_length=255, blank=True)
-    age_rating = models.CharField(max_length=20, null=True, blank=True)
+    age_rating = models.CharField(max_length=50, null=True, blank=True)
     platform = models.CharField(max_length=255, blank=True)
     # ManyToManyField allows each game to have multiple tags and each tag to be linked to multiple games.
     # related_name='games' lets you access all games for a tag using tag.games.all()
@@ -90,7 +90,10 @@ def map_steam_to_game(info, user=None):
     # Handle age rating safely
     age_rating = None
     if info.get('ratings') and isinstance(info.get('ratings'), dict):
-        age_rating = info.get('ratings').get('usk')
+        raw_age_rating = info.get('ratings').get('usk')
+        if raw_age_rating:
+            # Truncate to 50 characters to fit the model field
+            age_rating = str(raw_age_rating)[:50]
 
     return {
         'submitted_by': user,

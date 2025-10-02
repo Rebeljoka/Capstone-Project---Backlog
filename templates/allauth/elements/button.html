@@ -6,6 +6,12 @@
 {% if attrs.name %}name="{{ attrs.name }}"{% endif %}
 {% if attrs.value %}value="{{ attrs.value }}"{% endif %}
 {% if attrs.type %}type="{{ attrs.type }}"{% endif %}
+{% if attrs.disabled %}disabled{% endif %}
+{% if attrs.title %}title="{{ attrs.title }}"{% endif %}
+{% if attrs.tabindex %}tabindex="{{ attrs.tabindex }}"{% endif %}
+{% if attrs.onclick %}onclick="{{ attrs.onclick }}"{% endif %}
+{% if attrs.onsubmit %}onsubmit="{{ attrs.onsubmit }}"{% endif %}
+class="btn {% if 'prominent' in tags or 'login' in tags or 'signup' in tags %}btn-primary{% elif 'secondary' in tags %}btn-secondary{% elif 'danger' in tags %}btn-error{% else %}btn-outline{% endif %} w-full lg:btn-lg"
 >
 {% slot %}
 {% endslot %}

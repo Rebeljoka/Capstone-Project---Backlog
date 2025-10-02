@@ -1,3 +1,16 @@
-<li>
-    <a title="{{ attrs.name }}" href="{{ attrs.href }}">{{ attrs.name }}</a>
-</li>
+<a title="{{ attrs.name }}" 
+   href="{{ attrs.href }}"
+   class="btn btn-outline w-full gap-2 mb-2">
+    {% if attrs.id == 'google' %}
+        <iconify-icon icon="simple-icons:google"></iconify-icon>
+    {% elif attrs.id == 'github' %}
+        <iconify-icon icon="simple-icons:github"></iconify-icon>
+    {% elif attrs.id == 'discord' %}
+        <iconify-icon icon="simple-icons:discord"></iconify-icon>
+    {% elif attrs.id == 'steam' %}
+        <iconify-icon icon="simple-icons:steam"></iconify-icon>
+    {% else %}
+        <iconify-icon icon="tabler:login"></iconify-icon>
+    {% endif %}
+    Continue with {{ attrs.name }}
+</a>

@@ -192,3 +192,11 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Login/Logout redirects
+LOGIN_REDIRECT_URL = '/profile/'  # Redirect to profile page after login
+LOGOUT_REDIRECT_URL = '/'  # Redirect to home page after logout
+
+# Django Allauth settings
+ACCOUNT_LOGIN_REDIRECT_URL = '/profile/'  # Allauth-specific login redirect
+ACCOUNT_LOGOUT_REDIRECT_URL = '/'  # Allauth-specific logout redirect

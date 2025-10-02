@@ -1,86 +1,90 @@
+{% extends "base.html" %}
 {% load i18n %}
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>
-            {% block head_title %}
-            {% endblock head_title %}
-        </title>
-        {% block extra_head %}
-        {% endblock extra_head %}
-    </head>
-    <body>
-        {% block body %}
-            {% if messages %}
-                <div>
-                    <strong>{% trans "Messages:" %}</strong>
-                    <ul>
-                        {% for message in messages %}<li>{{ message }}</li>{% endfor %}
-                    </ul>
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-base-200 to-base-300">
+    <div class="container mx-auto px-4 py-8">
+        <div class="min-h-screen flex items-center justify-center">
+            <div class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                
+                <!-- Left Side - Branding/Info (hidden on mobile, shown on desktop) -->
+                <div class="hidden lg:flex flex-col justify-center space-y-8 p-8">
+                    <div class="text-center lg:text-left">
+                        <h1 class="text-6xl font-bold text-primary mb-4">Backlog.</h1>
+                        <p class="text-xl text-base-content/80 mb-6">Organize your gaming journey</p>
+                        <div class="space-y-4 text-base-content/70">
+                            <div class="flex items-center gap-3">
+                                <iconify-icon icon="tabler:device-gamepad" class="text-2xl text-primary"></iconify-icon>
+                                <span>Track your game collection</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <iconify-icon icon="tabler:heart" class="text-2xl text-secondary"></iconify-icon>
+                                <span>Create custom wishlists</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <iconify-icon icon="tabler:search" class="text-2xl text-accent"></iconify-icon>
+                                <span>Discover new games</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <iconify-icon icon="tabler:users" class="text-2xl text-info"></iconify-icon>
+                                <span>Join the community</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Decorative Elements -->
+                    <div class="relative">
+                        <div class="absolute inset-0 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-3xl transform rotate-3"></div>
+                        <div class="relative bg-base-100 p-6 rounded-2xl shadow-lg">
+                            <blockquote class="text-base-content/80 italic">
+                                "Finally, a place to organize my massive game backlog!"
+                            </blockquote>
+                            <cite class="text-sm text-base-content/60 mt-2 block">- Happy Gamer</cite>
+                        </div>
+                    </div>
                 </div>
-            {% endif %}
-            <div>
-                <strong>{% trans "Menu:" %}</strong>
-                <ul>
-                    {% if user.is_authenticated %}
-                        {% url 'account_email' as email_url_ %}
-                        {% if email_url_ %}
-                            <li>
-                                <a href="{{ email_url_ }}">{% trans "Change Email" %}</a>
-                            </li>
-                        {% endif %}
-                        {% url 'account_change_password' as change_password_url_ %}
-                        {% if change_password_url_ %}
-                            <li>
-                                <a href="{{ change_password_url_ }}">{% trans "Change Password" %}</a>
-                            </li>
-                        {% endif %}
-                        {% url 'socialaccount_connections' as connections_url_ %}
-                        {% if connections_url_ %}
-                            <li>
-                                <a href="{{ connections_url_ }}">{% trans "Account Connections" %}</a>
-                            </li>
-                        {% endif %}
-                        {% url 'mfa_index' as mfa_url_ %}
-                        {% if mfa_url_ %}
-                            <li>
-                                <a href="{{ mfa_url_ }}">{% trans "Two-Factor Authentication" %}</a>
-                            </li>
-                        {% endif %}
-                        {% url 'usersessions_list' as usersessions_list_url_ %}
-                        {% if usersessions_list_url_ %}
-                            <li>
-                                <a href="{{ usersessions_list_url_ }}">{% trans "Sessions" %}</a>
-                            </li>
-                        {% endif %}
-                        {% url 'account_logout' as logout_url_ %}
-                        {% if logout_url_ %}
-                            <li>
-                                <a href="{{ logout_url_ }}">{% trans "Sign Out" %}</a>
-                            </li>
-                        {% endif %}
-                    {% else %}
-                        {% url 'account_login' as login_url_ %}
-                        {% if login_url_ %}
-                            <li>
-                                <a href="{{ login_url_ }}">{% trans "Sign In" %}</a>
-                            </li>
-                        {% endif %}
-                        {% url 'account_signup' as signup_url_ %}
-                        {% if signup_url_ %}
-                            <li>
-                                <a href="{{ signup_url_ }}">{% trans "Sign Up" %}</a>
-                            </li>
-                        {% endif %}
-                    {% endif %}
-                </ul>
+
+                <!-- Right Side - Auth Form -->
+                <div class="flex justify-center lg:justify-end">
+                    <div class="w-full max-w-md lg:max-w-2xl space-y-6">
+                        {% block body %}
+                            <!-- Messages -->
+                            {% if messages %}
+                                <div class="space-y-3">
+                                    {% for message in messages %}
+                                        <div class="alert alert-{% if message.tags == 'error' %}error{% elif message.tags == 'success' %}success{% elif message.tags == 'warning' %}warning{% else %}info{% endif %} shadow-lg">
+                                            <iconify-icon icon="tabler:info-circle"></iconify-icon>
+                                            <span>{{ message }}</span>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                            <!-- Mobile Branding (shown only on mobile) -->
+                            <div class="text-center mb-8 lg:hidden">
+                                <h1 class="text-4xl font-bold text-primary mb-2">Backlog.</h1>
+                                <p class="text-base-content/70">Organize your gaming journey</p>
+                            </div>
+
+                            <!-- Auth Content Card -->
+                            <div class="card bg-base-100 shadow-2xl border border-base-300">
+                                <div class="card-body p-6 lg:p-12">
+                                    {% block auth_content %}
+                                    {% endblock auth_content %}
+                                </div>
+                            </div>
+
+                            <!-- Footer Links -->
+                            <div class="text-center text-sm text-base-content/60">
+                                <a href="{% url 'home' %}" class="hover:text-primary transition-colors">
+                                    ← Back to Home
+                                </a>
+                            </div>
+                        {% endblock body %}
+                    </div>
+                </div>
             </div>
-            {% block content %}
-            {% endblock content %}
-        {% endblock body %}
-        {% block extra_body %}
-        {% endblock extra_body %}
-    </body>
-</html>
+        </div>
+    </div>
+</div>
+{% endblock %}
