@@ -87,6 +87,14 @@ a, button, input, select, textarea {
     color: var(--color-text-main);
 }
 
+p {
+    font-family: var(--font-body);
+    color: var(--color-text-main);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+}
+
 
 /* ========================================
    FORM ELEMENTS

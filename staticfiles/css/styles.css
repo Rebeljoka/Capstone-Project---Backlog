@@ -87,6 +87,14 @@ a, button, input, select, textarea {
     color: var(--color-text-main);
 }
 
+p {
+    font-family: var(--font-body);
+    color: var(--color-text-main);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+}
+
 
 /* ========================================
    FORM ELEMENTS
@@ -187,10 +195,20 @@ footer {
    GAME LIST COMPONENTS
    ======================================== */
 
+.filters-card {
+    background-color: var(--color-card-bg);
+}
+
 /* Games grid layout */
 .games-grid {
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     display: grid !important;
+    /* Explicit gaps so server-rendered rows match JS-rendered cards.
+       Tailwind's `gap-6` is 1.5rem (24px) by default — use that value
+       to control vertical spacing between rows (row-gap) and columns. */
+    gap: 1.5rem; /* shorthand for row-gap and column-gap (24px) */
+    row-gap: 1.5rem; /* ensure vertical spacing is explicit */
+    align-items: start; /* prevent cards from stretching and changing row height */
 }
 
 /* Game card styling */
@@ -199,6 +217,7 @@ footer {
     transition: all 0.3s ease;
     width: 100%;
     min-height: fit-content;
+    background-color: var(--color-card-bg);
 }
 
 .game-card:hover {
@@ -224,6 +243,22 @@ footer {
     line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+}
+
+/* Make long card titles horizontally scrollable instead of pushing content down.
+   Keeps action buttons pinned and hides native scrollbars for a clean look. */
+.game-card .p-4 h3 {
+    display: block; /* override any -webkit-box line-clamp behavior */
+    white-space: nowrap; /* prevent wrapping onto multiple lines */
+    overflow-x: auto; /* allow horizontal scroll when title is long */
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE 10+ */
+}
+.game-card .p-4 h3::-webkit-scrollbar { /* WebKit */
+    height: 0; /* hide horizontal scrollbar */
+    display: none;
 }
 
 /* Results count styling */
@@ -407,5 +442,17 @@ footer {
 @media (min-width: 1280px) {
     .games-grid {
         grid-template-columns: repeat(5, 1fr) !important;
+    }
+}
+
+@media (min-width: 1280px) {
+  .games-grid {
+    align-content: start; /* stop grid rows stretching to fill min-height */
+  }
+}
+
+@media (min-width: 1280px) {
+    .game-card {
+        max-height: 202px !important;
     }
 }
