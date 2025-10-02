@@ -1,10 +1,134 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% block content %}
-<h1>Create Wishlist</h1>
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Create</button>
-</form>
-<a href="{% url 'wishlist_list' %}">Back to Wishlists</a>
+<div class="min-h-screen bg-gradient-to-br from-base-200 to-base-300">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header Section -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl lg:text-5xl font-bold text-base-content mb-4">
+                <iconify-icon icon="tabler:heart-plus" class="text-primary mr-2"></iconify-icon>
+                Create New Wishlist
+            </h1>
+            <p class="text-lg text-base-content/70 max-w-2xl mx-auto">
+                Organize your favorite games and keep track of what you want to play next
+            </p>
+        </div>
+
+        <!-- Main Form Card -->
+        <div class="max-w-2xl mx-auto">
+            <div class="card bg-base-100 shadow-2xl border border-base-300">
+                <div class="card-body p-8">
+                    <!-- Form Header -->
+                    <div class="text-center mb-6">
+                        <div class="avatar placeholder mb-4">
+                            <div class="bg-primary text-primary-content w-16 h-16 rounded-full flex items-center justify-center">
+                                <iconify-icon icon="tabler:list" class="text-2xl"></iconify-icon>
+                            </div>
+                        </div>
+                        <h2 class="text-2xl font-semibold text-base-content">Wishlist Details</h2>
+                        <p class="text-base-content/60 mt-2">Give your wishlist a memorable name and description</p>
+                    </div>
+
+                    <!-- Form -->
+                    <form method="post" class="space-y-6">
+                        {% csrf_token %}
+                        
+                        <!-- Enhanced form fields -->
+                        <div class="space-y-4">
+                            {% for field in form %}
+                                <div class="form-control">
+                                    <label class="label">
+                                        <span class="label-text font-semibold text-lg">
+                                            {% if field.name == 'name' %}
+                                                <iconify-icon icon="tabler:tag" class="mr-2"></iconify-icon>
+                                            {% elif field.name == 'description' %}
+                                                <iconify-icon icon="tabler:edit" class="mr-2"></iconify-icon>
+                                            {% endif %}
+                                            {{ field.label }}
+                                        </span>
+                                        {% if field.field.required %}
+                                            <span class="label-text-alt text-error">Required</span>
+                                        {% endif %}
+                                    </label>
+                                    
+                                    {% if field.name == 'name' %}
+                                        <input type="text" 
+                                            name="{{ field.name }}" 
+                                            value="{{ field.value|default:'' }}"
+                                            class="input input-bordered input-lg w-full focus:input-primary" 
+                                            placeholder="Enter a catchy name for your wishlist..."
+                                            {% if field.field.required %}required{% endif %}>
+                                    {% elif field.name == 'description' %}
+                                        <textarea name="{{ field.name }}" 
+                                            class="textarea textarea-bordered textarea-lg w-full focus:textarea-primary" 
+                                            rows="4"
+                                            placeholder="Describe what kind of games you're looking for..."
+                                            {% if field.field.required %}required{% endif %}>{{ field.value|default:'' }}</textarea>
+                                    {% else %}
+                                        {{ field }}
+                                    {% endif %}
+                                    
+                                    {% if field.help_text %}
+                                        <label class="label">
+                                            <span class="label-text-alt text-base-content/60">{{ field.help_text }}</span>
+                                        </label>
+                                    {% endif %}
+                                    
+                                    {% if field.errors %}
+                                        {% for error in field.errors %}
+                                            <label class="label">
+                                                <span class="label-text-alt text-error">
+                                                    <iconify-icon icon="tabler:alert-circle" class="mr-1"></iconify-icon>
+                                                    {{ error }}
+                                                </span>
+                                            </label>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="card-actions justify-between pt-6">
+                            <a href="{% url 'wishlist_list' %}" class="btn btn-outline btn-lg">
+                                <iconify-icon icon="tabler:arrow-left"></iconify-icon>
+                                Back to Wishlists
+                            </a>
+                            <button type="submit" 
+                                    class="btn btn-primary btn-lg">
+                                <iconify-icon icon="tabler:check"></iconify-icon>
+                                Create Wishlist
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Tips Card -->
+            <div class="card bg-base-100/50 shadow-lg border border-base-300 mt-6">
+                <div class="card-body p-6">
+                    <h3 class="text-lg font-semibold text-base-content mb-3 flex items-center">
+                        <iconify-icon icon="tabler:lightbulb" class="text-warning mr-2"></iconify-icon>
+                        Pro Tips
+                    </h3>
+                    <div class="space-y-2 text-sm text-base-content/70">
+                        <div class="flex items-start gap-2">
+                            <iconify-icon icon="tabler:point" class="text-primary mt-1 flex-shrink-0"></iconify-icon>
+                            <span>Choose a descriptive name that reflects the theme of your wishlist</span>
+                        </div>
+                        <div class="flex items-start gap-2">
+                            <iconify-icon icon="tabler:point" class="text-primary mt-1 flex-shrink-0"></iconify-icon>
+                            <span>Add a detailed description to help you remember why you wanted these games</span>
+                        </div>
+                        <div class="flex items-start gap-2">
+                            <iconify-icon icon="tabler:point" class="text-primary mt-1 flex-shrink-0"></iconify-icon>
+                            <span>You can always edit your wishlist details later</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

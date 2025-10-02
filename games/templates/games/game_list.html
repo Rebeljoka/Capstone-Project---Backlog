@@ -1,371 +1,310 @@
-{% extends 'base.html' %}
-{% load static %}
-{% load search_extras %}
-{% block content %}
+{% extends 'base.html' %} {% load static %} {% load search_extras %} {% block content %}
 <div class="mx-auto px-4 py-6 max-w-screen-2xl">
-  <div class="mb-6">
-    <h1 class="text-3xl font-bold mb-2">Steam Games</h1>
-    <p class="text-base-content/70">Discover and explore thousands of games from Steam</p>
-  </div>
+	<div class="mb-6">
+		<h1 class="text-3xl font-bold mb-2">Steam Games</h1>
+		<p class="text-base-content/70">Discover and explore thousands of games from Steam</p>
+	</div>
 
-  {% if steam_error %}
-    <div class="alert alert-warning mb-4">
-      <iconify-icon icon="tabler:info-circle"></iconify-icon>
-      <span>{{ steam_error }}</span>
-    </div>
-  {% endif %}
+	{% if steam_error %}
+	<div class="alert alert-warning mb-4">
+		<iconify-icon icon="tabler:info-circle"></iconify-icon>
+		<span>{{ steam_error }}</span>
+	</div>
+	{% endif %}
 
-  <!-- Enhanced Filters -->
-  <div class="card bg-base-100 shadow-lg mb-6">
-    <div class="card-body">
-      <form method="get" class="flex flex-wrap gap-4 justify-between items-end">
-        <!-- Search Input -->
-        <div class="form-control w-full max-w-2xl">
-          <label class="label" for="searchInput">
-            <span class="label-text font-medium">Search Games</span>
-          </label>
-          <div class="relative z-[9999]">
-            <input 
-              type="text" 
-              id="searchInput"
-              name="search" 
-              value="{{ search_query }}" 
-              placeholder="Search games..." 
-              class="input input-bordered w-full pr-12" 
-              autocomplete="off"
-              onkeyup="handleSearchInput(this)"
-              onkeydown="handleSearchKeydown(event)"
-            />
-            <button type="submit" class="btn btn-square btn-primary absolute right-0 top-0 rounded-l-none">
-              <iconify-icon icon="tabler:search"></iconify-icon>
-            </button>
-            
-            <!-- Clean search suggestions dropdown -->
-            <div id="search-suggestions" class="absolute top-full left-0 right-0 mt-1 bg-base-100 rounded-lg shadow-lg border border-base-200 hidden z-[9999] max-h-80 overflow-y-auto opacity-100">
-              <div class="p-2">
-                <div class="loading loading-spinner loading-sm hidden" id="search-loading"></div>
-                <div id="suggestions-list"></div>
-                <div id="no-suggestions" class="text-center py-4 text-base-content/50 hidden">
-                  <iconify-icon icon="tabler:search-off" class="text-xl mb-1"></iconify-icon>
-                  <p class="text-sm">No games found</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+	<!-- Enhanced Filters -->
+	<div class="card bg-base-100 shadow-lg mb-6 filters-card">
+		<div class="card-body">
+			<form method="get" class="flex flex-wrap gap-4 justify-between items-end">
+				<!-- Search Input -->
+				<div class="form-control w-full max-w-2xl">
+					<label class="label" for="searchInput">
+						<span class="label-text font-medium">Search Games</span>
+					</label>
+					<div class="relative">
+						<input type="text" id="searchInput" name="search" value="{{ search_query }}" placeholder="Search games..." class="input input-bordered w-full pr-12" autocomplete="off" onkeyup="handleSearchInput(this)" onkeydown="handleSearchKeydown(event)" />
+						<button type="submit" class="btn btn-square btn-primary absolute right-0 top-0 rounded-l-none">
+							<i class="nf nf-oct-search"></i>
+						</button>
 
-        <!-- Filters Group -->
-        <div class="flex flex-wrap gap-4 items-end">
-          <!-- Genre Filter -->
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text font-medium">Genres</span>
-            </label>
-            <div class="dropdown dropdown-end relative z-[9999]">
-              <label tabindex="0" class="btn btn-outline btn-sm w-full max-w-xs justify-between">
-                <span id="genre-display">
-                  {% if selected_genres %}
-                    {{ selected_genres|length }} genre{{ selected_genres|length|pluralize }} selected
-                  {% else %}
-                    All Genres
-                  {% endif %}
-                </span>
-                <iconify-icon icon="tabler:chevron-down" class="w-4 h-4"></iconify-icon>
-              </label>
-              <div tabindex="0" class="dropdown-content menu p-2 shadow-lg bg-base-100 rounded-lg border border-base-200 w-80 max-h-96 overflow-y-auto z-[9999] opacity-100 bg-opacity-100">
-                <div class="form-control p-2">
-                  <label class="label cursor-pointer justify-start gap-3">
-                    <input type="checkbox" class="checkbox checkbox-sm" id="genre-all" onchange="toggleAllGenres(this)">
-                    <span class="label-text font-medium">All Genres</span>
-                  </label>
-                </div>
-                <div class="divider my-1"></div>
-                {% for genre_id, genre_name in genres %}
-                  <div class="form-control">
-                    <label class="label cursor-pointer justify-start gap-3 py-1">
-                      <input type="checkbox" name="genres" value="{{ genre_id }}" class="checkbox checkbox-sm genre-checkbox" 
-                             {% if genre_id|stringformat:'s' in selected_genres %}checked{% endif %}
-                             onchange="updateGenreSelection()">
-                      <span class="label-text">{{ genre_name }}</span>
-                    </label>
-                  </div>
-                {% endfor %}
-              </div>
-            </div>
-          </div>
+						<!-- Clean search suggestions dropdown -->
+						<div id="search-suggestions" class="absolute top-full left-0 right-0 mt-1 bg-base-100 rounded-lg shadow-lg border border-base-200 hidden z-[9999] max-h-80 overflow-y-auto opacity-100">
+							<div class="p-2">
+								<div class="loading loading-spinner loading-sm hidden" id="search-loading"></div>
+								<div id="suggestions-list"></div>
+								<div id="no-suggestions" class="text-center py-4 text-base-content/50 hidden">
+									<iconify-icon icon="tabler:search-off" class="text-xl mb-1"></iconify-icon>
+									<p class="text-sm">No games found</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
 
-          <!-- Tag Filter -->
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text font-medium">Categories</span>
-            </label>
-            <div class="dropdown dropdown-end relative z-[9999]">
-              <label tabindex="0" class="btn btn-outline btn-sm w-full max-w-xs justify-between">
-                <span id="tag-display">
-                  {% if selected_tags %}
-                    {{ selected_tags|length }} categor{{ selected_tags|length|pluralize:"y,ies" }} selected
-                  {% else %}
-                    All Categories
-                  {% endif %}
-                </span>
-                <iconify-icon icon="tabler:chevron-down" class="w-4 h-4"></iconify-icon>
-              </label>
-              <div tabindex="0" class="dropdown-content menu p-2 shadow-lg bg-base-100 rounded-lg border border-base-200 w-80 max-h-96 overflow-y-auto z-[9999] opacity-100 bg-opacity-100">
-                <div class="form-control p-2">
-                  <label class="label cursor-pointer justify-start gap-3">
-                    <input type="checkbox" class="checkbox checkbox-sm" id="tag-all" onchange="toggleAllTags(this)">
-                    <span class="label-text font-medium">All Categories</span>
-                  </label>
-                </div>
-                <div class="divider my-1"></div>
-                {% for tag_id, tag_name in tags %}
-                  <div class="form-control">
-                    <label class="label cursor-pointer justify-start gap-3 py-1">
-                      <input type="checkbox" name="tags" value="{{ tag_id }}" class="checkbox checkbox-sm tag-checkbox"
-                             {% if tag_id|stringformat:'s' in selected_tags %}checked{% endif %}
-                             onchange="updateTagSelection()">
-                      <span class="label-text">{{ tag_name }}</span>
-                    </label>
-                  </div>
-                {% endfor %}
-              </div>
-            </div>
-          </div>
+				<!-- Filters Group -->
+				<div class="flex flex-wrap gap-4 items-end">
+					<!-- Genre Filter -->
+					<div class="form-control">
+						<label class="label">
+							<span class="label-text font-medium">Genres</span>
+						</label>
+						<div class="dropdown dropdown-end relative z-[9999]">
+							<label tabindex="0" class="btn btn-outline btn-sm w-full max-w-xs justify-between">
+								<span id="genre-display"> {% if selected_genres %} {{ selected_genres|length }} genre{{ selected_genres|length|pluralize }} selected {% else %} All Genres {% endif %} </span>
+								<iconify-icon icon="tabler:chevron-down" class="w-4 h-4"></iconify-icon>
+							</label>
+							<div tabindex="0" class="dropdown-content menu p-2 shadow-lg bg-base-100 rounded-lg border border-base-200 w-80 max-h-96 overflow-y-auto z-[9999] opacity-100 bg-opacity-100">
+								<div class="form-control p-2">
+									<label class="label cursor-pointer justify-start gap-3">
+										<input type="checkbox" class="checkbox checkbox-sm" id="genre-all" onchange="toggleAllGenres(this)" />
+										<span class="label-text font-medium">All Genres</span>
+									</label>
+								</div>
+								<div class="divider my-1"></div>
+								{% for genre_id, genre_name in genres %}
+								<div class="form-control">
+									<label class="label cursor-pointer justify-start gap-3 py-1">
+										<input type="checkbox" name="genres" value="{{ genre_id }}" class="checkbox checkbox-sm genre-checkbox" {% if genre_id|stringformat:'s' in selected_genres %}checked{% endif %} onchange="updateGenreSelection()">
+										<span class="label-text">{{ genre_name }}</span>
+									</label>
+								</div>
+								{% endfor %}
+							</div>
+						</div>
+					</div>
 
-          <!-- Filter Actions -->
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text font-medium">Actions</span>
-            </label>
-            <div class="flex gap-2">
-              <button type="submit" class="btn btn-primary btn-sm">
-                <iconify-icon icon="tabler:filter"></iconify-icon>
-                Apply Filters
-              </button>
-              <button type="button" class="btn btn-ghost btn-sm" onclick="clearAllFilters()">
-                <iconify-icon icon="tabler:x"></iconify-icon>
-                Clear All
-              </button>
-            </div>
-          </div>
-        </div>
-      </form>
+					<!-- Tag Filter -->
+					<div class="form-control">
+						<label class="label">
+							<span class="label-text font-medium">Categories</span>
+						</label>
+						<div class="dropdown dropdown-end relative z-[9999]">
+							<label tabindex="0" class="btn btn-outline btn-sm w-full max-w-xs justify-between">
+								<span id="tag-display"> {% if selected_tags %} {{ selected_tags|length }} categor{{ selected_tags|length|pluralize:"y,ies" }} selected {% else %} All Categories {% endif %} </span>
+								<iconify-icon icon="tabler:chevron-down" class="w-4 h-4"></iconify-icon>
+							</label>
+							<div tabindex="0" class="dropdown-content menu p-2 shadow-lg bg-base-100 rounded-lg border border-base-200 w-80 max-h-96 overflow-y-auto z-[9999] opacity-100 bg-opacity-100">
+								<div class="form-control p-2">
+									<label class="label cursor-pointer justify-start gap-3">
+										<input type="checkbox" class="checkbox checkbox-sm" id="tag-all" onchange="toggleAllTags(this)" />
+										<span class="label-text font-medium">All Categories</span>
+									</label>
+								</div>
+								<div class="divider my-1"></div>
+								{% for tag_id, tag_name in tags %}
+								<div class="form-control">
+									<label class="label cursor-pointer justify-start gap-3 py-1">
+										<input type="checkbox" name="tags" value="{{ tag_id }}" class="checkbox checkbox-sm tag-checkbox" {% if tag_id|stringformat:'s' in selected_tags %}checked{% endif %} onchange="updateTagSelection()">
+										<span class="label-text">{{ tag_name }}</span>
+									</label>
+								</div>
+								{% endfor %}
+							</div>
+						</div>
+					</div>
 
-      <!-- Active Filters Pills -->
-      <div id="active-filters" class="flex flex-wrap gap-2 mt-4 pt-4 border-t">
-        <!-- Search Term -->
-        {% if query %}
-          <div class="badge badge-primary gap-2">
-            <iconify-icon icon="tabler:search" class="w-3 h-3"></iconify-icon>
-            <span>{{ query }}</span>
-            <button type="button" class="btn btn-ghost btn-xs p-0" onclick="clearSearch()">
-              <iconify-icon icon="tabler:x" class="w-3 h-3"></iconify-icon>
-            </button>
-          </div>
-        {% endif %}
+					<!-- Filter Actions -->
+					<div class="form-control">
+						<label class="label">
+							<span class="label-text font-medium">Actions</span>
+						</label>
+						<div class="flex gap-2">
+							<button type="submit" class="btn btn-primary btn-sm">
+								<iconify-icon icon="tabler:filter"></iconify-icon>
+								Apply Filters
+							</button>
+							<button type="button" class="btn btn-ghost btn-sm" onclick="clearAllFilters()">
+								<iconify-icon icon="tabler:x"></iconify-icon>
+								Clear All
+							</button>
+						</div>
+					</div>
+				</div>
+			</form>
 
-        <!-- Platform Filter -->
-        {% if selected_platform %}
-          <div class="badge badge-secondary gap-2">
-            <iconify-icon icon="tabler:device-gamepad" class="w-3 h-3"></iconify-icon>
-            <span>{{ platform_name }}</span>
-            <button type="button" class="btn btn-ghost btn-xs p-0" onclick="clearPlatform()">
-              <iconify-icon icon="tabler:x" class="w-3 h-3"></iconify-icon>
-            </button>
-          </div>
-        {% endif %}
+			<!-- Active Filters Pills -->
+			<div id="active-filters" class="flex flex-wrap gap-2 mt-4 pt-4 border-t">
+				<!-- Search Term -->
+				{% if query %}
+				<div class="badge badge-primary gap-2">
+					<iconify-icon icon="tabler:search" class="w-3 h-3"></iconify-icon>
+					<span>{{ query }}</span>
+					<button type="button" class="btn btn-ghost btn-xs p-0" onclick="clearSearch()">
+						<iconify-icon icon="tabler:x" class="w-3 h-3"></iconify-icon>
+					</button>
+				</div>
+				{% endif %}
 
-        <!-- Genre Pills -->
-        {% for genre_id, genre_name in selected_genres_with_names %}
-          <div class="badge badge-accent gap-2">
-            <iconify-icon icon="tabler:tag" class="w-3 h-3"></iconify-icon>
-            <span>{{ genre_name }}</span>
-            <button type="button" class="btn btn-ghost btn-xs p-0" onclick="removeGenre('{{ genre_id }}')">
-              <iconify-icon icon="tabler:x" class="w-3 h-3"></iconify-icon>
-            </button>
-          </div>
-        {% endfor %}
+				<!-- Platform Filter -->
+				{% if selected_platform %}
+				<div class="badge badge-secondary gap-2">
+					<iconify-icon icon="tabler:device-gamepad" class="w-3 h-3"></iconify-icon>
+					<span>{{ platform_name }}</span>
+					<button type="button" class="btn btn-ghost btn-xs p-0" onclick="clearPlatform()">
+						<iconify-icon icon="tabler:x" class="w-3 h-3"></iconify-icon>
+					</button>
+				</div>
+				{% endif %}
 
-        <!-- Tag Pills -->
-        {% for tag_id, tag_name in selected_tags_with_names %}
-          <div class="badge badge-info gap-2">
-            <iconify-icon icon="tabler:category" class="w-3 h-3"></iconify-icon>
-            <span>{{ tag_name }}</span>
-            <button type="button" class="btn btn-ghost btn-xs p-0" onclick="removeTag('{{ tag_id }}')">
-              <iconify-icon icon="tabler:x" class="w-3 h-3"></iconify-icon>
-            </button>
-          </div>
-        {% endfor %}
+				<!-- Genre Pills -->
+				{% for genre_id, genre_name in selected_genres_with_names %}
+				<div class="badge badge-accent gap-2">
+					<iconify-icon icon="tabler:tag" class="w-3 h-3"></iconify-icon>
+					<span>{{ genre_name }}</span>
+					<button type="button" class="btn btn-ghost btn-xs p-0" onclick="removeGenre('{{ genre_id }}')">
+						<iconify-icon icon="tabler:x" class="w-3 h-3"></iconify-icon>
+					</button>
+				</div>
+				{% endfor %}
 
-        <!-- Results Count and Status -->
-        <div class="flex items-center gap-3 ml-auto">
-          <div class="loading loading-spinner loading-sm hidden" id="filter-loading"></div>
-          <span class="text-sm text-base-content/70">
-            <span id="results-count">{{ games|length }}</span> games found
-            {% if query or selected_platform or selected_genres or selected_tags %}
-              <span class="mx-2">•</span>
-              <span>Filters active</span>
-            {% endif %}
-          </span>
-          
-          <!-- Clear All Button (only show when filters are active) -->
-          {% if query or selected_platform or selected_genres or selected_tags %}
-            <button type="button" class="btn btn-ghost btn-xs text-error" onclick="clearAllFilters()">
-              <iconify-icon icon="tabler:trash" class="w-3 h-3"></iconify-icon>
-              Clear All
-            </button>
-          {% endif %}
-        </div>
-      </div>
-    </div>
-  </div>
+				<!-- Tag Pills -->
+				{% for tag_id, tag_name in selected_tags_with_names %}
+				<div class="badge badge-info gap-2">
+					<iconify-icon icon="tabler:category" class="w-3 h-3"></iconify-icon>
+					<span>{{ tag_name }}</span>
+					<button type="button" class="btn btn-ghost btn-xs p-0" onclick="removeTag('{{ tag_id }}')">
+						<iconify-icon icon="tabler:x" class="w-3 h-3"></iconify-icon>
+					</button>
+				</div>
+				{% endfor %}
 
-  <!-- Games Grid -->
-  <section id="game-container" class="games-grid grid gap-6 min-h-screen" style="grid-template-columns: repeat(1, 1fr);">
-    {% for game in steam_games %}
-      <div class="game-card bg-base-100 shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300 group">
-        <a href="{% url 'game_detail' game.appid %}" class="block">
-          <!-- Game Image -->
-          <div class="aspect-video bg-base-200 relative overflow-hidden">
-            {% if game.image %}
-              <img src="{{ game.image }}" 
-                   alt="{{ game.title }}" 
-                   class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                   loading="lazy">
-            {% else %}
-              <div class="w-full h-full flex items-center justify-center text-base-content/50">
-                <iconify-icon icon="tabler:device-gamepad-2" class="text-4xl"></iconify-icon>
-              </div>
-            {% endif %}
-            
-            <!-- Platform Icons Overlay -->
-            <div class="absolute top-2 right-2 flex gap-1">
-              {% if game.platforms.windows %}
-                <span class="badge badge-neutral badge-sm" title="Windows">
-                  <iconify-icon icon="simple-icons:windows"></iconify-icon>
-                </span>
-              {% endif %}
-              {% if game.platforms.mac %}
-                <span class="badge badge-neutral badge-sm" title="Mac">
-                  <iconify-icon icon="simple-icons:apple"></iconify-icon>
-                </span>
-              {% endif %}
-              {% if game.platforms.linux %}
-                <span class="badge badge-neutral badge-sm" title="Linux">
-                  <iconify-icon icon="simple-icons:linux"></iconify-icon>
-                </span>
-              {% endif %}
-            </div>
-          </div>
-          
-          <!-- Game Info -->
-          <div class="p-4">
-            <h3 class="font-semibold text-lg mb-2 line-clamp-2 group-hover:text-primary transition-colors">
-              {% if search_query %}
-                {{ game.title|highlight_search:search_query }}
-              {% else %}
-                {{ game.title }}
-              {% endif %}
-            </h3>
-            
-            <!-- Genres -->
-            <div class="flex gap-1 flex-wrap mb-3">
-              {% for genre in game.genres|slice:":2" %}
-                <span class="badge badge-outline badge-sm">
-                  {{ genre.description|default:genre }}
-                </span>
-              {% empty %}
-                <span class="badge badge-ghost badge-sm">Unknown Genre</span>
-              {% endfor %}
-            </div>
-            
-            <!-- Action buttons -->
-            <div class="flex gap-2 mt-4">
-              <div class="btn btn-primary btn-sm flex-1">
-                <iconify-icon icon="tabler:eye"></iconify-icon>
-                View Details
-              </div>
-              {% if user.is_authenticated %}
-                <a href="{% url 'add_steam_game_to_wishlist' game.appid %}" 
-                   class="btn btn-outline btn-secondary btn-sm"
-                   onclick="event.stopPropagation();">
-                  <iconify-icon icon="tabler:heart"></iconify-icon>
-                </a>
-              {% endif %}
-            </div>
-          </div>
-        </a>
-      </div>
-    {% empty %}
-      <div class="col-span-full">
-        <div class="text-center py-12">
-          <div class="mb-4">
-            <span class="icon-[tabler--search-off] text-6xl text-base-content/30"></span>
-          </div>
-          <h3 class="text-xl font-semibold mb-2">No games found</h3>
-          {% if search_query %}
-            <p class="text-base-content/70 mb-4">
-              No results for "<strong>{{ search_query }}</strong>"
-            </p>
-            <a href="{% url 'game_list' %}" class="btn btn-outline">
-              <span class="icon-[tabler--arrow-left]"></span>
-              Browse All Games
-            </a>
-          {% else %}
-            <p class="text-base-content/70">Try adjusting your filters or check back later.</p>
-          {% endif %}
-        </div>
-      </div>
-    {% endfor %}
-  </section>
+				<!-- Results Count and Status -->
+				<div class="flex items-center gap-3 ml-auto">
+					<div class="loading loading-spinner loading-sm hidden" id="filter-loading"></div>
+					<span class="text-sm text-base-content/70">
+						<span id="results-count">{{ games|length }}</span> games found {% if query or selected_platform or selected_genres or selected_tags %}
+						<span class="mx-2">•</span>
+						<span>Filters active</span>
+						{% endif %}
+					</span>
 
-  <!-- Load More Button (fallback for screens without scrolling) -->
-  <div id="load-more-container" class="flex justify-center py-8" style="display: none;">
-    <button id="load-more-btn" class="btn btn-primary btn-lg gap-2">
-      <iconify-icon icon="tabler:chevron-down"></iconify-icon>
-      Load More Games
-    </button>
-  </div>
+					<!-- Clear All Button (only show when filters are active) -->
+					{% if query or selected_platform or selected_genres or selected_tags %}
+					<button type="button" class="btn btn-ghost btn-xs text-error" onclick="clearAllFilters()">
+						<iconify-icon icon="tabler:trash" class="w-3 h-3"></iconify-icon>
+						Clear All
+					</button>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
 
-  <!-- Loading Indicator (will be managed by JavaScript) -->
-  <div id="loading-indicator" class="hidden">
-    <div class="flex justify-center items-center py-8">
-      <div class="flex flex-col items-center gap-4">
-        <div class="loading loading-spinner loading-lg"></div>
-        <p class="text-base-content/70">Loading more games...</p>
-      </div>
-    </div>
-  </div>
+	<!-- Games Grid -->
+	<section id="game-container" class="games-grid grid gap-6 min-h-screen">
+		{% for game in steam_games %}
+		<div class="game-card bg-base-100 shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300 group">
+			<a href="{% url 'game_detail' game.appid %}" class="block">
+				<!-- Game Image -->
+				<div class="aspect-video bg-base-200 relative overflow-hidden">
+					{% if game.image %}
+					<img src="{{ game.image }}" alt="{{ game.title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+					{% else %}
+					<div class="w-full h-full flex items-center justify-center text-base-content/50">
+						<iconify-icon icon="tabler:device-gamepad-2" class="text-4xl"></iconify-icon>
+					</div>
+					{% endif %}
 
-  <!-- Fallback pagination (for users with JavaScript disabled) -->
-  <noscript>
-    <div class="flex justify-center mt-8">
-      <div class="join">
-        {% if page_obj.has_previous %}
-          <a href="?{% if search_query %}search={{ search_query }}&{% endif %}{% if selected_genre %}genre={{ selected_genre }}&{% endif %}{% if selected_tag %}tag={{ selected_tag }}&{% endif %}page={{ page_obj.previous_page_number }}" 
-             class="join-item btn">
-            <span class="icon-[tabler--chevron-left]"></span>
-          </a>
-        {% endif %}
-        
-        <span class="join-item btn btn-active">
-          Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-        </span>
-        
-        {% if page_obj.has_next %}
-          <a href="?{% if search_query %}search={{ search_query }}&{% endif %}{% if selected_genre %}genre={{ selected_genre }}&{% endif %}{% if selected_tag %}tag={{ selected_tag }}&{% endif %}page={{ page_obj.next_page_number }}" 
-             class="join-item btn">
-            <span class="icon-[tabler--chevron-right]"></span>
-          </a>
-        {% endif %}
-      </div>
-    </div>
-  </noscript>
+					<!-- Platform Icons Overlay -->
+					<div class="absolute top-2 right-2 flex gap-1">
+						{% if game.platforms.windows %}
+						<span class="badge badge-neutral badge-sm" title="Windows">
+							<iconify-icon icon="simple-icons:windows"></iconify-icon>
+						</span>
+						{% endif %} {% if game.platforms.mac %}
+						<span class="badge badge-neutral badge-sm" title="Mac">
+							<iconify-icon icon="simple-icons:apple"></iconify-icon>
+						</span>
+						{% endif %} {% if game.platforms.linux %}
+						<span class="badge badge-neutral badge-sm" title="Linux">
+							<iconify-icon icon="simple-icons:linux"></iconify-icon>
+						</span>
+						{% endif %}
+					</div>
+				</div>
+
+				<!-- Game Info -->
+				<div class="p-4">
+					<h3 class="font-semibold text-lg mb-2 line-clamp-2 group-hover:text-primary transition-colors">{% if search_query %} {{ game.title|highlight_search:search_query }} {% else %} {{ game.title }} {% endif %}</h3>
+
+					<!-- Genres -->
+					<div class="flex gap-1 flex-wrap mb-3">
+						{% for genre in game.genres|slice:":2" %}
+						<span class="badge badge-outline badge-sm"> {{ genre.description|default:genre }} </span>
+						{% empty %}
+						<span class="badge badge-ghost badge-sm">Unknown Genre</span>
+						{% endfor %}
+					</div>
+
+					<!-- Action buttons -->
+					<div class="flex gap-2 mt-4">
+						<div class="btn btn-primary btn-sm flex-1">
+							<iconify-icon icon="tabler:eye"></iconify-icon>
+							View Details
+						</div>
+						{% if user.is_authenticated %}
+						<a href="{% url 'add_steam_game_to_wishlist' game.appid %}" class="btn btn-outline btn-secondary btn-sm" onclick="event.stopPropagation();">
+							<iconify-icon icon="tabler:heart"></iconify-icon>
+						</a>
+						{% endif %}
+					</div>
+				</div>
+			</a>
+		</div>
+		{% empty %}
+		<div class="col-span-full">
+			<div class="text-center py-12">
+				<div class="mb-4">
+					<span class="icon-[tabler--search-off] text-6xl text-base-content/30"></span>
+				</div>
+				<h3 class="text-xl font-semibold mb-2">No games found</h3>
+				{% if search_query %}
+				<p class="text-base-content/70 mb-4">No results for "<strong>{{ search_query }}</strong>"</p>
+				<a href="{% url 'game_list' %}" class="btn btn-outline">
+					<span class="icon-[tabler--arrow-left]"></span>
+					Browse All Games
+				</a>
+				{% else %}
+				<p class="text-base-content/70">Try adjusting your filters or check back later.</p>
+				{% endif %}
+			</div>
+		</div>
+		{% endfor %}
+	</section>
+
+	<!-- Load More Button (fallback for screens without scrolling) -->
+	<div id="load-more-container" class="flex justify-center py-8" style="display: none">
+		<button id="load-more-btn" class="btn btn-primary btn-lg gap-2">
+			<iconify-icon icon="tabler:chevron-down"></iconify-icon>
+			Load More Games
+		</button>
+	</div>
+
+	<!-- Fallback pagination (for users with JavaScript disabled) -->
+	<noscript>
+		<div class="flex justify-center mt-8">
+			<div class="join">
+				{% if page_obj.has_previous %}
+				<a href="?{% if search_query %}search={{ search_query }}&{% endif %}{% if selected_genre %}genre={{ selected_genre }}&{% endif %}{% if selected_tag %}tag={{ selected_tag }}&{% endif %}page={{ page_obj.previous_page_number }}" class="join-item btn">
+					<span class="icon-[tabler--chevron-left]"></span>
+				</a>
+				{% endif %}
+
+				<span class="join-item btn btn-active"> Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }} </span>
+
+				{% if page_obj.has_next %}
+				<a href="?{% if search_query %}search={{ search_query }}&{% endif %}{% if selected_genre %}genre={{ selected_genre }}&{% endif %}{% if selected_tag %}tag={{ selected_tag }}&{% endif %}page={{ page_obj.next_page_number }}" class="join-item btn">
+					<span class="icon-[tabler--chevron-right]"></span>
+				</a>
+				{% endif %}
+			</div>
+		</div>
+	</noscript>
 </div>
 
 <!-- Pass user authentication status to JavaScript -->
 <script>
-window.userAuthenticated = {% if user.is_authenticated %}true{% else %}false{% endif %};
+	window.userAuthenticated = {% if user.is_authenticated %}true{% else %}false{% endif %};
 </script>
 
 <!-- Infinite Scroll JavaScript -->

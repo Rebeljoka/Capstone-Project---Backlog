@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Backlog</title>
+        <title>Backlog.</title>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -24,161 +24,165 @@
     </head>
 
     <body class="leading-normal tracking-normal">
-                <nav class="navbar gap-4 shadow-base-300/20 shadow-sm sticky top-0 z-50 bg-base-100/95 backdrop-blur-sm" style="margin-bottom:0;padding-bottom:0;padding-left:3rem;padding-right:3rem;">
-                    <div class="navbar-start flex items-center gap-2">
-                        <div class="dropdown">
-                          <label tabindex="0" class="btn btn-ghost btn-circle flex items-center justify-center lg:btn-lg xl:btn-xl">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 lg:h-7 lg:w-7 xl:h-8 xl:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
-                          </label>
-                          <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 text-lg lg:text-xl">
-                            <li><a href="{% url 'game_list' %}" class="lg:text-xl">All Games</a></li>
-                            {% if user.is_authenticated %}
-                              <li><a href="{% url 'wishlist_list' %}" class="lg:text-xl">My Wishlists</a></li>
-                            {% else %}
-                              <li><a href="{% url 'account_login' %}" class="lg:text-xl">Login to see Wishlists</a></li>
-                            {% endif %}
-                          </ul>
-                        </div>
-                    </div>
-                    <div class="flex-1 flex justify-center items-center">
-                        <a href="{% url 'home' %}">
-                            <h1 class="text-5xl font-bold">
-                                <span>B</span><span>a</span><span>c</span><span>k</span><span>l</span><span>o</span><span>g</span><span>.</span>
-                        </a>
-                    </div>
-                    <div class="navbar-end flex items-center gap-4">
+        <nav class="navbar gap-4 shadow-base-300/20 shadow-sm sticky top-0 z-50 bg-base-100/95 backdrop-blur-sm" style="margin-bottom:0;padding-bottom:0;padding-left:3rem;padding-right:3rem;">
+            <div class="navbar-start flex items-center gap-2">
+                <div class="dropdown">
+                    <label tabindex="0" class="btn btn-ghost rounded-full flex items-center justify-center w-12 h-12 lg:w-20 lg:h-20 xl:w-24 xl:h-24">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 lg:h-12 lg:w-12 xl:h-16 xl:w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </label>
+                    <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 text-lg lg:text-xl">
+                        <li><a href="{% url 'game_list' %}" class="lg:text-xl">All Games</a></li>
                         {% if user.is_authenticated %}
-                            <!-- Authenticated User Avatar Dropdown -->
-                            <div class="dropdown dropdown-end">
-                              <label tabindex="0" class="btn btn-ghost btn-circle avatar flex items-center justify-center lg:btn-lg xl:btn-xl">
-                                <div class="w-10 rounded-full lg:w-14 xl:w-16">
-                                  <img src="{{ user|profile_picture_url }}" alt="avatar" 
-                                       onerror="this.src='https://ui-avatars.com/api/?name={{ user|user_initials }}&background=667eea&color=ffffff&size=200&bold=true'" />
-                                </div>
-                              </label>
-                              <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-64 text-lg lg:text-xl">
-                                <li class="flex gap-2 items-center p-2">
-                                  <div class="avatar">
+                        <li><a href="{% url 'wishlist_list' %}" class="lg:text-xl">My Wishlists</a></li>
+                        {% else %}
+                        <li><a href="{% url 'account_login' %}" class="lg:text-xl">Login to see Wishlists</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+                <div class="flex-1 flex justify-center items-center">
+                    <a href="{% url 'home' %}">
+                        <h1 class="text-5xl font-bold siteName">
+                            <span>B</span><span>a</span><span>c</span><span>k</span><span>l</span><span>o</span><span>g</span><span>.</span>
+                        </h1>
+                    </a>
+                </div>
+
+                <div class="navbar-end flex items-center gap-4">
+                    {% if user.is_authenticated %}
+                    <!-- Authenticated User Avatar Dropdown -->
+                    <div class="dropdown dropdown-end">
+                        <label tabindex="0" class="btn btn-ghost rounded-full avatar flex items-center justify-center w-12 h-12 lg:w-20 lg:h-20 xl:w-24 xl:h-24">
+                            <div class="w-8 rounded-full lg:w-14 xl:w-18">
+                                <img src="{{ user|profile_picture_url }}" alt="avatar" onerror="this.src='https://ui-avatars.com/api/?name={{ user|user_initials }}&background=667eea&color=ffffff&size=200&bold=true'" />
+                            </div>
+                        </label>
+                        <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-64 text-lg lg:text-xl">
+                            <li class="flex gap-2 items-center p-2">
+                                <div class="avatar">
                                     <div class="w-10 rounded-full">
-                                      <img src="{{ user|profile_picture_url }}" alt="avatar" 
-                                           onerror="this.src='https://ui-avatars.com/api/?name={{ user|user_initials }}&background=667eea&color=ffffff&size=200&bold=true'" />
+                                        <img src="{{ user|profile_picture_url }}" alt="avatar" onerror="this.src='https://ui-avatars.com/api/?name={{ user|user_initials }}&background=667eea&color=ffffff&size=200&bold=true'" />
                                     </div>
-                                  </div>
-                                  <div class="min-w-0 flex-1">
+                                </div>
+                                <div class="min-w-0 flex-1">
                                     <h6 class="text-xl lg:text-2xl font-semibold truncate">{{ user.username|default:"User" }}</h6>
                                     <small class="text-base-content/50 truncate block lg:text-lg">{{ user.email|default:"Member" }}</small>
-                                  </div>
-                                </li>
-                                <li><a href="{% url 'profile' %}" class="lg:text-xl"><span class="icon-[tabler--user]"></span>My Profile</a></li>
-                                <li><a href="{% url 'wishlist_list' %}" class="lg:text-xl"><span class="icon-[tabler--heart]"></span>My Wishlists</a></li>
-                                <li><a href="{% url 'edit_profile' %}" class="lg:text-xl"><span class="icon-[tabler--settings]"></span>Settings</a></li>
-                                
-                                <!-- Dark Mode Toggle -->
-                                <li>
-                                  <div class="flex items-center justify-between w-full px-4 py-2">
+                                </div>
+                            </li>
+                            <li><a href="{% url 'profile' %}" class="lg:text-xl"><span class="icon-[tabler--user]"></span>My Profile</a></li>
+                            <li><a href="{% url 'wishlist_list' %}" class="lg:text-xl"><span class="icon-[tabler--heart]"></span>My Wishlists</a></li>
+                            <li><a href="{% url 'edit_profile' %}" class="lg:text-xl"><span class="icon-[tabler--settings]"></span>Settings</a></li>
+
+                            <!-- Dark Mode Toggle -->
+                            <li>
+                                <div class="flex items-center justify-between w-full px-4 py-2">
                                     <span class="flex items-center gap-2 lg:text-xl">
-                                      <span class="icon-[tabler--moon]"></span>Dark Mode
+                                        <span class="icon-[tabler--moon]">
+                                        </span>Dark Mode
                                     </span>
                                     <input type="checkbox" class="toggle toggle-sm" id="theme-toggle" />
-                                  </div>
-                                </li>
-                                
-                                <!-- Language Selector -->
-                                <li>
-                                  <div class="flex items-center justify-between w-full px-4 py-2">
+                                </div>
+                            </li>
+
+                            <!-- Language Selector -->
+                            <li>
+                                <div class="flex items-center justify-between w-full px-4 py-2">
                                     <span class="flex items-center gap-2 lg:text-xl">
-                                      <span class="icon-[tabler--language]"></span>Language
+                                        <span class="icon-[tabler--language]"></span>Language
                                     </span>
                                     <select class="select select-sm w-16" id="language-select">
-                                      <option value="en">EN</option>
-                                      <option value="es">ES</option>
-                                      <option value="fr">FR</option>
-                                      <option value="de">DE</option>
-                                      <option value="ja">JP</option>
+                                        <option value="en">EN</option>
+                                        <option value="es">ES</option>
+                                        <option value="fr">FR</option>
+                                        <option value="de">DE</option>
+                                        <option value="ja">JP</option>
                                     </select>
-                                  </div>
-                                </li>
-                                
-                                <li><a class="btn btn-error btn-soft btn-block lg:text-xl" href="{% url 'account_logout' %}"><span class="icon-[tabler--logout]"></span>Sign out</a></li>
-                              </ul>
-                            </div>
-                        {% else %}
-                            <!-- Guest User Login/Signup Links -->
-                            <div class="flex gap-2">
-                                <a href="{% url 'account_login' %}" class="btn btn-ghost btn-sm">
-                                    <span class="icon-[tabler--login]"></span>Login
-                                </a>
-                                <a href="{% url 'account_signup' %}" class="btn btn-primary btn-sm">
-                                    <span class="icon-[tabler--user-plus]"></span>Sign Up
-                                </a>
-                            </div>
-                        {% endif %}
+                                </div>
+                            </li>
+
+                            <li><a class="btn btn-error btn-soft btn-block lg:text-xl" href="{% url 'account_logout' %}"><span class="icon-[tabler--logout]"></span>Sign out</a></li>
+                        </ul>
                     </div>
-                </nav>
-        <!-- Centered MacBook-style notch tab, hide all but notch until clicked, pure Tailwind -->
-  <div class="flex flex-col items-center">
-    <input type="checkbox" id="notch-toggle" class="peer hidden" />
-    <label for="notch-toggle"
-      class="bg-black rounded-b-2xl w-24 h-7 flex items-center justify-center shadow-lg hover:bg-gray-800 transition-colors duration-200 cursor-pointer mx-auto order-1 peer-checked:order-2 peer-checked:translate-y-2"
-      style="position:relative; top:0; z-index:20; margin-top:0; padding-top:0;"
-    >
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-    </label>
-    <div class="w-full max-w-xs mx-auto mt-2 hidden peer-checked:flex flex-col items-center order-2 peer-checked:order-1">
-      <div class="relative w-full flex justify-center">
-  <div class="absolute -top-2 left-1/2 -translate-x-1/2 w-64 h-14 rounded-b-2xl shadow-lg z-10 border border-base-300 search-bg"></div>
-        <form method="get" action="{% url 'game_list' %}" class="input rounded-full max-w-56 flex items-center mx-auto relative z-20" style="background:transparent; background-color: #fffffc;">
-          <span class="icon-[tabler--search] text-base-content/80 my-auto me-3 size-5 shrink-0"></span>
-          <label class="sr-only" for="searchInputNav">Search</label>
-          <input type="search" 
-                 name="search" 
-                 class="grow bg-white border-0 outline-none" 
-                 placeholder="Search games..." 
-                 id="searchInputNav" 
-                 value="{{ search_query|default:'' }}"
-                 autocomplete="off"
-                 onkeyup="handleSearchInput(this)"
-                 onkeydown="handleSearchKeydown(event)" />
-          <button type="submit" class="sr-only">Search</button>
-        </form>
-        
-        <!-- Search suggestions dropdown for nav -->
-        <div id="search-suggestions-nav" class="absolute top-full left-1/2 -translate-x-1/2 mt-1 bg-base-100 rounded-lg shadow-lg border border-base-200 hidden z-[9999] max-h-80 overflow-y-auto opacity-100 w-64">
-          <div class="p-2">
-            <div class="loading loading-spinner loading-sm hidden" id="search-loading-nav"></div>
-            <div id="suggestions-list-nav"></div>
-            <div id="no-suggestions-nav" class="text-center py-4 text-base-content/50 hidden">
-              <iconify-icon icon="tabler:search-off" class="text-xl mb-1"></iconify-icon>
-              <p class="text-sm">No games found</p>
+                    {% else %}
+                    <!-- Guest User Login/Signup Links -->
+                    <div class="flex gap-2">
+                        <a href="{% url 'account_login' %}" class="btn btn-ghost btn-sm">
+                            <span class="icon-[tabler--login]"></span>Login
+                        </a>
+                        <a href="{% url 'account_signup' %}" class="btn btn-primary btn-sm">
+                            <span class="icon-[tabler--user-plus]"></span>Sign Up
+                        </a>
+                    </div>
+                {% endif %}
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-        </div>
-        
-        <!-- Enhanced Messages Display -->
-        {% if messages %}
-        <div class="container mx-auto px-4 mt-4">
-            {% for message in messages %}
-                <div class="alert mb-4 {% if message.tags == 'error' %}alert-error{% elif message.tags == 'warning' %}alert-warning{% elif message.tags == 'success' %}alert-success{% elif message.tags == 'info' %}alert-info{% else %}alert-info{% endif %}">
-                    <div class="flex items-center">
-                        {% if message.tags == 'error' %}
-                            <span class="icon-[tabler--x-circle] mr-2"></span>
-                        {% elif message.tags == 'warning' %}
-                            <span class="icon-[tabler--alert-triangle] mr-2"></span>
-                        {% elif message.tags == 'success' %}
-                            <span class="icon-[tabler--check-circle] mr-2"></span>
-                        {% elif message.tags == 'info' %}
-                            <span class="icon-[tabler--info-circle] mr-2"></span>
-                        {% endif %}
-                        <span>{{ message }}</span>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-        {% endif %}
-        
+        </nav>
+
+<!-- Centered MacBook-style notch tab, hide all but notch until clicked, pure Tailwind -->
+        <div class="flex flex-col items-center">
+            <input type="checkbox" id="notch-toggle" class="peer hidden" />
+			<label for="notch-toggle" class="bg-black rounded-b-2xl w-24 h-7 flex items-center justify-center shadow-lg hover:bg-gray-800 transition-colors duration-200 cursor-pointer order-1 peer-checked:order-2 peer-checked:translate-y-2" style="position:relative; z-index:20;">
+				<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+			</label>
+			<div class="w-64 mx-auto mt-2 hidden peer-checked:flex flex-col items-center order-2 peer-checked:order-1">
+				<div class="relative w-full flex justify-center">
+					<div class="absolute -top-2 left-1/2 -translate-x-1/2 w-64 h-14 rounded-b-2xl shadow-lg border border-base-300 search-bg">
+					</div>
+					<form method="get" action="{% url 'game_list' %}" class="input rounded-full max-w-56 flex items-center mx-auto relative">
+						<span class="text-base-content/80 my-auto me-3 size-5 shrink-0"><i class="nf nf-oct-search"></i></span>
+						<label class="sr-only" for="searchInputNav">Search</label>
+						<input type="search" 
+						name="search" 
+						class="grow bg-white border-0 outline-none" 
+						placeholder="Search games..." 
+						id="searchInputNav" 
+						value="{{ search_query|default:'' }}"
+						autocomplete="off"
+						onkeyup="handleSearchInput(this)"
+						onkeydown="handleSearchKeydown(event)" />
+						<button type="submit" class="sr-only">Search</button>
+					</form>
+
+					<!-- Search suggestions dropdown for nav -->
+					<div id="search-suggestions-nav" class="absolute top-full left-1/2 -translate-x-1/2 mt-1 bg-base-100 rounded-lg shadow-lg border border-base-200 hidden z-[9999] max-h-80 overflow-y-auto opacity-100 w-64">
+						<div class="p-2">
+							<div class="loading loading-spinner loading-sm hidden" id="search-loading-nav"></div>
+								<div id="suggestions-list-nav"></div>
+									<div id="no-suggestions-nav" class="text-center py-4 text-base-content/50 hidden">
+										<iconify-icon icon="tabler:search-off" class="text-xl mb-1"></iconify-icon>
+										<p class="text-sm">No games found</p>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Enhanced Messages Display -->
+		{% if messages %}
+		<div class="container mx-auto px-4 mt-4">
+			{% for message in messages %}
+				<div class="alert mb-4 {% if message.tags == 'error' %}alert-error{% elif message.tags == 'warning' %}alert-warning{% elif message.tags == 'success' %}alert-success{% elif message.tags == 'info' %}alert-info{% else %}alert-info{% endif %}">
+					<div class="flex items-center">
+						{% if message.tags == 'error' %}
+							<span class="icon-[tabler--x-circle] mr-2"></span>
+						{% elif message.tags == 'warning' %}
+							<span class="icon-[tabler--alert-triangle] mr-2"></span>
+						{% elif message.tags == 'success' %}
+							<span class="icon-[tabler--check-circle] mr-2"></span>
+						{% elif message.tags == 'info' %}
+							<span class="icon-[tabler--info-circle] mr-2"></span>
+						{% endif %}
+						<span>{{ message }}</span>
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+		{% endif %}
+
         {% block content %}{% endblock %}
 
     <footer>
