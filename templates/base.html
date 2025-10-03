@@ -23,12 +23,12 @@
 
     </head>
 
-    <body class="leading-normal tracking-normal">
-        <nav class="navbar gap-4 shadow-base-300/20 shadow-sm sticky top-0 z-50 bg-base-100/95 backdrop-blur-sm" style="margin-bottom:0;padding-bottom:0;padding-left:3rem;padding-right:3rem;">
+    <body class="min-h-screen flex flex-col leading-normal tracking-normal">
+        <nav class="navbar gap-4 shadow-base-300/20 shadow-sm sticky top-0 z-50 backdrop-blur-md" style="margin-bottom:0;padding-bottom:0;padding-left:3rem;padding-right:3rem;">
             <div class="navbar-start flex items-center gap-2">
                 <div class="dropdown">
-                    <label tabindex="0" class="btn btn-ghost rounded-full flex items-center justify-center w-12 h-12 lg:w-20 lg:h-20 xl:w-24 xl:h-24">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 lg:h-12 lg:w-12 xl:h-16 xl:w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <label tabindex="0" class="btn btn-ghost transition-transform duration-200 hover:scale-105 rounded-full flex items-center justify-center w-25 h-25 lg:w-20 lg:h-20 xl:w-24 xl:h-24" style="background-color: transparent;">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-25 w-25 lg:h-12 lg:w-12 xl:h-16 xl:w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                         </svg>
                     </label>
@@ -54,8 +54,8 @@
                     {% if user.is_authenticated %}
                     <!-- Authenticated User Avatar Dropdown -->
                     <div class="dropdown dropdown-end">
-                        <label tabindex="0" class="btn btn-ghost rounded-full avatar flex items-center justify-center w-12 h-12 lg:w-20 lg:h-20 xl:w-24 xl:h-24">
-                            <div class="w-8 rounded-full lg:w-14 xl:w-18">
+                        <label tabindex="0" class="btn btn-ghost rounded-full avatar flex items-center justify-center w-25 h-25 lg:w-20 lg:h-20 xl:w-24 xl:h-24">
+                            <div class="w-25 rounded-full lg:w-14 xl:w-18">
                                 <img src="{{ user|profile_picture_url }}" alt="avatar" onerror="this.src='https://ui-avatars.com/api/?name={{ user|user_initials }}&background=667eea&color=ffffff&size=200&bold=true'" />
                             </div>
                         </label>
@@ -71,15 +71,15 @@
                                     <small class="text-base-content/50 truncate block lg:text-lg">{{ user.email|default:"Member" }}</small>
                                 </div>
                             </li>
-                            <li><a href="{% url 'profile' %}" class="lg:text-xl"><span class="icon-[tabler--user]"></span>My Profile</a></li>
-                            <li><a href="{% url 'wishlist_list' %}" class="lg:text-xl"><span class="icon-[tabler--heart]"></span>My Wishlists</a></li>
-                            <li><a href="{% url 'edit_profile' %}" class="lg:text-xl"><span class="icon-[tabler--settings]"></span>Settings</a></li>
+                            <li><a href="{% url 'profile' %}" class="lg:text-xl"><span class="nf nf-fa-user_o"></span>My Profile</a></li>
+                            <li><a href="{% url 'wishlist_list' %}" class="lg:text-xl"><span class="nf nf-oct-heart"></span>My Wishlists</a></li>
+                            <li><a href="{% url 'edit_profile' %}" class="lg:text-xl"><span class="nf nf-md-cog"></span>Settings</a></li>
 
                             <!-- Dark Mode Toggle -->
                             <li>
                                 <div class="flex items-center justify-between w-full px-4 py-2">
                                     <span class="flex items-center gap-2 lg:text-xl">
-                                        <span class="icon-[tabler--moon]">
+                                        <span class="nf nf-oct-moon">
                                         </span>Dark Mode
                                     </span>
                                     <input type="checkbox" class="toggle toggle-sm" id="theme-toggle" />
@@ -90,7 +90,7 @@
                             <li>
                                 <div class="flex items-center justify-between w-full px-4 py-2">
                                     <span class="flex items-center gap-2 lg:text-xl">
-                                        <span class="icon-[tabler--language]"></span>Language
+                                        <span class="nf nf-md-translate"></span>Language
                                     </span>
                                     <select class="select select-sm w-16" id="language-select">
                                         <option value="en">EN</option>
@@ -109,57 +109,58 @@
                     <!-- Guest User Login/Signup Links -->
                     <div class="flex gap-2">
                         <a href="{% url 'account_login' %}" class="btn btn-ghost btn-sm">
-                            <span class="icon-[tabler--login]"></span>Login
+                            <span class="nf nf-md-login"></span>Login
                         </a>
                         <a href="{% url 'account_signup' %}" class="btn btn-primary btn-sm">
-                            <span class="icon-[tabler--user-plus]"></span>Sign Up
+                            <span class="nf nf-oct-plus"></span>Sign Up
                         </a>
                     </div>
                 {% endif %}
             </div>
+            <!-- Centered MacBook-style notch tab, hide all but notch until clicked, pure Tailwind -->
+            <div class="flex flex-col items-center NotchContainer">
+                <input type="checkbox" id="notch-toggle" class="peer hidden" />
+                <label for="notch-toggle" class="bg-black rounded-b-2xl w-24 h-7 flex items-center justify-center shadow-lg hover:bg-gray-800 transition-colors duration-200 cursor-pointer order-1 peer-checked:order-2 peer-checked:translate-y-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                </label>
+                <div class="w-100 mx-auto mt-2 hidden peer-checked:flex flex-col items-center order-2 peer-checked:order-1">
+                    <div class="relative w-full flex justify-center">
+                        <div class="absolute -top-2 left-1/2 -translate-x-1/2 w-100 h-14 rounded-b-2xl shadow-lg border border-base-300 search-bg">
+                        </div>
+                        <form method="get" action="{% url 'game_list' %}" class="input w-90 rounded-full flex items-center mx-auto relative">
+                            <span class="text-base-content/80 my-auto me-3 size-5 shrink-0"><i class="nf nf-oct-search"></i></span>
+                            <label class="sr-only" for="searchInputNav">Search</label>
+                            <input type="search" 
+                            name="search" 
+                            class="grow bg-content border-0 outline-none" 
+                            placeholder="Search games..." 
+                            id="searchInputNav" 
+                            value="{{ search_query|default:'' }}"
+                            autocomplete="off"
+                            onkeyup="handleSearchInput(this)"
+                            onkeydown="handleSearchKeydown(event)" />
+                            <button type="submit" class="sr-only">Search</button>
+                        </form>
+
+                        <!-- Search suggestions dropdown for nav -->
+                        <div id="search-suggestions-nav" class="absolute top-full left-1/2 -translate-x-1/2 mt-1 bg-base-100 rounded-lg shadow-lg border border-base-200 hidden max-h-80 overflow-y-auto opacity-100 w-85 z-50">
+                            <div class="p-2">
+                                <div class="loading loading-spinner loading-sm hidden" id="search-loading-nav"></div>
+                                    <div id="suggestions-list-nav"></div>
+                                        <div id="no-suggestions-nav" class="text-center py-4 text-base-content/50 hidden">
+                                            <iconify-icon icon="tabler:search-off" class="text-xl mb-1"></iconify-icon>
+                                            <p class="text-sm">No games found</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </nav>
 
-<!-- Centered MacBook-style notch tab, hide all but notch until clicked, pure Tailwind -->
-        <div class="flex flex-col items-center">
-            <input type="checkbox" id="notch-toggle" class="peer hidden" />
-			<label for="notch-toggle" class="bg-black rounded-b-2xl w-24 h-7 flex items-center justify-center shadow-lg hover:bg-gray-800 transition-colors duration-200 cursor-pointer order-1 peer-checked:order-2 peer-checked:translate-y-2" style="position:relative; z-index:20;">
-				<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-			</label>
-			<div class="w-64 mx-auto mt-2 hidden peer-checked:flex flex-col items-center order-2 peer-checked:order-1">
-				<div class="relative w-full flex justify-center">
-					<div class="absolute -top-2 left-1/2 -translate-x-1/2 w-64 h-14 rounded-b-2xl shadow-lg border border-base-300 search-bg">
-					</div>
-					<form method="get" action="{% url 'game_list' %}" class="input rounded-full max-w-56 flex items-center mx-auto relative">
-						<span class="text-base-content/80 my-auto me-3 size-5 shrink-0"><i class="nf nf-oct-search"></i></span>
-						<label class="sr-only" for="searchInputNav">Search</label>
-						<input type="search" 
-						name="search" 
-						class="grow bg-white border-0 outline-none" 
-						placeholder="Search games..." 
-						id="searchInputNav" 
-						value="{{ search_query|default:'' }}"
-						autocomplete="off"
-						onkeyup="handleSearchInput(this)"
-						onkeydown="handleSearchKeydown(event)" />
-						<button type="submit" class="sr-only">Search</button>
-					</form>
 
-					<!-- Search suggestions dropdown for nav -->
-					<div id="search-suggestions-nav" class="absolute top-full left-1/2 -translate-x-1/2 mt-1 bg-base-100 rounded-lg shadow-lg border border-base-200 hidden z-[9999] max-h-80 overflow-y-auto opacity-100 w-64">
-						<div class="p-2">
-							<div class="loading loading-spinner loading-sm hidden" id="search-loading-nav"></div>
-								<div id="suggestions-list-nav"></div>
-									<div id="no-suggestions-nav" class="text-center py-4 text-base-content/50 hidden">
-										<iconify-icon icon="tabler:search-off" class="text-xl mb-1"></iconify-icon>
-										<p class="text-sm">No games found</p>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
 
 		<!-- Enhanced Messages Display -->
 		{% if messages %}
@@ -168,13 +169,13 @@
 				<div class="alert mb-4 {% if message.tags == 'error' %}alert-error{% elif message.tags == 'warning' %}alert-warning{% elif message.tags == 'success' %}alert-success{% elif message.tags == 'info' %}alert-info{% else %}alert-info{% endif %}">
 					<div class="flex items-center">
 						{% if message.tags == 'error' %}
-							<span class="icon-[tabler--x-circle] mr-2"></span>
+							<span class="nf nf-oct-x mr-2"></span>
 						{% elif message.tags == 'warning' %}
-							<span class="icon-[tabler--alert-triangle] mr-2"></span>
+							<span class="nf nf-oct-alert mr-2"></span>
 						{% elif message.tags == 'success' %}
-							<span class="icon-[tabler--check-circle] mr-2"></span>
+							<span class="nf nf-oct-check_circle mr-2"></span>
 						{% elif message.tags == 'info' %}
-							<span class="icon-[tabler--info-circle] mr-2"></span>
+							<span class="nf nf-oct-info mr-2"></span>
 						{% endif %}
 						<span>{{ message }}</span>
 					</div>
@@ -183,7 +184,9 @@
 		</div>
 		{% endif %}
 
+        <main class="flex-grow">
         {% block content %}{% endblock %}
+        </main>
 
         <footer class="footer footer-horizontal footer-center p-10 border-t border-base-200">
             <aside>

@@ -24,11 +24,11 @@
 					<div class="relative">
 						<input type="text" id="searchInput" name="search" value="{{ search_query }}" placeholder="Search games..." class="input input-bordered w-full pr-12" autocomplete="off" onkeyup="handleSearchInput(this)" onkeydown="handleSearchKeydown(event)" />
 						<button type="submit" class="btn btn-square btn-primary absolute right-0 top-0 rounded-l-none">
-							<i class="nf nf-oct-search"></i>
+							<i class="nf nf-oct-search text-white"></i>
 						</button>
 
 						<!-- Clean search suggestions dropdown -->
-						<div id="search-suggestions" class="absolute top-full left-0 right-0 mt-1 bg-base-100 rounded-lg shadow-lg border border-base-200 hidden z-[9999] max-h-80 overflow-y-auto opacity-100">
+						<div id="search-suggestions" class="absolute top-full left-0 right-0 mt-1 bg-base-100 rounded-lg shadow-lg border border-base-200 hidden max-h-80 overflow-y-auto opacity-100">
 							<div class="p-2">
 								<div class="loading loading-spinner loading-sm hidden" id="search-loading"></div>
 								<div id="suggestions-list"></div>
@@ -48,12 +48,12 @@
 						<label class="label">
 							<span class="label-text font-medium">Genres</span>
 						</label>
-						<div class="dropdown dropdown-end relative z-[9999]">
+						<div class="dropdown dropdown-end relative">
 							<label tabindex="0" class="btn btn-outline btn-sm w-full max-w-xs justify-between">
 								<span id="genre-display"> {% if selected_genres %} {{ selected_genres|length }} genre{{ selected_genres|length|pluralize }} selected {% else %} All Genres {% endif %} </span>
 								<iconify-icon icon="tabler:chevron-down" class="w-4 h-4"></iconify-icon>
 							</label>
-							<div tabindex="0" class="dropdown-content menu p-2 shadow-lg bg-base-100 rounded-lg border border-base-200 w-80 max-h-96 overflow-y-auto z-[9999] opacity-100 bg-opacity-100">
+							<div tabindex="0" class="dropdown-content menu p-2 shadow-lg bg-base-100 rounded-lg border border-base-200 w-80 max-h-96 lg:w-96 overflow-y-auto opacity-100 bg-opacity-100">
 								<div class="form-control p-2">
 									<label class="label cursor-pointer justify-start gap-3">
 										<input type="checkbox" class="checkbox checkbox-sm" id="genre-all" onchange="toggleAllGenres(this)" />
@@ -63,7 +63,7 @@
 								<div class="divider my-1"></div>
 								{% for genre_id, genre_name in genres %}
 								<div class="form-control">
-									<label class="label cursor-pointer justify-start gap-3 py-1">
+									<label class="label cursor-pointer justify-start gap-3 py-1 text-base-content">
 										<input type="checkbox" name="genres" value="{{ genre_id }}" class="checkbox checkbox-sm genre-checkbox" {% if genre_id|stringformat:'s' in selected_genres %}checked{% endif %} onchange="updateGenreSelection()">
 										<span class="label-text">{{ genre_name }}</span>
 									</label>
@@ -78,12 +78,12 @@
 						<label class="label">
 							<span class="label-text font-medium">Categories</span>
 						</label>
-						<div class="dropdown dropdown-end relative z-[9999]">
+						<div class="dropdown dropdown-end relative">
 							<label tabindex="0" class="btn btn-outline btn-sm w-full max-w-xs justify-between">
 								<span id="tag-display"> {% if selected_tags %} {{ selected_tags|length }} categor{{ selected_tags|length|pluralize:"y,ies" }} selected {% else %} All Categories {% endif %} </span>
 								<iconify-icon icon="tabler:chevron-down" class="w-4 h-4"></iconify-icon>
 							</label>
-							<div tabindex="0" class="dropdown-content menu p-2 shadow-lg bg-base-100 rounded-lg border border-base-200 w-80 max-h-96 overflow-y-auto z-[9999] opacity-100 bg-opacity-100">
+							<div tabindex="0" class="dropdown-content menu p-2 shadow-lg bg-base-100 rounded-lg border border-base-200 w-80 max-h-96 lg:w-162 overflow-y-auto opacity-100 bg-opacity-100">
 								<div class="form-control p-2">
 									<label class="label cursor-pointer justify-start gap-3">
 										<input type="checkbox" class="checkbox checkbox-sm" id="tag-all" onchange="toggleAllTags(this)" />
@@ -93,7 +93,7 @@
 								<div class="divider my-1"></div>
 								{% for tag_id, tag_name in tags %}
 								<div class="form-control">
-									<label class="label cursor-pointer justify-start gap-3 py-1">
+									<label class="label cursor-pointer justify-start gap-3 py-1 text-base-content">
 										<input type="checkbox" name="tags" value="{{ tag_id }}" class="checkbox checkbox-sm tag-checkbox" {% if tag_id|stringformat:'s' in selected_tags %}checked{% endif %} onchange="updateTagSelection()">
 										<span class="label-text">{{ tag_name }}</span>
 									</label>
@@ -110,10 +110,10 @@
 						</label>
 						<div class="flex gap-2">
 							<button type="submit" class="btn btn-primary btn-sm">
-								<iconify-icon icon="tabler:filter"></iconify-icon>
-								Apply Filters
+								<iconify-icon icon="tabler:filter" class="text-white"></iconify-icon>
+								<span class="text-primary-content">Apply Filters</span>
 							</button>
-							<button type="button" class="btn btn-ghost btn-sm" onclick="clearAllFilters()">
+							<button type="button" class="btn btn-ghost btn-sm border border-base-content" onclick="clearAllFilters()">
 								<iconify-icon icon="tabler:x"></iconify-icon>
 								Clear All
 							</button>

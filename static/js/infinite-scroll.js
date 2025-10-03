@@ -294,20 +294,20 @@ class GameListManager {
 		}
 
 		// Build image section
-		const imageHTML = game.image
-			? `<img src="${game.image}" 
-                 alt="${game.title}" 
-                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                 loading="lazy">`
+		const imageHTML = game.image ? 
+				`<img src="${game.image}" 
+				alt="${game.title}" 
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                loading="lazy">`
 			: `<div class="w-full h-full flex items-center justify-center text-base-content/50">
                 <iconify-icon icon="tabler:device-gamepad-2" class="text-4xl"></iconify-icon>
             </div>`;
 
 		// Build wishlist button if user is authenticated
-		const wishlistButtonHTML = window.userAuthenticated
-			? `<a href="/games/add-to-wishlist/${game.appid}/" 
-			   class="btn btn-outline btn-secondary btn-sm"
-			   onclick="event.stopPropagation();">
+		const wishlistButtonHTML = window.userAuthenticated ?
+				`<a href="/games/add-to-wishlist/${game.appid}/" 
+				class="btn btn-outline btn-secondary btn-sm"
+				onclick="event.stopPropagation();">
 				<iconify-icon icon="tabler:heart"></iconify-icon>
 			</a>`
 			: "";
@@ -398,7 +398,7 @@ class GameListManager {
 
 // Initialize infinite scroll when DOM is ready
 document.addEventListener("DOMContentLoaded", function () {
-	new GameListManager();
+	const gameListManager = new GameListManager();
 });
 
 //  Search function
@@ -658,12 +658,18 @@ function updateTagSelection() {
 
 // Filter pill removal functions
 function removeGenre(genreId) {
-	const checkbox = document.querySelector(`input[name="genres"][value="${genreId}"]`);
-	if (checkbox) {
-		checkbox.checked = false;
-		updateGenreSelection();
-		document.querySelector("form").submit();
-	}
+	// Get current query params
+	const params = new URLSearchParams(window.location.search);
+	// Get all current genres
+	const genres = params.getAll('genres');
+	// Remove only the clicked genre
+	const updatedGenres = genres.filter(g => g !== genreId);
+	// Remove all genres from params
+	params.delete('genres');
+	// Add back the remaining genres
+	updatedGenres.forEach(g => params.append('genres', g));
+	// Redirect to updated URL
+	window.location.href = window.location.pathname + '?' + params.toString();
 }
 
 function removeTag(tagId) {
@@ -680,30 +686,32 @@ function clearSearch() {
 	document.querySelector("form").submit();
 }
 
-function clearPlatform() {
-	document.querySelector('select[name="platform"]').value = "";
-	document.querySelector("form").submit();
-}
-
 function clearAllFilters() {
 	// Clear search
-	document.querySelector('input[name="search"]').value = "";
+	const searchInput = document.querySelector('input[name="search"]');
+	if (searchInput) searchInput.value = "";
 
 	// Clear platform
-	document.querySelector('select[name="platform"]').value = "";
+	const platformSelect = document.querySelector('select[name="platform"]');
+	if (platformSelect) platformSelect.value = "";
 
 	// Clear all genre checkboxes
-	document.querySelectorAll(".genre-checkbox").forEach((cb) => (cb.checked = false));
-	document.getElementById("genre-all").checked = true;
-	updateGenreSelection();
+	document.querySelectorAll('input[name="genres"]').forEach(cb => cb.checked = false);
+	// If you have an "All Genres" checkbox, check it
+	const allGenreCheckbox = document.getElementById("genre-all");
+	if (allGenreCheckbox) allGenreCheckbox.checked = true;
+	if (typeof updateGenreSelection === "function") updateGenreSelection();
 
 	// Clear all tag checkboxes
-	document.querySelectorAll(".tag-checkbox").forEach((cb) => (cb.checked = false));
-	document.getElementById("tag-all").checked = true;
-	updateTagSelection();
+	document.querySelectorAll('input[name="tags"]').forEach(cb => cb.checked = false);
+	// If you have an "All Tags" checkbox, check it
+	const allTagCheckbox = document.getElementById("tag-all");
+	if (allTagCheckbox) allTagCheckbox.checked = true;
+	if (typeof updateTagSelection === "function") updateTagSelection();
 
-	// Submit form
-	document.querySelector("form").submit();
+	// Submit the filter form
+	const filterForm = document.querySelector("form");
+	if (filterForm) filterForm.submit();
 }
 
 // Show loading spinner during filter operations
@@ -719,3 +727,49 @@ document.addEventListener("DOMContentLoaded", function () {
 	updateGenreSelection();
 	updateTagSelection();
 });
+
+function showSearchSuggestions() {
+    const dropdown = document.getElementById("search-suggestions");
+    const gameContainer = document.getElementById("game-container");
+    if (dropdown) dropdown.classList.remove("hidden");
+    if (gameContainer) gameContainer.style.visibility = "hidden";
+}
+
+function hideSearchSuggestions() {
+    const dropdown = document.getElementById("search-suggestions");
+    const gameContainer = document.getElementById("game-container");
+    if (dropdown) dropdown.classList.add("hidden");
+    if (gameContainer) gameContainer.style.visibility = "visible";
+    currentSuggestionIndex = -1;
+}
+
+// Update fetchSearchSuggestions to call showSearchSuggestions
+async function fetchSearchSuggestions(query) {
+    // Check cache first
+    if (searchCache.has(query)) {
+        displaySuggestions(searchCache.get(query), query);
+        showSearchSuggestions();
+        return;
+    }
+
+    // Show loading state
+    showSearchLoading();
+    showSearchSuggestions();
+
+    try {
+        const response = await fetch(`/games/api/search-suggestions/?q=${encodeURIComponent(query)}`);
+        const data = await response.json();
+
+        if (response.ok) {
+            // Cache the results
+            searchCache.set(query, data.suggestions);
+            displaySuggestions(data.suggestions, query);
+            showSearchSuggestions();
+        } else {
+            hideSearchSuggestions();
+        }
+    } catch (error) {
+        console.error("Search suggestions error:", error);
+        hideSearchSuggestions();
+    }
+}

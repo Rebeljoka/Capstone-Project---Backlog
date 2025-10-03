@@ -31,6 +31,8 @@
     --color-text-main: #2c2c2c;
     --shadow: black 0px 4px 6px -1px, black 0px 2px 4px -1px;
     --reverse-shadow: black 0px -4px 6px -1px, black 0px -2px 4px -1px;
+    --nav-bg: oklch(0.9897 0.0024 103.6 / 0.3);
+    --footer-bg: oklch(0.9897 0.0024 103.6 / 0.3);
 }
 
 /* Dark theme overrides */
@@ -47,6 +49,8 @@
     --color-text-main: #e5e5e5;
     --shadow: white 0px 4px 6px -1px, white 0px 2px 4px -1px;
     --reverse-shadow: white 0px -4px 6px -1px, white 0px -2px 4px -1px;
+    --nav-bg: oklch(0.1446 0.0004 269.2 / 0.3);
+    --footer-bg: oklch(0.1446 0.0004 269.2 / 0.3);
 }
 
 
@@ -85,7 +89,6 @@ h2, h3, h4, h5, h6 {
 a, button, input, select, textarea {
     font-family: var(--font-ui);
     color: var(--color-text-main);
-    background-color: var(--color-bg-main);
 }
 
 p {
@@ -95,7 +98,6 @@ p {
     margin-bottom: 1rem;
     font-size: 1.25rem;
 }
-
 
 /* ========================================
    FORM ELEMENTS
@@ -121,29 +123,34 @@ select {
 
 /* Navigation */
 nav {
-    background-color: var(--color-bg-main);
+    backdrop-filter: blur(8px);
+    background-color: var(--nav-bg);
     box-shadow: var(--shadow);
     min-height: 80px;
 }
 
-/* Footer */
-footer {
-    background-color: var(--color-bg-main);
-    box-shadow: var(--reverse-shadow);
-    margin-top: auto;
+/* Notch Container */
+.NotchContainer {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 0 0 20px 20px;
+    background-color: var(--nav-bg);
 }
 
 /* Search background */
 .search-bg {
-    background-color: var(--color-bg-main);
     border: none;
     box-shadow: var(--shadow);
 }
 
-/* Dark mode search background adjustment */
-[data-theme="dark"] .search-bg {
-    background-color: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(12px);
+/* Footer */
+footer {
+    backdrop-filter: blur(8px);
+    background-color: var(--footer-bg);
+    box-shadow: var(--reverse-shadow);
+    margin-top: 80px;
 }
 
 
@@ -319,7 +326,6 @@ footer {
 
 /* Multi-select filter enhancements */
 .dropdown-content {
-    z-index: 50;
     max-height: 400px;
     overflow-y: auto;
     border: 1px solid oklch(var(--bc) / 0.2);
@@ -426,6 +432,9 @@ footer {
     .games-grid {
         grid-template-columns: repeat(1, 1fr) !important;
     }
+    .siteName > span {
+        font-size: 40px;
+    }
 }
 
 @media (min-width: 640px) and (max-width: 767px) {
@@ -444,15 +453,9 @@ footer {
     .games-grid {
         grid-template-columns: repeat(5, 1fr) !important;
     }
-}
-
-@media (min-width: 1280px) {
-  .games-grid {
-    align-content: start; /* stop grid rows stretching to fill min-height */
-  }
-}
-
-@media (min-width: 1280px) {
+    .games-grid {
+        align-content: start; /* stop grid rows stretching to fill min-height */
+    }
     .game-card {
         max-height: 202px !important;
     }

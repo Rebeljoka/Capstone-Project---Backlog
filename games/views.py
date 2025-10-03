@@ -231,16 +231,16 @@ def game_list(request):
                 if selected_genres:
                     genres = game_data.get('genres', [])
                     game_genre_ids = [str(genre.get('id')) for genre in genres]
-                    # Check if ANY of the selected genres match (OR logic for multi-select)
-                    if not any(genre_id in game_genre_ids for genre_id in selected_genres):
+                    # Check if ALL of the selected genres match (AND logic for multi-select)
+                    if not all(genre_id in game_genre_ids for genre_id in selected_genres):
                         continue
 
                 # Apply tag filter if selected (multi-select AND logic)
                 if selected_tags:
                     tags = game_data.get('tags', [])
                     game_tag_ids = [str(tag.get('id')) for tag in tags]
-                    # Check if ANY of the selected tags match (OR logic for multi-select)
-                    if not any(tag_id in game_tag_ids for tag_id in selected_tags):
+                    # Check if ALL of the selected tags match (AND logic for multi-select)
+                    if not all(tag_id in game_tag_ids for tag_id in selected_tags):
                         continue
 
                 # Add appid back to the game data for pagination reference
