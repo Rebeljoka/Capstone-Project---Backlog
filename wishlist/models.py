@@ -7,6 +7,7 @@ class Wishlist(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='wishlists')
     name = models.CharField(max_length=100)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         unique_together = ('user', 'name')

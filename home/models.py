@@ -3,11 +3,29 @@ from django.contrib.auth.models import User
 from cloudinary.models import CloudinaryField
 
 
+class FavoriteGenre(models.Model):
+    name = models.CharField(max_length=64, unique=True)
+
+    def __str__(self):
+        return self.name
+
+
+class Platform(models.Model):
+    name = models.CharField(max_length=64, unique=True)
+    icon = models.CharField(max_length=32, default='device-gamepad')
+    active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.name
+
+
 class UserProfile(models.Model):
     """Extended user profile with additional fields"""
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     profile_picture = CloudinaryField('image', null=True, blank=True)
     bio = models.TextField(max_length=500, blank=True)
+    favorite_genres = models.ManyToManyField(FavoriteGenre, blank=True, related_name='users')
+    platforms = models.ManyToManyField(Platform, blank=True, related_name='users')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -55,3 +73,14 @@ class UserProfile(models.Model):
 
         # Return a generated avatar URL using UI Avatars or similar service
         return f"https://ui-avatars.com/api/?name={initials}&background={color}&color=ffffff&size=200&bold=true"
+
+
+class Activity(models.Model):
+    """User activity log for profile page and notifications"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='activity_set')
+    icon = models.CharField(max_length=32, default='activity')
+    text = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username}: {self.text[:30]}... ({self.timestamp})"

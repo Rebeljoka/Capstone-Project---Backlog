@@ -409,6 +409,13 @@ footer {
     100% { transform: rotate(360deg); }
 }
 
+/* ========================================
+   WISHLIST COMPONENTS
+   ======================================== */
+
+.wishCard {
+    background-color: var(--color-card-bg);
+}
 
 /* ========================================
    RESPONSIVE DESIGN / MEDIA QUERIES

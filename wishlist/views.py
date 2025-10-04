@@ -58,6 +58,18 @@ def wishlist_create(request):
             wishlist.user = request.user
             wishlist.save()
             messages.success(request, "Wishlist created successfully.")
+            # Log activity for profile page
+            try:
+                from home.models import Activity
+                from django.utils import timezone
+                Activity.objects.create(
+                    user=request.user,
+                    icon='heart',
+                    text=f'Created a new wishlist <span class="text-primary">"{wishlist.name}"</span>',
+                    timestamp=timezone.now()
+                )
+            except Exception:
+                pass  # Don't break wishlist creation if activity logging fails
             return redirect('wishlist_list')
     else:
         form = WishlistForm()
@@ -150,6 +162,18 @@ def add_steam_game_to_wishlist(request, appid):
                     order=wishlist.items.count()  # Add at the end
                 )
                 messages.success(request, f"'{game.title}' added to '{wishlist.name}' wishlist.")
+            # Log activity for profile page
+            try:
+                from home.models import Activity
+                from django.utils import timezone
+                Activity.objects.create(
+                    user=request.user,
+                    icon='plus',
+                    text=f'Added <span class="text-primary">{game.title}</span> to wishlist <span class="text-primary">"{wishlist.name}"</span>',
+                    timestamp=timezone.now()
+                )
+            except Exception:
+                pass  # Don't break if activity logging fails
 
             return redirect('game_list')
 

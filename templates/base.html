@@ -27,7 +27,7 @@
         <nav class="navbar gap-4 shadow-base-300/20 shadow-sm sticky top-0 z-50 backdrop-blur-md" style="margin-bottom:0;padding-bottom:0;padding-left:3rem;padding-right:3rem;">
             <div class="navbar-start flex items-center gap-2">
                 <div class="dropdown">
-                    <label tabindex="0" class="btn btn-ghost transition-transform duration-200 hover:scale-105 rounded-full flex items-center justify-center w-25 h-25 lg:w-20 lg:h-20 xl:w-24 xl:h-24" style="background-color: transparent;">
+                    <label tabindex="0" class="btn btn-ghost transition-transform duration-200 hover:scale-105 rounded-full flex items-center justify-center w-25 h-25 lg:w-20 lg:h-20 xl:w-24 xl:h-24">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-25 w-25 lg:h-12 lg:w-12 xl:h-16 xl:w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                         </svg>
@@ -54,7 +54,7 @@
                     {% if user.is_authenticated %}
                     <!-- Authenticated User Avatar Dropdown -->
                     <div class="dropdown dropdown-end">
-                        <label tabindex="0" class="btn btn-ghost rounded-full avatar flex items-center justify-center w-25 h-25 lg:w-20 lg:h-20 xl:w-24 xl:h-24">
+                        <label tabindex="0" class="btn btn-ghost transition-transform duration-200 hover:scale-105 rounded-full avatar flex items-center justify-center w-25 h-25 lg:w-20 lg:h-20 xl:w-24 xl:h-24">
                             <div class="w-25 rounded-full lg:w-14 xl:w-18">
                                 <img src="{{ user|profile_picture_url }}" alt="avatar" onerror="this.src='https://ui-avatars.com/api/?name={{ user|user_initials }}&background=667eea&color=ffffff&size=200&bold=true'" />
                             </div>
@@ -167,7 +167,7 @@
 		<div class="container mx-auto px-4 mt-4">
 			{% for message in messages %}
 				<div class="alert mb-4 {% if message.tags == 'error' %}alert-error{% elif message.tags == 'warning' %}alert-warning{% elif message.tags == 'success' %}alert-success{% elif message.tags == 'info' %}alert-info{% else %}alert-info{% endif %}">
-					<div class="flex items-center">
+					<div class="flex items-center text-center">
 						{% if message.tags == 'error' %}
 							<span class="nf nf-oct-x mr-2"></span>
 						{% elif message.tags == 'warning' %}
@@ -179,6 +179,9 @@
 						{% endif %}
 						<span>{{ message }}</span>
 					</div>
+                    <button type="button" class="btn-xs ml-auto" onclick="this.closest('.alert').style.display='none'">
+                        <span class="nf nf-oct-x"></span>
+                    </button>
 				</div>
 			{% endfor %}
 		</div>

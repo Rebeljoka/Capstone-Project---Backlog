@@ -24,7 +24,7 @@
                         <!-- User Stats -->
                         <div class="flex flex-row justify-center lg:justify-start gap-4 mb-6 pt-4">
                             <div class="stat bg-primary/10 rounded-lg p-4 text-center min-w-0 flex-1 lg:flex-initial lg:min-w-[120px]">
-                                <div class="stat-value text-primary text-2xl">{{ user.wishlist_set.count|default:0 }}</div>
+                                <div class="stat-value text-primary text-2xl">{{ stats.wishlists|default:0 }}</div>
                                 <div class="stat-title text-sm">Wishlists</div>
                             </div>
                             <div class="stat bg-secondary/10 rounded-lg p-4 text-center min-w-0 flex-1 lg:flex-initial lg:min-w-[120px]">
@@ -94,11 +94,13 @@
                             Favorite Genres
                         </h2>
                         <div class="flex flex-wrap gap-2">
-                            <div class="badge badge-primary">Action</div>
-                            <div class="badge badge-secondary">RPG</div>
-                            <div class="badge badge-accent">Strategy</div>
-                            <div class="badge badge-outline">Adventure</div>
-                            <div class="badge badge-outline">Simulation</div>
+                            {% if favorite_genres %}
+                                {% for genre in favorite_genres %}
+                                    <div class="badge badge-primary">{{ genre }}</div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="badge badge-outline">No genres set</div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -111,27 +113,19 @@
                             Gaming Platforms
                         </h2>
                         <div class="space-y-2">
-                            <div class="flex items-center justify-between">
-                                <span class="text-sm flex items-center gap-2">
-                                    <iconify-icon icon="tabler:brand-windows"></iconify-icon>
-                                    PC (Steam)
-                                </span>
-                                <div class="badge badge-success badge-sm">Active</div>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <span class="text-sm flex items-center gap-2">
-                                    <iconify-icon icon="tabler:device-gamepad-2"></iconify-icon>
-                                    PlayStation
-                                </span>
-                                <div class="badge badge-outline badge-sm">Inactive</div>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <span class="text-sm flex items-center gap-2">
-                                    <iconify-icon icon="tabler:device-mobile"></iconify-icon>
-                                    Mobile
-                                </span>
-                                <div class="badge badge-success badge-sm">Active</div>
-                            </div>
+                            {% if platforms %}
+                                {% for platform in platforms %}
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm flex items-center gap-2">
+                                            <iconify-icon icon="tabler:{{ platform.icon }}"></iconify-icon>
+                                            {{ platform.name }}
+                                        </span>
+                                        <div class="badge badge-{% if platform.active %}success{% else %}outline{% endif %} badge-sm">{% if platform.active %}Active{% else %}Inactive{% endif %}</div>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="text-sm text-base-content/60">No platforms set</div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -150,9 +144,9 @@
                             <a href="{% url 'wishlist_list' %}" class="btn btn-sm btn-outline">View All</a>
                         </div>
                         
-                        {% if user.wishlist_set.count > 0 %}
+                        {% if recent_wishlists.count > 0 %}
                             <div class="space-y-3">
-                                {% for wishlist in user.wishlist_set.all|slice:":3" %}
+                                {% for wishlist in recent_wishlists|slice:"0:3" %}
                                     <div class="border border-base-300 rounded-lg p-4 hover:bg-base-200/50 transition-colors">
                                         <div class="flex items-center justify-between">
                                             <div>
@@ -189,50 +183,23 @@
                         </h2>
                         
                         <div class="space-y-4">
-                            <!-- Sample activity items - these would come from a real activity log -->
-                            <div class="flex items-start gap-3">
-                                <div class="avatar placeholder">
-                                    <div class="bg-primary text-primary-content w-8 h-8 rounded-full">
-                                        <iconify-icon icon="tabler:heart" class="text-sm"></iconify-icon>
+                            {% if activity_log %}
+                                {% for activity in activity_log %}
+                                    <div class="flex items-start gap-3">
+                                        <div class="avatar placeholder">
+                                            <div class="bg-primary text-primary-content w-8 h-8 rounded-full">
+                                                <iconify-icon icon="tabler:{{ activity.icon }}" class="text-sm"></iconify-icon>
+                                            </div>
+                                        </div>
+                                        <div class="flex-1">
+                                            <p class="text-sm">{{ activity.text|safe }}</p>
+                                            <p class="text-xs text-base-content/60">{{ activity.time }}</p>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="flex-1">
-                                    <p class="text-sm">
-                                        <span class="font-semibold">Created</span> a new wishlist
-                                        <span class="text-primary">"Must Play RPGs"</span>
-                                    </p>
-                                    <p class="text-xs text-base-content/60">2 hours ago</p>
-                                </div>
-                            </div>
-                            
-                            <div class="flex items-start gap-3">
-                                <div class="avatar placeholder">
-                                    <div class="bg-secondary text-secondary-content w-8 h-8 rounded-full">
-                                        <iconify-icon icon="tabler:plus" class="text-sm"></iconify-icon>
-                                    </div>
-                                </div>
-                                <div class="flex-1">
-                                    <p class="text-sm">
-                                        <span class="font-semibold">Added</span> 
-                                        <span class="text-secondary">"Cyberpunk 2077"</span> to wishlist
-                                    </p>
-                                    <p class="text-xs text-base-content/60">1 day ago</p>
-                                </div>
-                            </div>
-                            
-                            <div class="flex items-start gap-3">
-                                <div class="avatar placeholder">
-                                    <div class="bg-accent text-accent-content w-8 h-8 rounded-full">
-                                        <iconify-icon icon="tabler:user-plus" class="text-sm"></iconify-icon>
-                                    </div>
-                                </div>
-                                <div class="flex-1">
-                                    <p class="text-sm">
-                                        <span class="font-semibold">Joined</span> Backlog community
-                                    </p>
-                                    <p class="text-xs text-base-content/60">{{ user.date_joined|date:"M d, Y" }}</p>
-                                </div>
-                            </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="text-base-content/60 text-sm">No recent activity</div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -247,19 +214,19 @@
                         
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                             <div class="text-center">
-                                <div class="text-2xl font-bold text-primary">42</div>
+                                <div class="text-2xl font-bold text-primary">{{ stats.games_owned|default:0 }}</div>
                                 <div class="text-xs text-base-content/60">Games Owned</div>
                             </div>
                             <div class="text-center">
-                                <div class="text-2xl font-bold text-secondary">128</div>
+                                <div class="text-2xl font-bold text-secondary">{{ stats.hours_played|default:0 }}</div>
                                 <div class="text-xs text-base-content/60">Hours Played</div>
                             </div>
                             <div class="text-center">
-                                <div class="text-2xl font-bold text-accent">7</div>
+                                <div class="text-2xl font-bold text-accent">{{ stats.completed|default:0 }}</div>
                                 <div class="text-xs text-base-content/60">Completed</div>
                             </div>
                             <div class="text-center">
-                                <div class="text-2xl font-bold text-info">15</div>
+                                <div class="text-2xl font-bold text-info">{{ stats.in_backlog|default:0 }}</div>
                                 <div class="text-xs text-base-content/60">In Backlog</div>
                             </div>
                         </div>

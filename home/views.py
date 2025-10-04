@@ -20,19 +20,61 @@ def profile(request):
     # Calculate days since joining
     days_joined = (timezone.now().date() - user.date_joined.date()).days
 
-    # Get total games from all wishlists (avoid duplicates)
-    total_games = 0
-    if hasattr(user, 'wishlist_set'):
-        game_ids = set()
-        for wishlist in user.wishlist_set.all():
-            for game in wishlist.games.all():
-                game_ids.add(game.id)
-        total_games = len(game_ids)
+    # Get total games from all wishlists using WishlistItem (avoid duplicates)
+    from wishlist.models import WishlistItem
+    wishlist_qs = user.wishlists.all()
+    game_ids = set()
+    for wishlist in wishlist_qs:
+        for item in wishlist.items.all():
+            game_ids.add(item.game.pk)
+    total_games = len(game_ids)
+
+    # Example: favorite genres (replace with your actual logic)
+    favorite_genres = []
+    if hasattr(user, 'profile') and hasattr(user.profile, 'favorite_genres'):
+        favorite_genres = [g.name for g in user.profile.favorite_genres.all()]
+
+    # Example: platforms (replace with your actual logic)
+    platforms = []
+    if hasattr(user, 'profile') and hasattr(user.profile, 'platforms'):
+        platforms = [
+            {
+                'name': p.name,
+                'icon': p.icon if hasattr(p, 'icon') else 'device-gamepad',
+                'active': p.active if hasattr(p, 'active') else True,
+            }
+            for p in user.profile.platforms.all()
+        ]
+
+    # Example: activity log (replace with your actual logic)
+    activity_log = []
+    if hasattr(user, 'activity_set'):
+        for activity in user.activity_set.order_by('-timestamp')[:10]:
+            activity_log.append({
+                'icon': activity.icon if hasattr(activity, 'icon') else 'activity',
+                'text': activity.text,
+                'time': activity.timestamp.strftime('%b %d, %Y %H:%M'),
+            })
+
+    # Example: stats (replace with your actual logic)
+    stats = {
+        'wishlists': wishlist_qs.count(),
+        'games_added': total_games,
+        'hours_played': getattr(user.profile, 'hours_played', 0) if hasattr(user, 'profile') else 0,
+    }
+
+    # Get wishlists ordered by most recently updated
+    recent_wishlists = user.wishlists.all().order_by('-updated_at')
 
     context = {
         'user': user,
         'days_joined': days_joined,
         'total_games': total_games,
+        'favorite_genres': favorite_genres,
+        'platforms': platforms,
+        'activity_log': activity_log,
+        'stats': stats,
+        'recent_wishlists': recent_wishlists,
     }
 
     return render(request, 'profile.html', context)

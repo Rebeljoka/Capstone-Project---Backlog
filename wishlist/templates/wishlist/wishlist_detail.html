@@ -1,121 +1,105 @@
-{% extends 'base.html' %}
-{% load static %}
-{% block content %}
+{% extends 'base.html' %} {% load static %} {% block content %}
 <div class="container mx-auto px-4 py-8 max-w-4xl">
-  
-  <!-- Header -->
-  <div class="mb-8">
-    <div class="flex items-center justify-between">
-      <div>
-        <h1 class="text-3xl font-bold text-primary mb-2">{{ wishlist.name }}</h1>
-        <p class="text-base-content/70">
-          {% if wishlist.items.count %}
-            {{ wishlist.items.count }} game{{ wishlist.items.count|pluralize }}
-          {% else %}
-            Empty wishlist
-          {% endif %}
-        </p>
-      </div>
-      <div class="flex gap-3">
-        <a href="{% url 'wishlist_list' %}" class="btn btn-outline">
-          <iconify-icon icon="tabler:arrow-left"></iconify-icon>
-          Back
-        </a>
-        <form action="{% url 'wishlist_delete' wishlist.pk %}" method="post" class="inline">
-          {% csrf_token %}
-          <button type="submit" class="btn btn-error" onclick="return confirm('Delete this wishlist?');">
-            <iconify-icon icon="tabler:trash"></iconify-icon>
-            Delete
-          </button>
-        </form>
-      </div>
-    </div>
-  </div>
+	<!-- Header -->
+	<div class="mb-8">
+		<div class="flex items-center justify-between">
+			<div>
+				<h1 class="text-3xl font-bold text-primary mb-2">{{ wishlist.name }}</h1>
+				<p class="text-base-content/70">{% if wishlist.items.count %} {{ wishlist.items.count }} game{{ wishlist.items.count|pluralize }} {% else %} Empty wishlist {% endif %}</p>
+			</div>
+			<div class="flex gap-3">
+				<a href="{% url 'wishlist_list' %}" class="btn btn-outline">
+					<iconify-icon icon="tabler:arrow-left"></iconify-icon>
+					Back
+				</a>
+				<form action="{% url 'wishlist_delete' wishlist.pk %}" method="post" class="inline">
+					{% csrf_token %}
+					<button type="submit" class="btn btn-error" onclick="return confirm('Delete this wishlist?');">
+						<iconify-icon icon="tabler:trash"></iconify-icon>
+						Delete
+					</button>
+				</form>
+			</div>
+		</div>
+	</div>
 
-  <!-- Games List -->
-  {% if wishlist.items.all %}
-    <div class="space-y-3">
-      {% for item in wishlist.items.all %}
-        <div class="card bg-base-100 shadow hover:shadow-md transition-shadow">
-          <div class="card-body p-4">
-            <div class="flex items-center gap-4">
-              
-              <!-- Priority Number -->
-              <div class="badge badge-primary badge-lg font-bold">
-                {{ forloop.counter }}
-              </div>
-              
-              <!-- Game Image -->
-              <div class="avatar">
-                <div class="w-12 h-12 rounded">
-                  {% if item.game.image %}
-                    <img src="{{ item.game.image }}" alt="{{ item.game.title }}">
-                  {% else %}
-                    <div class="bg-base-300 w-full h-full flex items-center justify-center">
-                      <iconify-icon icon="tabler:device-gamepad" class="text-base-content/50"></iconify-icon>
-                    </div>
-                  {% endif %}
-                </div>
-              </div>
-              
-              <!-- Game Info -->
-              <div class="flex-1 min-w-0">
-                <h3 class="font-semibold text-lg truncate">{{ item.game.title }}</h3>
-                {% if item.game.developer %}
-                  <p class="text-sm text-base-content/70">{{ item.game.developer }}</p>
-                {% endif %}
-              </div>
-              
-              <!-- Action Buttons -->
-              <div class="flex items-center gap-2">
-                <!-- Move Up -->
-                {% if not forloop.first %}
-                  <form action="{% url 'wishlist_item_move' item.pk 'up' %}" method="post">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-sm btn-circle btn-outline" title="Move up">
-                      <iconify-icon icon="tabler:chevron-up"></iconify-icon>
-                    </button>
-                  </form>
-                {% endif %}
-                
-                <!-- Move Down -->
-                {% if not forloop.last %}
-                  <form action="{% url 'wishlist_item_move' item.pk 'down' %}" method="post">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-sm btn-circle btn-outline" title="Move down">
-                      <iconify-icon icon="tabler:chevron-down"></iconify-icon>
-                    </button>
-                  </form>
-                {% endif %}
-                
-                <!-- Remove -->
-                <form action="{% url 'wishlist_item_delete' item.pk %}" method="post">
-                  {% csrf_token %}
-                  <button type="submit" class="btn btn-sm btn-circle btn-error btn-outline" 
-                          onclick="return confirm('Remove {{ item.game.title }} from wishlist?');" 
-                          title="Remove from wishlist">
-                    <iconify-icon icon="tabler:x"></iconify-icon>
-                  </button>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-      {% endfor %}
-    </div>
-    
-  {% else %}
-    <!-- Empty State -->
-    <div class="text-center py-12">
-      <iconify-icon icon="tabler:heart-off" class="text-6xl text-base-content/30 mb-4"></iconify-icon>
-      <h2 class="text-xl font-semibold mb-2">No games in this wishlist</h2>
-      <p class="text-base-content/70 mb-4">Add some games to get started!</p>
-      <a href="{% url 'game_list' %}" class="btn btn-primary">
-        <iconify-icon icon="tabler:plus"></iconify-icon>
-        Browse Games
-      </a>
-    </div>
-  {% endif %}
-  
+	<!-- Games List -->
+	{% if wishlist.items.all %}
+	<div class="space-y-3">
+		{% for item in wishlist.items.all %}
+		<div class="card bg-base-100 shadow hover:shadow-md transition-shadow">
+			<div class="card-body p-4">
+				<div class="flex items-center gap-4">
+					<!-- Priority Number -->
+					<div class="badge badge-primary badge-lg font-bold">{{ forloop.counter }}</div>
+
+					<!-- Game Image -->
+					<div class="avatar">
+						<div class="w-12 h-12 rounded">
+							{% if item.game.image %}
+							<img src="{{ item.game.image }}" alt="{{ item.game.title }}" />
+							{% else %}
+							<div class="bg-base-300 w-full h-full flex items-center justify-center">
+								<iconify-icon icon="tabler:device-gamepad" class="text-base-content/50"></iconify-icon>
+							</div>
+							{% endif %}
+						</div>
+					</div>
+
+					<!-- Game Info -->
+					<div class="flex-1 min-w-0">
+						<h3 class="font-semibold text-lg truncate">{{ item.game.title }}</h3>
+						{% if item.game.developer %}
+						<p class="text-sm text-base-content/70">{{ item.game.developer }}</p>
+						{% endif %}
+					</div>
+
+					<!-- Action Buttons -->
+					<div class="flex items-center gap-2">
+						<!-- Move Up -->
+						{% if not forloop.first %}
+						<form action="{% url 'wishlist_item_move' item.pk 'up' %}" method="post">
+							{% csrf_token %}
+							<button type="submit" class="btn btn-sm btn-circle btn-outline" title="Move up">
+								<iconify-icon icon="tabler:chevron-up"></iconify-icon>
+							</button>
+						</form>
+						{% endif %}
+
+						<!-- Move Down -->
+						{% if not forloop.last %}
+						<form action="{% url 'wishlist_item_move' item.pk 'down' %}" method="post">
+							{% csrf_token %}
+							<button type="submit" class="btn btn-sm btn-circle btn-outline" title="Move down">
+								<iconify-icon icon="tabler:chevron-down"></iconify-icon>
+							</button>
+						</form>
+						{% endif %}
+
+						<!-- Remove -->
+						<form action="{% url 'wishlist_item_delete' item.pk %}" method="post">
+							{% csrf_token %}
+							<button type="submit" class="btn btn-sm btn-circle btn-error btn-outline" onclick="return confirm('Remove {{ item.game.title }} from wishlist?');" title="Remove from wishlist">
+								<iconify-icon icon="tabler:x"></iconify-icon>
+							</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		{% endfor %}
+	</div>
+
+	{% else %}
+	<!-- Empty State -->
+	<div class="text-center py-12">
+		<iconify-icon icon="tabler:heart-off" class="text-6xl text-base-content/30 mb-4"></iconify-icon>
+		<h2 class="text-xl font-semibold mb-2">No games in this wishlist</h2>
+		<p class="text-base-content/70 mb-4">Add some games to get started!</p>
+		<a href="{% url 'game_list' %}" class="btn btn-primary">
+			<span class="nf nf-fa-plus text-white"> Browse Games </span>
+		</a>
+	</div>
+	{% endif %}
 </div>
 {% endblock %}
