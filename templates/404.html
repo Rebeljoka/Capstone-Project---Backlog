@@ -1,6 +1,22 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1>Page Not Found (404)</h1>
-<p>Sorry, the page you are looking for does not exist or you do not have permission to view it.</p>
-<a href="/">Return to Home</a>
+<div class="flex items-center justify-center min-h-[60vh]">
+	<div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 max-w-md w-full text-center">
+		<div class="flex justify-center mb-6">
+			<!-- Playful SVG illustration -->
+			<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<circle cx="60" cy="60" r="56" fill="#FBBF24" stroke="#F59E42" stroke-width="8"/>
+				<ellipse cx="45" cy="65" rx="8" ry="12" fill="#fff"/>
+				<ellipse cx="75" cy="65" rx="8" ry="12" fill="#fff"/>
+				<circle cx="45" cy="68" r="3" fill="#333"/>
+				<circle cx="75" cy="68" r="3" fill="#333"/>
+				<path d="M50 90 Q60 100 70 90" stroke="#333" stroke-width="3" fill="none"/>
+				<text x="60" y="50" text-anchor="middle" font-size="32" fill="#333" font-family="monospace" font-weight="bold">404</text>
+			</svg>
+		</div>
+		<h1 class="text-4xl font-extrabold text-yellow-500 mb-2">Oops! 404</h1>
+		<p class="text-lg text-gray-700 dark:text-gray-300 mb-4">The page you're looking for doesn't exist or you don't have permission to view it.</p>
+		<a href="/" class="inline-block px-6 py-2 bg-yellow-500 text-white font-semibold rounded-lg shadow hover:bg-yellow-600 transition">Return to Home</a>
+	</div>
+</div>
 {% endblock %}

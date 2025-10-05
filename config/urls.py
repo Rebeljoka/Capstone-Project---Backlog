@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
+from home.views import custom_404_view, custom_500_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,6 +26,11 @@ urlpatterns = [
     path('wishlist/', include('wishlist.urls')),
     path('', include('home.urls')),
 ]
+
+# Custom error handlers
+handler404 = custom_404_view
+
+handler500 = custom_500_view
 
 if settings.DEBUG:
     # Include django_browser_reload URLs only in DEBUG mode

@@ -23,6 +23,10 @@ class Game(models.Model):
     # ManyToManyField allows each game to have multiple genres and each genre to be linked to multiple games.
     # related_name='games' lets you access all games for a genre using genre.games.all()
     genres = models.ManyToManyField('Genre', related_name='games', blank=True)
+    # System requirements (minimum)
+    pc_requirements_minimum = models.TextField(blank=True)
+    mac_requirements_minimum = models.TextField(blank=True)
+    linux_requirements_minimum = models.TextField(blank=True)
 
     def __str__(self):
         # This method controls how the object is displayed in the admin and shell.

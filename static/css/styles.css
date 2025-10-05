@@ -418,6 +418,57 @@ footer {
 }
 
 /* ========================================
+   Edit Profile Page Custom Styles
+   ======================================== */
+
+	.menu-item.active {
+		background-color: hsl(var(--p) / 0.1);
+		color: hsl(var(--p));
+		font-weight: 600;
+	}
+
+	.menu-item:hover {
+		background-color: hsl(var(--b2));
+	}
+
+	.section-content {
+		animation: fadeIn 0.3s ease-in-out;
+	}
+
+	@keyframes fadeIn {
+		from {
+			opacity: 0;
+			transform: translateY(10px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	/* Avatar fallback styling */
+	.avatar img {
+		object-fit: cover;
+	}
+
+	.avatar img:not([src]),
+	.avatar img[src=""] {
+		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: white;
+		font-weight: bold;
+		font-size: 1.5rem;
+	}
+
+	.avatar img:not([src])::before,
+	.avatar img[src=""]::before {
+		content: "{{ user|user_initials }}";
+	}
+
+
+/* ========================================
    RESPONSIVE DESIGN / MEDIA QUERIES
    ======================================== */
 

@@ -1,3 +1,22 @@
+// Utility: Debounce and Throttle
+function debounce(fn, delay) {
+	let timer;
+	return function(...args) {
+		clearTimeout(timer);
+		timer = setTimeout(() => fn.apply(this, args), delay);
+	};
+}
+
+function throttle(fn, limit) {
+	let lastCall = 0;
+	return function(...args) {
+		const now = Date.now();
+		if (now - lastCall >= limit) {
+			lastCall = now;
+			fn.apply(this, args);
+		}
+	};
+}
 // Infinite Scroll Functionality for Game List
 class GameListManager {
 	constructor() {
@@ -8,6 +27,11 @@ class GameListManager {
 		this.selectedGenres = [];
 		this.selectedTags = [];
 		this.selectedPlatform = "";
+
+		// Cache elements once in the constructor
+		this.gameContainer = document.getElementById("game-container");
+		this.loadMoreContainer = document.getElementById("load-more-container");
+		this.loadMoreBtn = document.getElementById("load-more-btn");
 
 		// Only initialize if we're on the game list page
 		if (this.isGameListPage()) {
@@ -20,10 +44,7 @@ class GameListManager {
 	}
 
 	init() {
-		this.gameContainer = document.getElementById("game-container");
 		this.loadingSpinner = this.createLoadingSpinner();
-		this.loadMoreContainer = document.getElementById("load-more-container");
-		this.loadMoreBtn = document.getElementById("load-more-btn");
 
 		if (this.gameContainer) {
 			// Get current search parameters from URL
@@ -70,27 +91,19 @@ class GameListManager {
 			this.gameContainer.parentNode.appendChild(this.loadingSpinner);
 		}
 
-		// Set up scroll event listener
-		let scrollTimeout;
-		window.addEventListener("scroll", () => {
-			clearTimeout(scrollTimeout);
-			scrollTimeout = setTimeout(() => {
-				this.handleScroll();
-			}, 100); // Throttle scroll events
-		});
+		// Set up scroll event listener using throttle utility
+		window.addEventListener("scroll", throttle(() => {
+			this.handleScroll();
+		}, 100), { passive: true });
 	}
 
 	setupSearch() {
-		// Debounced search functionality
+		// Debounced search functionality using debounce utility
 		const searchInput = document.getElementById("searchInput");
 		if (searchInput) {
-			let searchTimeout;
-			searchInput.addEventListener("input", (e) => {
-				clearTimeout(searchTimeout);
-				searchTimeout = setTimeout(() => {
-					this.handleSearch(e.target.value);
-				}, 300);
-			});
+			searchInput.addEventListener("input", debounce((e) => {
+				this.handleSearch(e.target.value);
+			}, 300));
 		}
 	}
 
@@ -189,14 +202,11 @@ class GameListManager {
 				params.append("tags", tag);
 			});
 
-			console.log(`Loading page ${this.currentPage + 1} with params:`, params.toString());
 
 			const response = await fetch(`/games/api/load-more/?${params}`);
 			const data = await response.json();
 
 			if (response.ok) {
-				console.log(`Loaded ${data.games.length} games, has_more: ${data.has_more}`);
-				console.log("Game data received:", data.games); // Debug: see all game data
 				this.appendGames(data.games);
 				this.currentPage++;
 				this.hasMore = data.has_more;
@@ -204,11 +214,9 @@ class GameListManager {
 				// Update URL without page refresh
 				this.updateURL();
 			} else {
-				console.error("Error loading games:", data.error);
 				this.showError("Failed to load more games. Please try again.");
 			}
 		} catch (error) {
-			console.error("Network error:", error);
 			this.showError("Network error. Please check your connection.");
 		} finally {
 			this.loading = false;
@@ -249,12 +257,10 @@ class GameListManager {
 		card.style.transition = "opacity 0.3s ease, transform 0.3s ease";
 
 		const platforms = game.platforms || {};
-		console.log("Game platforms for", game.title, ":", platforms); // Debug log
 
 		// Build platform icons
 		let platformIconsHTML = "";
 		if (platforms.windows) {
-			console.log("Adding Windows platform for", game.title);
 			platformIconsHTML += `
                 <span class="badge badge-neutral badge-sm" title="Windows">
                     <iconify-icon icon="simple-icons:windows"></iconify-icon>
@@ -262,7 +268,6 @@ class GameListManager {
             `;
 		}
 		if (platforms.mac) {
-			console.log("Adding Mac platform for", game.title);
 			platformIconsHTML += `
                 <span class="badge badge-neutral badge-sm" title="Mac">
                     <iconify-icon icon="simple-icons:apple"></iconify-icon>
@@ -270,7 +275,6 @@ class GameListManager {
             `;
 		}
 		if (platforms.linux) {
-			console.log("Adding Linux platform for", game.title);
 			platformIconsHTML += `
                 <span class="badge badge-neutral badge-sm" title="Linux">
                     <iconify-icon icon="simple-icons:linux"></iconify-icon>
@@ -294,8 +298,8 @@ class GameListManager {
 		}
 
 		// Build image section
-		const imageHTML = game.image ? 
-				`<img src="${game.image}" 
+		const imageHTML = game.image
+			? `<img src="${game.image}" 
 				alt="${game.title}" 
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 loading="lazy">`
@@ -304,8 +308,8 @@ class GameListManager {
             </div>`;
 
 		// Build wishlist button if user is authenticated
-		const wishlistButtonHTML = window.userAuthenticated ?
-				`<a href="/games/add-to-wishlist/${game.appid}/" 
+		const wishlistButtonHTML = window.userAuthenticated
+			? `<a href="/games/add-to-wishlist/${game.appid}/" 
 				class="btn btn-outline btn-secondary btn-sm"
 				onclick="event.stopPropagation();">
 				<iconify-icon icon="tabler:heart"></iconify-icon>
@@ -397,8 +401,11 @@ class GameListManager {
 }
 
 // Initialize infinite scroll when DOM is ready
+// Single DOMContentLoaded listener for all initialization
 document.addEventListener("DOMContentLoaded", function () {
-	const gameListManager = new GameListManager();
+	new GameListManager();
+	updateGenreSelection();
+	updateTagSelection();
 });
 
 //  Search function
@@ -457,66 +464,55 @@ function updateSuggestionHighlight(suggestions) {
 	});
 }
 
-async function fetchSearchSuggestions(query) {
-	// Check cache first
-	if (searchCache.has(query)) {
-		displaySuggestions(searchCache.get(query), query);
-		return;
-	}
-
-	// Show loading state
-	showSearchLoading();
-
-	try {
-		const response = await fetch(`/games/api/search-suggestions/?q=${encodeURIComponent(query)}`);
-		const data = await response.json();
-
-		if (response.ok) {
-			// Cache the results
-			searchCache.set(query, data.suggestions);
-			displaySuggestions(data.suggestions, query);
-		} else {
-			hideSearchSuggestions();
-		}
-	} catch (error) {
-		console.error("Search suggestions error:", error);
-		hideSearchSuggestions();
-	}
-}
-
 function displaySuggestions(suggestions, query) {
-	const suggestionsList = document.getElementById("suggestions-list");
-	const noSuggestions = document.getElementById("no-suggestions");
-	const dropdown = document.getElementById("search-suggestions");
+    // Find the active input and its related suggestion elements
+    let activeInput = document.activeElement;
+    let suggestionsList = null;
+    let noSuggestions = null;
+    let dropdown = null;
 
-	hideSearchLoading();
+    if (activeInput && activeInput.classList.contains('searchInput')) {
+        // Use data attributes or DOM traversal to find related elements
+        const parent = activeInput.closest('.search-bar, .relative, form') || document;
+        suggestionsList = parent.querySelector('.suggestions-list') || document.getElementById('suggestions-list');
+        noSuggestions = parent.querySelector('.no-suggestions') || document.getElementById('no-suggestions');
+        dropdown = parent.querySelector('.search-suggestions') || document.getElementById('search-suggestions');
+    } else {
+        // Fallback to global elements
+        suggestionsList = document.getElementById('suggestions-list');
+        noSuggestions = document.getElementById('no-suggestions');
+        dropdown = document.getElementById('search-suggestions');
+    }
 
-	if (!suggestions || suggestions.length === 0) {
-		suggestionsList.innerHTML = "";
-		noSuggestions.classList.remove("hidden");
-		dropdown.classList.remove("hidden");
-		return;
-	}
+    hideSearchLoading();
 
-	noSuggestions.classList.add("hidden");
-	currentSuggestionIndex = -1;
+    if (!suggestions || suggestions.length === 0) {
+        if (suggestionsList) suggestionsList.innerHTML = "";
+        if (noSuggestions) noSuggestions.classList.remove("hidden");
+        if (dropdown) dropdown.classList.remove("hidden");
+        return;
+    }
 
-	// Create clean suggestion items with highlighted text
-	suggestionsList.innerHTML = suggestions
-		.map(
-			(game, index) => `
-    <div class="suggestion-item cursor-pointer flex items-center gap-3" 
-         data-appid="${game.appid}" 
-         data-title="${game.name}"
-         onclick="selectSuggestion(this)">
-      <iconify-icon icon="tabler:device-gamepad-2" class="text-base-content/50 flex-shrink-0"></iconify-icon>
-      <span class="text-sm truncate">${highlightMatch(game.name, query)}</span>
-    </div>
-  `
-		)
-		.join("");
+    if (noSuggestions) noSuggestions.classList.add("hidden");
+    currentSuggestionIndex = -1;
 
-	dropdown.classList.remove("hidden");
+    // Create clean suggestion items with highlighted text
+    if (suggestionsList) {
+        suggestionsList.innerHTML = suggestions
+            .map(
+                (game, index) => `
+        <div class="suggestion-item cursor-pointer flex items-center gap-3" 
+             data-appid="${game.appid}" 
+             data-title="${game.name}"
+             onclick="selectSuggestion(this)">
+          <iconify-icon icon="tabler:device-gamepad-2" class="text-base-content/50 flex-shrink-0"></iconify-icon>
+          <span class="text-sm truncate">${highlightMatch(game.name, query)}</span>
+        </div>
+      `
+            )
+            .join("");
+    }
+    if (dropdown) dropdown.classList.remove("hidden");
 }
 
 function highlightMatch(text, query) {
@@ -539,70 +535,61 @@ function selectSuggestion(element) {
 	try {
 		let formToSubmit = null;
 		if (input) {
-			formToSubmit = input.closest('form');
+			formToSubmit = input.closest("form");
 		}
 		if (!formToSubmit) {
-			formToSubmit = document.querySelector('form');
+			formToSubmit = document.querySelector("form");
 		}
 		if (formToSubmit) {
 			formToSubmit.submit();
 		} else {
-			console.warn('selectSuggestion: no form found to submit');
 		}
 	} catch (e) {
-		console.error('selectSuggestion submit failed', e);
 	}
 }
 
 function showSearchLoading() {
-	try {
-		const loader = document.getElementById("search-loading");
-		const suggestions = document.getElementById("search-suggestions");
-		if (loader) loader.classList.remove("hidden");
-		if (suggestions) suggestions.classList.remove("hidden");
-	} catch (e) {
-		// Defensive: ignore if DOM not ready or elements missing
-		console.debug('showSearchLoading: element missing', e);
-	}
+	const loader = document.getElementById("search-loading");
+	const suggestions = document.getElementById("search-suggestions");
+	if (loader) loader.classList.remove("hidden");
+	if (suggestions) suggestions.classList.remove("hidden");
 }
 
 function hideSearchLoading() {
-	try {
-		const loader = document.getElementById("search-loading");
-		if (loader) loader.classList.add("hidden");
-	} catch (e) {
-		console.debug('hideSearchLoading: element missing', e);
-	}
+	const loader = document.getElementById("search-loading");
+	if (loader) loader.classList.add("hidden");
 }
 
-function hideSearchSuggestions() {
-	document.getElementById("search-suggestions").classList.add("hidden");
-	currentSuggestionIndex = -1;
-}
 
-// Close suggestions when clicking outside
+
+
+// Close suggestions when clicking outside any search input or dropdown
 document.addEventListener("click", function (event) {
-	const searchInput = document.getElementById("searchInput");
-	const searchSuggestions = document.getElementById("search-suggestions");
-
-	if (!searchInput.contains(event.target) && !searchSuggestions.contains(event.target)) {
+	let clickedInside = false;
+	document.querySelectorAll('.searchInput, .search-suggestions').forEach(function(el) {
+		if (el.contains(event.target)) {
+			clickedInside = true;
+		}
+	});
+	if (!clickedInside) {
 		hideSearchSuggestions();
 	}
 });
 
-// Show suggestions when input is focused and has content
-document.getElementById("searchInput").addEventListener("focus", function () {
-	if (this.value.trim().length >= 2) {
-		const query = this.value.trim();
-		if (searchCache.has(query)) {
+
+// Event delegation for .searchInput focus
+document.body.addEventListener('focusin', function(e) {
+	if (e.target.classList.contains('searchInput')) {
+		const query = e.target.value.trim();
+		if (query.length >= 2 && searchCache.has(query)) {
 			displaySuggestions(searchCache.get(query), query);
 		}
 	}
 });
 
-// Clear search cache periodically (every 5 minutes)
+// Optimized search cache clearing: only clear if cache is large
 setInterval(() => {
-	searchCache.clear();
+	if (searchCache.size > 100) searchCache.clear();
 }, 300000);
 
 // Multi-Select Filter JavaScript
@@ -616,18 +603,19 @@ function toggleAllGenres(checkbox) {
 function updateGenreSelection() {
 	const allCheckbox = document.getElementById("genre-all");
 	const genreCheckboxes = document.querySelectorAll(".genre-checkbox");
-	const checkedGenres = document.querySelectorAll(".genre-checkbox:checked");
+	let checkedCount = 0;
+	genreCheckboxes.forEach(cb => { if (cb.checked) checkedCount++; });
 	const display = document.getElementById("genre-display");
-
 	// Update "All" checkbox state
-	allCheckbox.checked = checkedGenres.length === genreCheckboxes.length;
-	allCheckbox.indeterminate = checkedGenres.length > 0 && checkedGenres.length < genreCheckboxes.length;
-
+	if (allCheckbox) {
+		allCheckbox.checked = checkedCount === genreCheckboxes.length;
+		allCheckbox.indeterminate = checkedCount > 0 && checkedCount < genreCheckboxes.length;
+	}
 	// Update display text
-	if (checkedGenres.length === 0 || allCheckbox.checked) {
-		display.textContent = "All Genres";
-	} else {
-		display.textContent = `${checkedGenres.length} genre${checkedGenres.length === 1 ? "" : "s"} selected`;
+	if (display) {
+		display.textContent = (checkedCount === 0 || (allCheckbox && allCheckbox.checked))
+			? "All Genres"
+			: `${checkedCount} genre${checkedCount === 1 ? "" : "s"} selected`;
 	}
 }
 
@@ -641,18 +629,19 @@ function toggleAllTags(checkbox) {
 function updateTagSelection() {
 	const allCheckbox = document.getElementById("tag-all");
 	const tagCheckboxes = document.querySelectorAll(".tag-checkbox");
-	const checkedTags = document.querySelectorAll(".tag-checkbox:checked");
+	let checkedCount = 0;
+	tagCheckboxes.forEach(cb => { if (cb.checked) checkedCount++; });
 	const display = document.getElementById("tag-display");
-
 	// Update "All" checkbox state
-	allCheckbox.checked = checkedTags.length === tagCheckboxes.length;
-	allCheckbox.indeterminate = checkedTags.length > 0 && checkedTags.length < tagCheckboxes.length;
-
+	if (allCheckbox) {
+		allCheckbox.checked = checkedCount === tagCheckboxes.length;
+		allCheckbox.indeterminate = checkedCount > 0 && checkedCount < tagCheckboxes.length;
+	}
 	// Update display text
-	if (checkedTags.length === 0 || allCheckbox.checked) {
-		display.textContent = "All Categories";
-	} else {
-		display.textContent = `${checkedTags.length} categor${checkedTags.length === 1 ? "y" : "ies"} selected`;
+	if (display) {
+		display.textContent = (checkedCount === 0 || (allCheckbox && allCheckbox.checked))
+			? "All Categories"
+			: `${checkedCount} categor${checkedCount === 1 ? "y" : "ies"} selected`;
 	}
 }
 
@@ -661,15 +650,15 @@ function removeGenre(genreId) {
 	// Get current query params
 	const params = new URLSearchParams(window.location.search);
 	// Get all current genres
-	const genres = params.getAll('genres');
+	const genres = params.getAll("genres");
 	// Remove only the clicked genre
-	const updatedGenres = genres.filter(g => g !== genreId);
+	const updatedGenres = genres.filter((g) => g !== genreId);
 	// Remove all genres from params
-	params.delete('genres');
+	params.delete("genres");
 	// Add back the remaining genres
-	updatedGenres.forEach(g => params.append('genres', g));
+	updatedGenres.forEach((g) => params.append("genres", g));
 	// Redirect to updated URL
-	window.location.href = window.location.pathname + '?' + params.toString();
+	window.location.href = window.location.pathname + "?" + params.toString();
 }
 
 function removeTag(tagId) {
@@ -696,14 +685,14 @@ function clearAllFilters() {
 	if (platformSelect) platformSelect.value = "";
 
 	// Clear all genre checkboxes
-	document.querySelectorAll('input[name="genres"]').forEach(cb => cb.checked = false);
+	document.querySelectorAll('input[name="genres"]').forEach((cb) => (cb.checked = false));
 	// If you have an "All Genres" checkbox, check it
 	const allGenreCheckbox = document.getElementById("genre-all");
 	if (allGenreCheckbox) allGenreCheckbox.checked = true;
 	if (typeof updateGenreSelection === "function") updateGenreSelection();
 
 	// Clear all tag checkboxes
-	document.querySelectorAll('input[name="tags"]').forEach(cb => cb.checked = false);
+	document.querySelectorAll('input[name="tags"]').forEach((cb) => (cb.checked = false));
 	// If you have an "All Tags" checkbox, check it
 	const allTagCheckbox = document.getElementById("tag-all");
 	if (allTagCheckbox) allTagCheckbox.checked = true;
@@ -723,53 +712,54 @@ document.querySelector("form").addEventListener("submit", function () {
 });
 
 // Initialize filter states on page load
-document.addEventListener("DOMContentLoaded", function () {
-	updateGenreSelection();
-	updateTagSelection();
-});
+
 
 function showSearchSuggestions() {
-    const dropdown = document.getElementById("search-suggestions");
-    const gameContainer = document.getElementById("game-container");
-    if (dropdown) dropdown.classList.remove("hidden");
-    if (gameContainer) gameContainer.style.visibility = "hidden";
+	requestAnimationFrame(() => {
+		const dropdowns = document.querySelectorAll('.search-suggestions');
+		const containers = document.querySelectorAll('.game-container');
+		dropdowns.forEach(dropdown => dropdown.classList.remove('hidden'));
+		containers.forEach(container => container.style.visibility = 'hidden');
+	});
 }
 
 function hideSearchSuggestions() {
-    const dropdown = document.getElementById("search-suggestions");
-    const gameContainer = document.getElementById("game-container");
-    if (dropdown) dropdown.classList.add("hidden");
-    if (gameContainer) gameContainer.style.visibility = "visible";
-    currentSuggestionIndex = -1;
+	requestAnimationFrame(() => {
+		const dropdowns = document.querySelectorAll('.search-suggestions');
+		const containers = document.querySelectorAll('.game-container');
+		dropdowns.forEach(dropdown => dropdown.classList.add('hidden'));
+		containers.forEach(container => container.style.visibility = 'visible');
+		currentSuggestionIndex = -1;
+	});
 }
 
 // Update fetchSearchSuggestions to call showSearchSuggestions
+// Centralized search suggestion logic
 async function fetchSearchSuggestions(query) {
-    // Check cache first
-    if (searchCache.has(query)) {
-        displaySuggestions(searchCache.get(query), query);
-        showSearchSuggestions();
-        return;
-    }
+	// Check cache first
+	if (searchCache.has(query)) {
+		displaySuggestions(searchCache.get(query), query);
+		showSearchSuggestions();
+		return;
+	}
 
-    // Show loading state
-    showSearchLoading();
-    showSearchSuggestions();
+	// Show loading state
+	showSearchLoading();
+	showSearchSuggestions();
 
-    try {
-        const response = await fetch(`/games/api/search-suggestions/?q=${encodeURIComponent(query)}`);
-        const data = await response.json();
+	try {
+		const response = await fetch(`/games/api/search-suggestions/?q=${encodeURIComponent(query)}`);
+		const data = await response.json();
 
-        if (response.ok) {
-            // Cache the results
-            searchCache.set(query, data.suggestions);
-            displaySuggestions(data.suggestions, query);
-            showSearchSuggestions();
-        } else {
-            hideSearchSuggestions();
-        }
-    } catch (error) {
-        console.error("Search suggestions error:", error);
-        hideSearchSuggestions();
-    }
+		if (response.ok) {
+			// Cache the results
+			searchCache.set(query, data.suggestions);
+			displaySuggestions(data.suggestions, query);
+			showSearchSuggestions();
+		} else {
+			hideSearchSuggestions();
+		}
+	} catch (error) {
+		hideSearchSuggestions();
+	}
 }

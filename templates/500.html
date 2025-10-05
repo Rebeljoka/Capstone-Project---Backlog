@@ -1,6 +1,22 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1>Server Error (500)</h1>
-<p>Sorry, something went wrong on our end. Please try again later.</p>
-<a href="/">Return to Home</a>
+<div class="flex items-center justify-center min-h-[60vh]">
+	<div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 max-w-md w-full text-center">
+		<div class="flex justify-center mb-6">
+			<!-- Playful SVG illustration for 500 error -->
+			<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<circle cx="60" cy="60" r="56" fill="#F87171" stroke="#EF4444" stroke-width="8"/>
+				<ellipse cx="45" cy="65" rx="8" ry="12" fill="#fff"/>
+				<ellipse cx="75" cy="65" rx="8" ry="12" fill="#fff"/>
+				<circle cx="45" cy="68" r="3" fill="#333"/>
+				<circle cx="75" cy="68" r="3" fill="#333"/>
+				<path d="M50 90 Q60 80 70 90" stroke="#333" stroke-width="3" fill="none"/>
+				<text x="60" y="50" text-anchor="middle" font-size="32" fill="#333" font-family="monospace" font-weight="bold">500</text>
+			</svg>
+		</div>
+		<h1 class="text-4xl font-extrabold text-red-500 mb-2">Server Error (500)</h1>
+		<p class="text-lg text-gray-700 dark:text-gray-300 mb-4">Sorry, something went wrong on our end. Please try again later.</p>
+		<a href="/" class="inline-block px-6 py-2 bg-red-500 text-white font-semibold rounded-lg shadow hover:bg-red-600 transition">Return to Home</a>
+	</div>
+</div>
 {% endblock %}

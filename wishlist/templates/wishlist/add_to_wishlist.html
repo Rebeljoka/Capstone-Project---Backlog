@@ -12,7 +12,7 @@
 	<form method="post">
 		{% csrf_token %}
 		<div class="mb-6">
-			<label for="wishlist_id" class="block text-sm font-medium text-gray-700 mb-3"> Select Wishlist: </label>
+			<label for="wishlist_id" class="block text-sm font-medium mb-3"> Select Wishlist: </label>
 			<div class="space-y-3">
 				{% for item in wishlists_with_status %} {% if item.has_game %}
 				<div class="border border-orange-200 dark:border-orange-400 bg-orange-50 dark:bg-orange-900 rounded-lg p-3">

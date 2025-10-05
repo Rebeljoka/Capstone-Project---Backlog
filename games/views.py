@@ -341,14 +341,37 @@ def game_list(request):
 
 
 def game_detail(request, pk):
-    # Use the cached full details function for game detail page
-    game = get_cached_game_details(pk)
 
-    if game:
+    # Try to get the game from the database first
+    try:
+        db_game = Game.objects.get(game_id=pk)
+        # Convert genres and tags to list of dicts with 'description' key for template compatibility
+        genres = [{'description': genre.genre} for genre in db_game.genres.all()]
+        tags = [{'description': tag.name} for tag in db_game.tags.all()]
+        game = {
+            'appid': db_game.game_id,
+            'title': db_game.title,
+            'developer': db_game.developer,
+            'release_date': db_game.release_date,
+            'image': db_game.image,
+            'description': db_game.short_description,
+            'genres': genres,
+            'tags': tags,
+            'platforms': db_game.platform,
+            'pc_requirements_minimum': db_game.pc_requirements_minimum,
+            'mac_requirements_minimum': db_game.mac_requirements_minimum,
+            'linux_requirements_minimum': db_game.linux_requirements_minimum,
+            # Add other fields as needed
+        }
         return render(request, 'games/game_detail.html', {'game': game})
-    else:
-        error = 'Could not fetch game info from Steam.'
-        return render(request, 'games/game_detail.html', {'error': error})
+    except Game.DoesNotExist:
+        # If not in DB, use the cached full details function for game detail page
+        game = get_cached_game_details(pk)
+        if game:
+            return render(request, 'games/game_detail.html', {'game': game})
+        else:
+            error = 'Could not fetch game info from Steam.'
+            return render(request, 'games/game_detail.html', {'error': error})
 
 
 @login_required
@@ -357,18 +380,26 @@ def game_detail(request, pk):
 # creates the Game object, sets genres/tags, and redirects to the game detail page.
 def add_game_from_steam(request, appid):
     url = f"https://store.steampowered.com/api/appdetails?appids={appid}"
-    response = requests.get(url)
-    data = response.json()
-    app_data = data.get(str(appid), {})
-    if app_data.get('success'):
-        info = app_data['data']
+    try:
+        response = requests.get(url)
+        if response.status_code != 200:
+            return render(request, 'games/game_error.html', {'error': 'Could not fetch game info from Steam (bad response).'})
+        data = response.json()
+        if not data:
+            return render(request, 'games/game_error.html', {'error': 'No data returned from Steam API.'})
+        app_data = data.get(str(appid))
+        if not app_data or not app_data.get('success'):
+            return render(request, 'games/game_error.html', {'error': 'Could not fetch game info from Steam.'})
+        info = app_data.get('data')
+        if not info:
+            return render(request, 'games/game_error.html', {'error': 'Game data missing from Steam API.'})
         fields = map_steam_to_game(info, user=request.user)
         game = Game.objects.create(**fields)
         set_game_genres_and_tags(game, info)
         # Redirect to game detail or list page
         return redirect('game_detail', pk=game.pk)
-    else:
-        return render(request, 'games/game_error.html', {'error': 'Could not fetch game info from Steam.'})
+    except Exception as e:
+        return render(request, 'games/game_error.html', {'error': f'Error fetching game info: {e}'})
 
 
 @require_http_methods(["GET"])

@@ -7,6 +7,14 @@ from django.utils import timezone
 from django.db import transaction
 
 
+def custom_404_view(request, exception):
+    return render(request, '404.html', status=404)
+
+
+def custom_500_view(request):
+    return render(request, '500.html', status=500)
+
+
 # Create your views here.
 def index(request):
     return render(request, 'home/index.html')
@@ -308,10 +316,18 @@ def handle_profile_picture_upload(request, user):
 
 
 def handle_profile_picture_removal(request, user):
-    """Handle profile picture removal"""
+    """Handle profile picture removal from Cloudinary and profile"""
     try:
-        if user.profile.profile_picture:
-            user.profile.profile_picture.delete()
+        profile_picture = user.profile.profile_picture
+        if profile_picture:
+            public_id = getattr(profile_picture, 'public_id', None)
+            if public_id:
+                from cloudinary import api
+                try:
+                    api.delete_resources([public_id])
+                except Exception as cloudinary_error:
+                    messages.warning(request, f'Cloudinary deletion warning: {cloudinary_error}')
+            profile_picture.delete()
             user.profile.profile_picture = None
             user.profile.save()
             messages.success(request, 'Profile picture removed successfully!')

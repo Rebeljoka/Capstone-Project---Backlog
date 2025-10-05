@@ -1,10 +1,9 @@
-{% extends 'base.html' %}
-{% block content %}
+{% extends 'base.html' %} {% block content %}
 <h1>Remove Game from Wishlist</h1>
 <p>Are you sure you want to remove "{{ item.game.title }}" from "{{ item.wishlist.name }}"?</p>
 <form method="post">
-  {% csrf_token %}
-  <button type="submit">Yes, remove</button>
-  <a href="{% url 'wishlist_detail' item.wishlist.pk %}">Cancel</a>
+	{% csrf_token %}
+	<button type="submit">Yes, remove</button>
+	<a href="{% url 'wishlist_detail' item.wishlist.pk %}">Cancel</a>
 </form>
 {% endblock %}
