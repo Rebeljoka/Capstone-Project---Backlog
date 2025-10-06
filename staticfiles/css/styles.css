@@ -126,7 +126,6 @@ nav {
     backdrop-filter: blur(8px);
     background-color: var(--nav-bg);
     box-shadow: var(--shadow);
-    min-height: 80px;
 }
 
 /* Notch Container */
@@ -198,6 +197,23 @@ footer {
   100% { color: var(--color-error); }
 }
 
+/* ========================================
+   HOME PAGE
+   ======================================== */
+
+.hero-section {
+    margin-top: 0;
+    position: relative;
+    z-index: 1;
+}
+
+.hero-section .hero-img {
+    margin-top: 0;
+    display: block;
+    object-fit: cover;
+    width: 100vw;
+    height: 800px;
+}
 
 /* ========================================
    GAME LIST COMPONENTS
@@ -418,24 +434,68 @@ footer {
 }
 
 /* ========================================
+   Edit Profile Page Custom Styles
+   ======================================== */
+
+	.menu-item.active {
+		background-color: hsl(var(--p) / 0.1);
+		color: hsl(var(--p));
+		font-weight: 600;
+	}
+
+	.menu-item:hover {
+		background-color: hsl(var(--b2));
+	}
+
+	.section-content {
+		animation: fadeIn 0.3s ease-in-out;
+	}
+
+	@keyframes fadeIn {
+		from {
+			opacity: 0;
+			transform: translateY(10px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	/* Avatar fallback styling */
+	.avatar img {
+		object-fit: cover;
+	}
+
+	.avatar img:not([src]),
+	.avatar img[src=""] {
+		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: white;
+		font-weight: bold;
+		font-size: 1.5rem;
+	}
+
+
+
+/* ========================================
    RESPONSIVE DESIGN / MEDIA QUERIES
    ======================================== */
 
 /* Responsive navbar height */
 @media (min-width: 1024px) {
     nav {
-        min-height: 60px;
-    }
-}
-
-@media (min-width: 1280px) {
-    nav {
-        min-height: 70px;
+        min-height: 80px;
     }
 }
 
 /* Responsive games grid */
 @media (max-width: 639px) {
+    nav {
+        min-height: 90px;
+    }
     .games-grid {
         grid-template-columns: repeat(1, 1fr) !important;
     }
@@ -445,18 +505,27 @@ footer {
 }
 
 @media (min-width: 640px) and (max-width: 767px) {
+    nav {
+        min-height: 90px;
+    }
     .games-grid {
         grid-template-columns: repeat(1, 1fr) !important;
     }
 }
 
 @media (min-width: 768px) and (max-width: 1279px) {
+    nav {
+        min-height: 90px;
+    }
     .games-grid {
         grid-template-columns: repeat(3, 1fr) !important;
     }
 }
 
 @media (min-width: 1280px) {
+    nav {
+        min-height: 90px;
+    }
     .games-grid {
         grid-template-columns: repeat(5, 1fr) !important;
     }
@@ -466,4 +535,27 @@ footer {
     .game-card {
         max-height: 202px !important;
     }
+}
+
+/* ========================================
+   BUTTON STYLES
+   ======================================== */
+
+/* Rainbow animated button */
+.rainbow-btn {
+    background: linear-gradient(270deg, #ff6ec4, #7873f5, #1fd1f9, #76ff7a, #fffc00, #ff6ec4);
+    background-size: 1200% 1200%;
+    animation: rainbow-gradient 3s ease infinite;
+    border: none;
+    transition: box-shadow 0.3s;
+}
+
+@keyframes rainbow-gradient {
+    0% {background-position:0% 50%}
+    50% {background-position:100% 50%}
+    100% {background-position:0% 50%}
+}
+
+.rainbow-btn:hover {
+    box-shadow: 0 0 20px 5px #fffc00, 0 0 40px 10px #ff6ec4;
 }

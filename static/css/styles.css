@@ -126,7 +126,6 @@ nav {
     backdrop-filter: blur(8px);
     background-color: var(--nav-bg);
     box-shadow: var(--shadow);
-    min-height: 80px;
 }
 
 /* Notch Container */
@@ -198,6 +197,23 @@ footer {
   100% { color: var(--color-error); }
 }
 
+/* ========================================
+   HOME PAGE
+   ======================================== */
+
+.hero-section {
+    margin-top: 0;
+    position: relative;
+    z-index: 1;
+}
+
+.hero-section .hero-img {
+    margin-top: 0;
+    display: block;
+    object-fit: cover;
+    width: 100vw;
+    height: 800px;
+}
 
 /* ========================================
    GAME LIST COMPONENTS
@@ -462,10 +478,6 @@ footer {
 		font-size: 1.5rem;
 	}
 
-	.avatar img:not([src])::before,
-	.avatar img[src=""]::before {
-		content: "{{ user|user_initials }}";
-	}
 
 
 /* ========================================
@@ -475,18 +487,15 @@ footer {
 /* Responsive navbar height */
 @media (min-width: 1024px) {
     nav {
-        min-height: 60px;
-    }
-}
-
-@media (min-width: 1280px) {
-    nav {
-        min-height: 70px;
+        min-height: 80px;
     }
 }
 
 /* Responsive games grid */
 @media (max-width: 639px) {
+    nav {
+        min-height: 90px;
+    }
     .games-grid {
         grid-template-columns: repeat(1, 1fr) !important;
     }
@@ -496,18 +505,27 @@ footer {
 }
 
 @media (min-width: 640px) and (max-width: 767px) {
+    nav {
+        min-height: 90px;
+    }
     .games-grid {
         grid-template-columns: repeat(1, 1fr) !important;
     }
 }
 
 @media (min-width: 768px) and (max-width: 1279px) {
+    nav {
+        min-height: 90px;
+    }
     .games-grid {
         grid-template-columns: repeat(3, 1fr) !important;
     }
 }
 
 @media (min-width: 1280px) {
+    nav {
+        min-height: 90px;
+    }
     .games-grid {
         grid-template-columns: repeat(5, 1fr) !important;
     }
@@ -517,4 +535,27 @@ footer {
     .game-card {
         max-height: 202px !important;
     }
+}
+
+/* ========================================
+   BUTTON STYLES
+   ======================================== */
+
+/* Rainbow animated button */
+.rainbow-btn {
+    background: linear-gradient(270deg, #ff6ec4, #7873f5, #1fd1f9, #76ff7a, #fffc00, #ff6ec4);
+    background-size: 1200% 1200%;
+    animation: rainbow-gradient 3s ease infinite;
+    border: none;
+    transition: box-shadow 0.3s;
+}
+
+@keyframes rainbow-gradient {
+    0% {background-position:0% 50%}
+    50% {background-position:100% 50%}
+    100% {background-position:0% 50%}
+}
+
+.rainbow-btn:hover {
+    box-shadow: 0 0 20px 5px #fffc00, 0 0 40px 10px #ff6ec4;
 }

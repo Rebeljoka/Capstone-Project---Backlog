@@ -333,6 +333,13 @@
 	</div>
 </div>
 
+<style>
+	.avatar img:not([src])::before,
+	.avatar img[src=""]::before {
+		content: "{{ user|user_initials }}";
+	}
+</style>
+
 <script src="{% static 'js/edit-profile.js' %}"></script>
 
 {% endblock %}

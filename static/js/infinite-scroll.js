@@ -18,7 +18,7 @@ function throttle(fn, limit) {
 	};
 }
 // Infinite Scroll Functionality for Game List
-class GameListManager {
+var GameListManager = class GameListManager {
 	constructor() {
 		this.currentPage = 1;
 		this.loading = false;
@@ -411,9 +411,9 @@ document.addEventListener("DOMContentLoaded", function () {
 //  Search function
 // Enhanced Search JavaScript
 // Search functionality with debouncing and suggestions
-let searchTimeout;
-let searchCache = new Map();
-let currentSuggestionIndex = -1;
+var searchTimeout;
+var searchCache = new Map();
+var currentSuggestionIndex = -1;
 
 function handleSearchInput(input) {
 	clearTimeout(searchTimeout);
@@ -560,9 +560,6 @@ function hideSearchLoading() {
 	if (loader) loader.classList.add("hidden");
 }
 
-
-
-
 // Close suggestions when clicking outside any search input or dropdown
 document.addEventListener("click", function (event) {
 	let clickedInside = false;
@@ -680,9 +677,6 @@ function clearAllFilters() {
 	const searchInput = document.querySelector('input[name="search"]');
 	if (searchInput) searchInput.value = "";
 
-	// Clear platform
-	const platformSelect = document.querySelector('select[name="platform"]');
-	if (platformSelect) platformSelect.value = "";
 
 	// Clear all genre checkboxes
 	document.querySelectorAll('input[name="genres"]').forEach((cb) => (cb.checked = false));
@@ -712,8 +706,6 @@ document.querySelector("form").addEventListener("submit", function () {
 });
 
 // Initialize filter states on page load
-
-
 function showSearchSuggestions() {
 	requestAnimationFrame(() => {
 		const dropdowns = document.querySelectorAll('.search-suggestions');

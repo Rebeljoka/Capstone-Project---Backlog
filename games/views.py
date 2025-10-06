@@ -76,6 +76,10 @@ def get_cached_game_details(appid):
                         'price_overview': info.get('price_overview', {}),
                         'metacritic': info.get('metacritic', {}),
                         'recommendations': info.get('recommendations', {}),
+                        # Add system requirements for PC, Mac, Linux
+                        'pc_requirements_minimum': info.get('pc_requirements', {}).get('minimum', ''),
+                        'mac_requirements_minimum': info.get('mac_requirements', {}).get('minimum', ''),
+                        'linux_requirements_minimum': info.get('linux_requirements', {}).get('minimum', ''),
                     }
                     # Cache for 24 hours
                     cache.set(cache_key, game_data, 86400)

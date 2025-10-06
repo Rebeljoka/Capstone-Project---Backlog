@@ -1,4 +1,4 @@
-{% extends 'base.html' %} {% load static %} {% block content %}
+{% extends 'base.html' %} {% load game_extras %} {% load static %} {% block content %}
 <div class="mx-auto px-4 py-6 max-w-screen-2xl">
 	{% if error %}
 	<!-- Error State -->
@@ -198,36 +198,41 @@
 						</h2>
 
 						<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-							{% if game.pc_requirements_minimum or game.pc_requirements %}
+							{% if game.pc_requirements_minimum %}
 							<div>
 								<h3 class="font-semibold flex items-center gap-2 mb-2">
 									<iconify-icon icon="simple-icons:windows"></iconify-icon>
 									Windows
 								</h3>
-								<div class="text-sm text-base-content/70">
-									{{ game.pc_requirements_minimum|default:game.pc_requirements.minimum|default:"Not specified"|truncatechars:100 }}
+								<div class="text-sm text-base-content/70 bg-base-200 rounded p-3 overflow-auto whitespace-pre-line" style="max-height: 200px;">
+									{# Render HTML for PC requirements (Steam API returns HTML) #}
+									{% if '<' in game.pc_requirements_minimum %}
+										{{ game.pc_requirements_minimum|safe }}
+									{% else %}
+										{{ game.pc_requirements_minimum|addbrcommas|safe }}
+									{% endif %}
 								</div>
 							</div>
 							{% endif %}
-							{% if game.mac_requirements_minimum or game.mac_requirements %}
+							{% if game.mac_requirements_minimum %}
 							<div>
 								<h3 class="font-semibold flex items-center gap-2 mb-2">
 									<iconify-icon icon="simple-icons:apple"></iconify-icon>
 									Mac
 								</h3>
-								<div class="text-sm text-base-content/70">
-									{{ game.mac_requirements_minimum|default:game.mac_requirements.minimum|default:"Not specified"|truncatechars:100 }}
+								<div class="text-sm text-base-content/70 bg-base-200 rounded p-3 overflow-auto whitespace-pre-line" style="max-height: 200px;">
+									{{ game.mac_requirements_minimum|addbrcommas|safe|default:"Not specified" }}
 								</div>
 							</div>
 							{% endif %}
-							{% if game.linux_requirements_minimum or game.linux_requirements %}
+							{% if game.linux_requirements_minimum %}
 							<div>
 								<h3 class="font-semibold flex items-center gap-2 mb-2">
 									<iconify-icon icon="simple-icons:linux"></iconify-icon>
 									Linux
 								</h3>
-								<div class="text-sm text-base-content/70">
-									{{ game.linux_requirements_minimum|default:game.linux_requirements.minimum|default:"Not specified"|truncatechars:100 }}
+								<div class="text-sm text-base-content/70 bg-base-200 rounded p-3 overflow-auto whitespace-pre-line" style="max-height: 200px;">
+									{{ game.linux_requirements_minimum|addbrcommas|safe|default:"Not specified" }}
 								</div>
 							</div>
 							{% endif %}

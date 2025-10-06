@@ -1,5 +1,28 @@
-{% extends 'base.html' %} {% block content %}
-<section class="text-center mt-20">
-
+{% extends 'base.html' %} {% load static %} {% block content %}
+<section class="text-center hero-section overflow-hidden">
+	<img src="{% static 'images/hero.jpg' %}" alt="Logo" id="hero-img" class="mx-auto blur-md scale-105 bg-center hero-img" />
+	<div class="grid place-items-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+		<h1 class="text-4xl md:text-5xl font-bold text-white mb-4">Welcome to Backlog.</h1>
+		<h2 class="text-xl md:text-2xl text-white mb-6">Organize your gaming journey.</h2>
+		<h3 class="text-md md:text-lg text-white mb-6">Track your game collection, create custom wishlists, and discover new games.</h3>
+		<h4 class="text-md md:text-lg text-white mb-6">Browse our extensive library of games today and Sign up!</h4>
+		<div class="flex flex-row justify-center gap-4 mt-2">
+			<a href="{% url 'account_signup' %}" class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg text-lg font-medium transition-colors shadow-md hover:shadow-lg">Sign Up</a>
+			<a href="{% url 'game_list' %}" class="px-6 py-3 text-white rounded-lg text-lg font-medium shadow-md hover:shadow-lg rainbow-btn">Get Started</a>
+		</div>
+	</div>
 </section>
+
+<section>
+</section>
+
+
+
+<script>
+	window.addEventListener("scroll", function () {
+		const img = document.getElementById("hero-img");
+		const scrolled = window.scrollY;
+		img.style.transform = `translateY(${scrolled * 0.3}px) scale(1.05)`; // 0.3 = parallax speed
+	});
+</script>
 {% endblock %}
