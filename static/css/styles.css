@@ -249,9 +249,6 @@ footer {
    GAME LIST COMPONENTS
    ======================================== */
 
-#game-container {
-    background-color: var(--color-bg-main);
-}
 
 .filters-card {
     background-color: var(--color-card-bg);
