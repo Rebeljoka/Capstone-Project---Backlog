@@ -194,7 +194,13 @@
 	<section id="game-container" class="games-grid grid gap-6 min-h-screen">
 		{% for game in steam_games %}
 		<div class="game-card bg-base-100 shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300 group">
-			<a href="{% url 'game_detail' game.appid %}" class="block">
+			{% if game.appid %}
+				<a href="{% url 'game_detail' game.appid %}" class="block">
+			{% elif game.game_id %}
+				<a href="{% url 'game_detail' game.game_id %}" class="block">
+			{% else %}
+				<div class="block">
+			{% endif %}
 				<!-- Game Image -->
 				<div class="aspect-video bg-base-200 relative overflow-hidden">
 					{% if game.image %}
@@ -243,13 +249,19 @@
 							View Details
 						</div>
 						{% if user.is_authenticated %}
-						<a href="{% url 'add_steam_game_to_wishlist' game.appid %}" class="btn btn-outline btn-secondary btn-sm" onclick="event.stopPropagation();">
-							<iconify-icon icon="tabler:heart"></iconify-icon>
-						</a>
+							{% if game.appid %}
+								<a href="{% url 'add_steam_game_to_wishlist' game.appid %}" class="btn btn-outline btn-secondary btn-sm" onclick="event.stopPropagation();">
+									<iconify-icon icon="tabler:heart"></iconify-icon>
+								</a>
+							{% elif game.game_id %}
+								<a href="{% url 'add_steam_game_to_wishlist' game.game_id %}" class="btn btn-outline btn-secondary btn-sm" onclick="event.stopPropagation();">
+									<iconify-icon icon="tabler:heart"></iconify-icon>
+								</a>
+							{% endif %}
 						{% endif %}
 					</div>
 				</div>
-			</a>
+			{% if game.appid or game.game_id %}</a>{% else %}</div>{% endif %}
 		</div>
 		{% empty %}
 		<div class="col-span-full">
@@ -285,7 +297,7 @@
 		<div class="flex justify-center mt-8">
 			<div class="join">
 				{% if page_obj.has_previous %}
-				<a href="?{% if search_query %}search={{ search_query }}&{% endif %}{% if selected_genre %}genre={{ selected_genre }}&{% endif %}{% if selected_tag %}tag={{ selected_tag }}&{% endif %}page={{ page_obj.previous_page_number }}" class="join-item btn">
+				<a href="?{{ current_query }}&page={{ page_obj.previous_page_number }}" class="join-item btn">
 					<span class="icon-[tabler--chevron-left]"></span>
 				</a>
 				{% endif %}
@@ -293,7 +305,7 @@
 				<span class="join-item btn btn-active"> Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }} </span>
 
 				{% if page_obj.has_next %}
-				<a href="?{% if search_query %}search={{ search_query }}&{% endif %}{% if selected_genre %}genre={{ selected_genre }}&{% endif %}{% if selected_tag %}tag={{ selected_tag }}&{% endif %}page={{ page_obj.next_page_number }}" class="join-item btn">
+				<a href="?{{ current_query }}&page={{ page_obj.next_page_number }}" class="join-item btn">
 					<span class="icon-[tabler--chevron-right]"></span>
 				</a>
 				{% endif %}

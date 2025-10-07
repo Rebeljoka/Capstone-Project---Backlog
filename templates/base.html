@@ -33,6 +33,7 @@
                         </svg>
                     </label>
                     <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 text-lg lg:text-xl">
+                        <li><a href="{% url 'home' %}" class="lg:text-xl">Home</a></li>
                         <li><a href="{% url 'game_list' %}" class="lg:text-xl">All Games</a></li>
                         {% if user.is_authenticated %}
                         <li><a href="{% url 'wishlist_list' %}" class="lg:text-xl">My Wishlists</a></li>
@@ -107,12 +108,18 @@
                     </div>
                     {% else %}
                     <!-- Guest User Login/Signup Links -->
-                    <div class="flex gap-2">
-                        <a href="{% url 'account_login' %}" class="btn btn-ghost btn-sm">
+                    <div class="flex gap-6 items-center">
+                        <!-- Dark Mode Toggle for Guest Users -->
+                        <div class="flex items-center gap-2 px-2 py-1">
+                            <span class="nf nf-oct-moon"></span>
+                            <input type="checkbox" class="toggle toggle-lg" id="theme-toggle" />
+                        </div>
+                        <a href="{% url 'account_login' %}" class="btn btn-ghost btn-lg">
                             <span class="nf nf-md-login"></span>Login
                         </a>
-                        <a href="{% url 'account_signup' %}" class="btn btn-primary btn-sm">
-                            <span class="nf nf-oct-plus"></span>Sign Up
+                        <a href="{% url 'account_signup' %}" class="btn btn-primary btn-lg">
+                            <span class="nf nf-oct-plus text-white"></span>
+                            <span class="text-white">Sign Up</span>
                         </a>
                     </div>
                 {% endif %}
@@ -164,7 +171,7 @@
 
 		<!-- Enhanced Messages Display -->
 		{% if messages %}
-		<div class="container mx-auto px-4 mt-4">
+		<div class="container mx-auto px-4 mt-4 messages-container">
 			{% for message in messages %}
 				<div class="alert mb-4 {% if message.tags == 'error' %}alert-error{% elif message.tags == 'warning' %}alert-warning{% elif message.tags == 'success' %}alert-success{% elif message.tags == 'info' %}alert-info{% else %}alert-info{% endif %}">
 					<div class="flex items-center text-center">

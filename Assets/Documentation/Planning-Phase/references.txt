@@ -1,2 +1,5 @@
 hero image from:
 https://unsplash.com/photos/vintage-gray-game-console-and-joystick-p0j-mE6mGo4
+
+steam scarper guy:
+https://www.kaggle.com/datasets/nikdavis/steam-store-raw

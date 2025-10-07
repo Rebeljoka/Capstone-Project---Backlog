@@ -73,37 +73,48 @@ var GameListManager = class GameListManager {
 
 	createLoadingSpinner() {
 		const spinner = document.createElement("div");
-		spinner.className = "loading-spinner hidden";
+		spinner.className = "spinner-wrapper hidden"; // renamed to avoid conflict
 		spinner.innerHTML = `
-            <div class="flex justify-center items-center py-8">
-                <div class="flex flex-col items-center gap-4">
-                    <div class="loading loading-spinner loading-lg"></div>
-                    <p class="text-base-content/70">Loading more games...</p>
-                </div>
-            </div>
-        `;
+		<div class="flex justify-center items-center py-8">
+			<div class="flex flex-col items-center gap-4">
+				<div class="loading loading-spinner loading-lg"></div>
+				<p class="text-base-content/70">Loading more games...</p>
+			</div>
+		</div>
+	`;
 		return spinner;
 	}
 
 	setupInfiniteScroll() {
-		// Add loading spinner to the page
-		if (this.gameContainer) {
+		// Remove any existing spinner before adding a new one
+		if (this.gameContainer && this.gameContainer.parentNode) {
+			const existingSpinner = this.gameContainer.parentNode.querySelector('.spinner-wrapper');
+			if (existingSpinner) {
+				existingSpinner.remove();
+			}
 			this.gameContainer.parentNode.appendChild(this.loadingSpinner);
 		}
 
 		// Set up scroll event listener using throttle utility
-		window.addEventListener("scroll", throttle(() => {
-			this.handleScroll();
-		}, 100), { passive: true });
+		window.addEventListener(
+			"scroll",
+			throttle(() => {
+				this.handleScroll();
+			}, 100),
+			{ passive: true }
+		);
 	}
 
 	setupSearch() {
 		// Debounced search functionality using debounce utility
 		const searchInput = document.getElementById("searchInput");
 		if (searchInput) {
-			searchInput.addEventListener("input", debounce((e) => {
-				this.handleSearch(e.target.value);
-			}, 300));
+			searchInput.addEventListener(
+				"input",
+				debounce((e) => {
+					this.handleSearch(e.target.value);
+				}, 300)
+			);
 		}
 	}
 
@@ -201,7 +212,6 @@ var GameListManager = class GameListManager {
 			this.selectedTags.forEach((tag) => {
 				params.append("tags", tag);
 			});
-
 
 			const response = await fetch(`/games/api/load-more/?${params}`);
 			const data = await response.json();
@@ -398,15 +408,18 @@ var GameListManager = class GameListManager {
 		const newURL = `${window.location.pathname}${params.toString() ? "?" + params.toString() : ""}`;
 		window.history.replaceState({}, "", newURL);
 	}
-}
+};
 
 // Initialize infinite scroll when DOM is ready
 // Single DOMContentLoaded listener for all initialization
-document.addEventListener("DOMContentLoaded", function () {
-	new GameListManager();
-	updateGenreSelection();
-	updateTagSelection();
-});
+if (!window.__GameListManagerInitialized) {
+    window.__GameListManagerInitialized = true;
+    document.addEventListener("DOMContentLoaded", function () {
+        new GameListManager();
+        updateGenreSelection();
+        updateTagSelection();
+    });
+}
 
 //  Search function
 // Enhanced Search JavaScript

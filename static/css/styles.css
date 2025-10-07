@@ -60,6 +60,7 @@
 
 html, body {
     height: 100%;
+    background-color: var(--color-bg-main);
 }
 
 body {
@@ -71,6 +72,10 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+}
+
+main {
+    background-color: var(--color-bg-main);
 }
 
 
@@ -152,6 +157,10 @@ footer {
     margin-top: 80px;
 }
 
+.footer {
+    background-color: var(--footer-bg) !important;
+}
+
 
 /* ========================================
    BRAND & LOGO
@@ -197,6 +206,27 @@ footer {
   100% { color: var(--color-error); }
 }
 
+.btn-ghost {
+    background: transparent;
+    color: var(--color-text-main);
+    backdrop-filter: blur(8px);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.messages-container {
+    position: fixed;
+    z-index: 10;
+    pointer-events: auto;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 10rem;
+    width: 100vw;
+}
+
+.messages-container > * {
+    color: var(--color-text-main);
+}
+
 /* ========================================
    HOME PAGE
    ======================================== */
@@ -218,6 +248,10 @@ footer {
 /* ========================================
    GAME LIST COMPONENTS
    ======================================== */
+
+#game-container {
+    background-color: var(--color-bg-main);
+}
 
 .filters-card {
     background-color: var(--color-card-bg);

@@ -110,6 +110,8 @@ def add_steam_game_to_wishlist(request, appid):
     """
     Add a Steam game to a user's wishlist.
     If the game doesn't exist in our database, fetch it from Steam API first.
+    NOTE: This project stores the Steam appid in the Game model's primary key `game_id`,
+    so we try to look up/create using `game_id` (Steam appid) first and fall back to title.
     """
     # Get user's wishlists for selection
     user_wishlists = Wishlist.objects.filter(user=request.user)
@@ -118,8 +120,9 @@ def add_steam_game_to_wishlist(request, appid):
         messages.error(request, "You need to create a wishlist first.")
         return redirect('wishlist_create')
 
-    # Try to find the game in our database first by title (since we don't store Steam appid)
-    # Fetch game info from Steam API to get the title
+    # Try to find the game in our database first by Steam appid.
+    # This project uses Game.game_id == Steam appid, so we attempt a get_or_create by game_id.
+    # We still fetch Steam details to get the canonical title and fields; fall back to title if needed.
     url = f"https://store.steampowered.com/api/appdetails?appids={appid}"
     try:
         response = requests.get(url, timeout=10)
@@ -133,14 +136,31 @@ def add_steam_game_to_wishlist(request, appid):
         info = app_data['data']
         game_title = info.get('name', 'Unknown')
 
-        # Try to find existing game by title
+        # Prefer robust lookup by Steam appid stored in game_id (many entries use Steam appid as PK)
+        game = None
         try:
-            game = Game.objects.get(title=game_title)
-        except Game.DoesNotExist:
-            # Game not in database, create it
-            fields = map_steam_to_game(info, user=request.user)
-            game = Game.objects.create(**fields)
-            set_game_genres_and_tags(game, info)
+            appid_int = int(appid)
+        except Exception:
+            appid_int = None
+
+        if appid_int is not None:
+            try:
+                # Try to find or create by primary key (game_id)
+                fields = map_steam_to_game(info, user=request.user)
+                game, created = Game.objects.get_or_create(game_id=appid_int, defaults=fields)
+                if created:
+                    set_game_genres_and_tags(game, info)
+            except Exception:
+                game = None
+
+        # If not found/created by appid, fall back to title-based lookup/create
+        if game is None:
+            try:
+                game = Game.objects.get(title=game_title)
+            except Game.DoesNotExist:
+                fields = map_steam_to_game(info, user=request.user)
+                game = Game.objects.create(**fields)
+                set_game_genres_and_tags(game, info)
 
     except Exception as e:
         messages.error(request, f"Error fetching game info: {e}")
