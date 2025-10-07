@@ -1,3 +1,4 @@
+/* jshint esversion: 11, esnext: false */
 // Dark Mode Toggle Functionality
 document.addEventListener('DOMContentLoaded', function() {
     const themeToggle = document.getElementById('theme-toggle');
@@ -36,19 +37,19 @@ document.addEventListener('DOMContentLoaded', function() {
         const currentLanguage = localStorage.getItem('language') || 'en';
         
         // Function to update language options with checkmarks
-        function updateLanguageOptions(selectedLang) {
+        const updateLanguageOptions = function(selectedLang) {
             const options = languageSelect.querySelectorAll('option');
             options.forEach(option => {
                 const value = option.value;
                 const text = option.textContent.replace(' ✓', ''); // Remove existing checkmark
-                
+
                 if (value === selectedLang) {
                     option.textContent = text + ' ✓'; // Add checkmark to selected
                 } else {
                     option.textContent = text; // Remove checkmark from others
                 }
             });
-        }
+        };
         
         // Set initial language and update display
         languageSelect.value = currentLanguage;

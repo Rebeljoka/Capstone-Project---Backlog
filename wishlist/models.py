@@ -5,7 +5,11 @@ from games.models import Game
 
 class Wishlist(models.Model):
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='wishlists')
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='wishlists',
+    )
     name = models.CharField(max_length=100)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -13,11 +17,16 @@ class Wishlist(models.Model):
         unique_together = ('user', 'name')
 
     def __str__(self):
-        return f"{self.name} ({self.user.username})"
+        username = self.user.username
+        return f"{self.name} ({username})"
 
 
 class WishlistItem(models.Model):
-    wishlist = models.ForeignKey(Wishlist, on_delete=models.CASCADE, related_name='items')
+    wishlist = models.ForeignKey(
+        Wishlist,
+        on_delete=models.CASCADE,
+        related_name='items',
+    )
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     order = models.PositiveIntegerField(default=0, null=True, blank=True)
     added_on = models.DateTimeField(auto_now_add=True)
@@ -27,4 +36,7 @@ class WishlistItem(models.Model):
         ordering = ['order', 'added_on']
 
     def __str__(self):
-        return f"{self.game.title} in {self.wishlist.name} ({self.wishlist.user.username})"
+        wishlist_name = self.wishlist.name
+        username = self.wishlist.user.username
+        game_title = self.game.title
+        return f"{game_title} in {wishlist_name} ({username})"

@@ -1,3 +1,4 @@
+	/* jshint esversion: 11, esnext: false */
 	// Section navigation
 	function showSection(sectionId) {
 		// Hide all sections

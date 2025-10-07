@@ -1,3 +1,4 @@
+/* jshint esversion: 11, esnext: false */
 // Utility: Debounce and Throttle
 function debounce(fn, delay) {
 	let timer;
@@ -309,14 +310,12 @@ var GameListManager = class GameListManager {
 		}
 
 		// Build image section
-		const imageHTML = game.image
-			? `<img src="${game.image}" 
-				alt="${game.title}" 
-                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                loading="lazy">`
-			: `<div class="w-full h-full flex items-center justify-center text-base-content/50">
-                <iconify-icon icon="tabler:device-gamepad-2" class="text-4xl"></iconify-icon>
-            </div>`;
+		let imageHTML = '';
+		if (game.image) {
+			imageHTML = `<img src="${game.image}" alt="${game.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">`;
+		} else {
+			imageHTML = `<div class="w-full h-full flex items-center justify-center text-base-content/50"><iconify-icon icon="tabler:device-gamepad-2" class="text-4xl"></iconify-icon></div>`;
+		}
 
 		// Build wishlist button if user is authenticated
 		// resolve a canonical appid preferring DB (game.game_id) first
@@ -324,13 +323,10 @@ var GameListManager = class GameListManager {
 
 		// Add data attributes so modal can read title/short reliably
 		const dataAttrs = `data-title="${escapeHtmlAttr(game.title || '')}" data-short="${escapeHtmlAttr((game.short_description || '').split(/\s+/).slice(0,20).join(' '))}"`;
-		const wishlistButtonHTML = window.userAuthenticated
-			? `<a href="/wishlist/add-steam-game/${appid}/?title=${encodeURIComponent(game.title || '')}" 
-				class="btn btn-outline btn-secondary btn-sm"
-				onclick="event.stopPropagation();" ${dataAttrs}>
-				<iconify-icon icon="tabler:heart"></iconify-icon>
-			</a>`
-			: "";
+		let wishlistButtonHTML = "";
+		if (window.userAuthenticated) {
+			wishlistButtonHTML = `<a href="/wishlist/add-steam-game/${appid}/?title=${encodeURIComponent(game.title || '')}" class="btn btn-outline btn-secondary btn-sm" onclick="event.stopPropagation();" ${dataAttrs}><iconify-icon icon="tabler:heart"></iconify-icon></a>`;
+		}
 
 		card.innerHTML = `
 			<a href="/games/${appid}/" class="block" data-title="${escapeHtmlAttr(game.title || '')}" data-short="${escapeHtmlAttr((game.short_description || '').split(/\s+/).slice(0,20).join(' '))}">
@@ -365,11 +361,13 @@ var GameListManager = class GameListManager {
                     </div>
                 </div>
             </a>
-        `;
+		`;
 
-	function escapeHtmlAttr(s) { return String(s).replace(/"/g, '&quot;').replace(/&/g, '&amp;'); }
+	function escapeHtmlAttr(s) {
+		return String(s).replace(/"/g, '&quot;').replace(/&/g, '&amp;');
+	}
 
-		return card;
+	return card;
 	}
 
 	showLoadingSpinner() {
@@ -406,11 +404,11 @@ var GameListManager = class GameListManager {
 // Single DOMContentLoaded listener for all initialization
 if (!window.__GameListManagerInitialized) {
     window.__GameListManagerInitialized = true;
-    document.addEventListener("DOMContentLoaded", function () {
-        new GameListManager();
-        updateGenreSelection();
-        updateTagSelection();
-    });
+	document.addEventListener("DOMContentLoaded", function () {
+		window.__gameListManager = new GameListManager();
+		updateGenreSelection();
+		updateTagSelection();
+	});
 }
 
 //  Search function
@@ -515,7 +513,7 @@ function displaySuggestions(suggestions, query) {
 		  <iconify-icon icon="tabler:device-gamepad-2" class="text-base-content/50 flex-shrink-0"></iconify-icon>
 		  <span class="text-sm truncate">${highlightMatch(game.name, query)}</span>
 		</div>
-	  `
+	  `;
 				}
 			)
 			.join("");
@@ -618,9 +616,11 @@ function updateGenreSelection() {
 	}
 	// Update display text
 	if (display) {
-		display.textContent = (checkedCount === 0 || (allCheckbox && allCheckbox.checked))
-			? "All Genres"
-			: `${checkedCount} genre${checkedCount === 1 ? "" : "s"} selected`;
+		if (checkedCount === 0 || (allCheckbox && allCheckbox.checked)) {
+			display.textContent = "All Genres";
+		} else {
+			display.textContent = `${checkedCount} genre${checkedCount === 1 ? "" : "s"} selected`;
+		}
 	}
 }
 
@@ -644,9 +644,11 @@ function updateTagSelection() {
 	}
 	// Update display text
 	if (display) {
-		display.textContent = (checkedCount === 0 || (allCheckbox && allCheckbox.checked))
-			? "All Categories"
-			: `${checkedCount} categor${checkedCount === 1 ? "y" : "ies"} selected`;
+		if (checkedCount === 0 || (allCheckbox && allCheckbox.checked)) {
+			display.textContent = "All Categories";
+		} else {
+			display.textContent = `${checkedCount} categor${checkedCount === 1 ? "y" : "ies"} selected`;
+		}
 	}
 }
 
@@ -794,8 +796,8 @@ function showMessage(type, text) {
 		const alert = document.createElement('div');
 		const typeClass = (type === 'error') ? 'alert-error' : (type === 'warning') ? 'alert-warning' : (type === 'success') ? 'alert-success' : 'alert-info';
 		alert.className = `alert mb-4 ${typeClass}`;
-		alert.setAttribute('role', 'status');
-		function _esc(s) { return String(s).replace(/[&<>"']/g, function(m) { return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]); }); }
+	alert.setAttribute('role', 'status');
+	const _esc = function(s) { return String(s).replace(/[&<>"']/g, function(m) { return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]); }); };
 
 		alert.innerHTML = `
 			<div class="flex items-center text-center">
@@ -839,8 +841,11 @@ document.body.addEventListener('click', async (e) => {
 		// Gather title/short description from data attributes or DOM as fallbacks
 		const card = anchor.closest('.game-card');
 		let domTitle = '';
-		if (card) domTitle = (card.querySelector('h3')?.textContent || '').trim();
-		if (!domTitle) domTitle = anchor.dataset?.title || anchor.getAttribute('title') || '';
+		if (card) {
+			const h3 = card.querySelector('h3');
+			domTitle = (h3 && h3.textContent ? h3.textContent : '').trim();
+		}
+		if (!domTitle) domTitle = (anchor.dataset && anchor.dataset.title) ? anchor.dataset.title : (anchor.getAttribute('title') || '');
 		let shortDesc = '';
 		if (card) {
 			const sel = card.querySelector('.short-description, .game-short, .description, p');
@@ -979,9 +984,9 @@ async function openWishlistPickerAndAdd(pathname, title, short_description, anch
 	setTimeout(() => dialog.focus(), 0);
 
 	const focusableSelector = 'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
-	function getFocusableElements(container) {
+	const getFocusableElements = function(container) {
 		return Array.from(container.querySelectorAll(focusableSelector)).filter(el => el.offsetParent !== null);
-	}
+	};
 
 	function trapTabKey(e) {
 		if (e.key !== 'Tab') return;
@@ -1006,7 +1011,7 @@ async function openWishlistPickerAndAdd(pathname, title, short_description, anch
 	const cancelBtn = modal.querySelector('.modal-cancel');
 	const list = modal.querySelector('.wishlist-list');
 
-	function close() { modal.remove(); }
+	const close = function() { modal.remove(); };
 
 	function closeAndRestore() {
 		modal.removeEventListener('keydown', trapTabKey);

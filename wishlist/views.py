@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Wishlist, WishlistItem
 from .forms import WishlistForm
-from django.http import Http404, JsonResponse
+from django.http import JsonResponse
 import json
 from games.models import Game, map_steam_to_game, set_game_genres_and_tags
 import requests
@@ -153,12 +153,23 @@ def add_steam_game_to_wishlist(request, appid):
     """
     # Get user's wishlists for selection
     user_wishlists = Wishlist.objects.filter(user=request.user)
+    accept_header = request.headers.get('accept', '')
+    is_ajax_like = (
+        request.headers.get('x-requested-with') == 'XMLHttpRequest'
+        or request.content_type == 'application/json'
+        or 'application/json' in accept_header
+    )
 
     if not user_wishlists.exists():
         # If this is an AJAX request, return JSON instead of redirecting
-        is_ajax = request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.content_type == 'application/json' or 'application/json' in request.headers.get('accept', '')
-        if is_ajax and request.method == 'POST':
-            return JsonResponse({'success': False, 'error': 'You need to create a wishlist first.'}, status=400)
+        if is_ajax_like and request.method == 'POST':
+            return JsonResponse(
+                {
+                    'success': False,
+                    'error': 'You need to create a wishlist first.',
+                },
+                status=400,
+            )
         messages.error(request, "You need to create a wishlist first.")
         return redirect('wishlist_create')
 
@@ -226,9 +237,7 @@ def add_steam_game_to_wishlist(request, appid):
             return redirect('game_list')
 
     # Detect AJAX/JSON POSTs so we can return structured JSON for client-side handlers
-    is_ajax = request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.content_type == 'application/json' or 'application/json' in request.headers.get('accept', '')
-
-    if request.method == 'POST' and is_ajax:
+    if request.method == 'POST' and is_ajax_like:
         # Accept either JSON body or form-encoded data
         payload = {}
         if request.content_type == 'application/json':
@@ -241,18 +250,35 @@ def add_steam_game_to_wishlist(request, appid):
 
         wishlist_id = payload.get('wishlist_id') or payload.get('wishlistId')
         if not wishlist_id:
-            return JsonResponse({'success': False, 'error': 'Missing wishlist_id.'}, status=400)
+            return JsonResponse(
+                {'success': False, 'error': 'Missing wishlist_id.'},
+                status=400,
+            )
 
         try:
             wishlist = Wishlist.objects.get(pk=wishlist_id, user=request.user)
         except Wishlist.DoesNotExist:
-            return JsonResponse({'success': False, 'error': 'Invalid wishlist selection.'}, status=400)
+            return JsonResponse(
+                {'success': False, 'error': 'Invalid wishlist selection.'},
+                status=400,
+            )
 
         try:
             # Check if game is already in this wishlist
             existed = WishlistItem.objects.filter(wishlist=wishlist, game=game).exists()
             if existed:
-                return JsonResponse({'success': True, 'message': f"'{game.title}' is already in your '{wishlist.name}' wishlist.", 'already_in_wishlist': True, 'game_id': game.game_id, 'wishlist_id': wishlist.pk})
+                return JsonResponse(
+                    {
+                        'success': True,
+                        'message': (
+                            f"'{game.title}' is already in your "
+                            f"'{wishlist.name}' wishlist."
+                        ),
+                        'already_in_wishlist': True,
+                        'game_id': game.game_id,
+                        'wishlist_id': wishlist.pk,
+                    }
+                )
 
             # Add to wishlist
             WishlistItem.objects.create(
@@ -268,13 +294,24 @@ def add_steam_game_to_wishlist(request, appid):
                 Activity.objects.create(
                     user=request.user,
                     icon='plus',
-                    text=f'Added <span class="text-primary">{game.title}</span> to wishlist <span class="text-primary">"{wishlist.name}"</span>',
+                    text=(
+                        f'Added <span class="text-primary">{game.title}</span> to wishlist '
+                        f'<span class="text-primary">"{wishlist.name}"</span>'
+                    ),
                     timestamp=timezone.now()
                 )
             except Exception:
                 pass
 
-            return JsonResponse({'success': True, 'message': f"'{game.title}' added to '{wishlist.name}' wishlist.", 'already_in_wishlist': False, 'game_id': game.game_id, 'wishlist_id': wishlist.pk})
+            return JsonResponse(
+                {
+                    'success': True,
+                    'message': f"'{game.title}' added to '{wishlist.name}' wishlist.",
+                    'already_in_wishlist': False,
+                    'game_id': game.game_id,
+                    'wishlist_id': wishlist.pk,
+                }
+            )
         except Exception as e:
             return JsonResponse({'success': False, 'error': str(e)}, status=500)
 
@@ -302,7 +339,10 @@ def add_steam_game_to_wishlist(request, appid):
                 Activity.objects.create(
                     user=request.user,
                     icon='plus',
-                    text=f'Added <span class="text-primary">{game.title}</span> to wishlist <span class="text-primary">"{wishlist.name}"</span>',
+                    text=(
+                        f'Added <span class="text-primary">{game.title}</span> to wishlist '
+                        f'<span class="text-primary">"{wishlist.name}"</span>'
+                    ),
                     timestamp=timezone.now()
                 )
             except Exception:

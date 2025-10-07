@@ -8,7 +8,10 @@ from datetime import datetime
 
 class Game(models.Model):
     game_id = models.AutoField(primary_key=True)
-    submitted_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    submitted_by = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+    )
     title = models.CharField(max_length=255)
     image = models.CharField(max_length=255, blank=True)
     short_description = models.TextField(blank=True)
@@ -99,18 +102,22 @@ def map_steam_to_game(info, user=None):
             # Truncate to 50 characters to fit the model field
             age_rating = str(raw_age_rating)[:50]
 
+    steam_appid = info.get('steam_appid')
+    developer_names = ', '.join(info.get('developers', []))
+    platform_list = ', '.join(platforms)
+
     return {
         # Include steam appid as game_id when present so we can create DB records with Steam PK
-        'game_id': int(info.get('steam_appid')) if info.get('steam_appid') else None,
+        'game_id': int(steam_appid) if steam_appid else None,
         'submitted_by': user,
         'title': info.get('name', ''),
         'image': info.get('header_image', ''),
         'short_description': info.get('short_description', ''),
         'long_description': info.get('detailed_description', ''),
         'release_date': release_date,
-        'developer': ', '.join(info.get('developers', [])),
+        'developer': developer_names,
         'age_rating': age_rating,
-        'platform': ', '.join(platforms),
+        'platform': platform_list,
     }
 
 

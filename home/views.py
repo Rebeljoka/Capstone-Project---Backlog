@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate, update_session_auth_hash
-from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
 from django.contrib import messages
 from django.utils import timezone
 from django.db import transaction
@@ -57,7 +56,6 @@ def profile(request):
     days_joined = (timezone.now().date() - user.date_joined.date()).days
 
     # Get total games from all wishlists using WishlistItem (avoid duplicates)
-    from wishlist.models import WishlistItem
     wishlist_qs = user.wishlists.all()
     game_ids = set()
     for wishlist in wishlist_qs:

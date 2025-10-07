@@ -5,14 +5,19 @@ Handles fetching Steam data, filtering, and rendering templates.
 import requests
 import concurrent.futures
 import logging
-from urllib.parse import urlencode
 from django.core.cache import cache
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
-from .models import Genre, Tag, Game, map_steam_to_game, set_game_genres_and_tags
+from games.models import (
+    Genre,
+    Tag,
+    Game,
+    map_steam_to_game,
+    set_game_genres_and_tags,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -316,8 +321,16 @@ def game_list(request):
     # Removed unused variable 'current_query'
 
     # Selected names for display
-    selected_genres_with_names = [(genre_id, genre_name) for genre_id, genre_name in genres_list if genre_id in selected_genres]
-    selected_tags_with_names = [(tag_id, tag_name) for tag_id, tag_name in tags_list if tag_id in selected_tags]
+    selected_genres_with_names = [
+        (genre_id, genre_name)
+        for genre_id, genre_name in genres_list
+        if genre_id in selected_genres
+    ]
+    selected_tags_with_names = [
+        (tag_id, tag_name)
+        for tag_id, tag_name in tags_list
+        if tag_id in selected_tags
+    ]
 
     return render(
         request,
@@ -391,7 +404,11 @@ def add_game_from_steam(request, appid):
     try:
         response = requests.get(url)
         if response.status_code != 200:
-            return render(request, 'games/game_error.html', {'error': 'Could not fetch game info from Steam (bad response).'})
+            return render(
+                request,
+                'games/game_error.html',
+                {'error': 'Could not fetch game info from Steam (bad response).'}
+            )
         data = response.json()
         if not data:
             return render(request, 'games/game_error.html', {'error': 'No data returned from Steam API.'})
@@ -562,13 +579,19 @@ def game_list_api(request):
             # Keep games that contain ALL of the selected genres (AND semantics)
             games_minimal = [
                 g for g in games_minimal
-                if all(str(sel_gid) in [str(genre.get('id')) for genre in g.get('genres', [])] for sel_gid in selected_genres)
+                if all(
+                    str(sel_gid) in [str(genre.get('id')) for genre in g.get('genres', [])]
+                    for sel_gid in selected_genres
+                )
             ]
         if selected_tags:
             # Keep games that contain ALL of the selected tags (AND semantics)
             games_minimal = [
                 g for g in games_minimal
-                if all(str(sel_tid) in [str(tag.get('id')) for tag in g.get('tags', [])] for sel_tid in selected_tags)
+                if all(
+                    str(sel_tid) in [str(tag.get('id')) for tag in g.get('tags', [])]
+                    for sel_tid in selected_tags
+                )
             ]
 
         # Pagination
