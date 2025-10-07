@@ -301,7 +301,7 @@ var GameListManager = class GameListManager {
 				.map((genre) => {
 					const genreName = genre.description || genre.name || genre;
 					// Apply gradient + hover/focus ring classes per request
-					return `<span class="badge badge-sm bg-gradient-to-r from-purple-500 to-pink-50">${genreName}</span>`;
+					return `<span class="badge badge-sm bg-gradient-to-r from-purple-500 to-pink-500 text-white">${genreName}</span>`;
 				})
 				.join("\n              ");
 		} else {

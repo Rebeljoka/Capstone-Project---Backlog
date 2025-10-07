@@ -236,7 +236,7 @@
 					<!-- Genres -->
 					<div class="flex gap-1 flex-wrap mb-3">
 						{% for genre in game.genres|slice:":2" %}
-						<span class="badge badge-outline badge-sm bg-gradient-to-r from-purple-500 to-pink-500"> {{ genre.description|default:genre }} </span>
+						<span class="badge badge-outline badge-sm bg-gradient-to-r from-purple-500 to-pink-500 text-white"> {{ genre.description|default:genre }} </span>
 						{% empty %}
 						<span class="badge badge-ghost badge-sm">Unknown Genre</span>
 						{% endfor %}
