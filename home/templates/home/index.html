@@ -13,7 +13,42 @@
 	</div>
 </section>
 
-<section>
+<!-- Popular Wishlisted Games -->
+<section class="w-full py-12">
+	<h1 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-8 text-center">Popular Wishlisted Games</h1>
+
+	<div class="w-full flex justify-center">
+	<div class="flex flex-row items-center justify-center gap-6 flex-nowrap">
+			{% for game in popular_games|slice:":5" %}
+			<div class="w-full max-w-sm border border-gray-200 rounded-lg shadow-sm p-0" style="background-color:var(--color-card-bg);">
+				<a href="{% url 'game_detail' game.game_id %}" class="block">
+					<div class="relative">
+						{% if game.image %}
+						<img class="rounded-t-lg w-full h-44 object-cover" src="{{ game.image }}" alt="{{ game.title }} cover" />
+						{% else %}
+						<img class="rounded-t-lg w-full h-44 object-cover" src="{% static 'images/placeholder.png' %}" alt="placeholder cover" />
+						{% endif %}
+						<span class="absolute top-2 right-2 badge badge-primary badge-lg">POPULAR</span>
+					</div>
+				</a>
+				<div class="px-4 py-3">
+					<a href="{% url 'game_detail' game.game_id %}">
+						<h5 class="text-lg font-semibold tracking-tight text-gray-900 dark:text-white truncate text-center">{{ game.title }}</h5>
+					</a>
+					<div class="flex items-center justify-between">
+						<a href="{% url 'game_detail' game.game_id %}" class="text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-md px-4 py-2">View details</a>
+						<!-- wishlist count with heart icon -->
+						<div class="flex items-center">
+							<span class="nf nf-oct-heart text-red-500 text-2xl md:text-3xl leading-none"></span>
+							<span class="ml-2 text-lg md:text-xl font-semibold">{{ game.wishlist_count|default:0 }}</span>
+						</div>
+						<a href="{% url 'add_steam_game_to_wishlist' game.game_id %}" class="btn btn-outline btn-secondary btn-md text-md">Add to Wishlist!</a>
+					</div>
+				</div>
+			</div>
+			{% endfor %}
+		</div>
+	</div>
 </section>
 
 

@@ -319,16 +319,21 @@ var GameListManager = class GameListManager {
             </div>`;
 
 		// Build wishlist button if user is authenticated
+		// resolve a canonical appid preferring DB (game.game_id) first
+		const appid = game.game_id || game.appid || game.id;
+
+		// Add data attributes so modal can read title/short reliably
+		const dataAttrs = `data-title="${escapeHtmlAttr(game.title || '')}" data-short="${escapeHtmlAttr((game.short_description || '').split(/\s+/).slice(0,20).join(' '))}"`;
 		const wishlistButtonHTML = window.userAuthenticated
-			? `<a href="/games/add-to-wishlist/${game.appid}/" 
+			? `<a href="/wishlist/add-steam-game/${appid}/?title=${encodeURIComponent(game.title || '')}" 
 				class="btn btn-outline btn-secondary btn-sm"
-				onclick="event.stopPropagation();">
+				onclick="event.stopPropagation();" ${dataAttrs}>
 				<iconify-icon icon="tabler:heart"></iconify-icon>
 			</a>`
 			: "";
 
 		card.innerHTML = `
-            <a href="/games/${game.appid}/" class="block">
+			<a href="/games/${appid}/" class="block" data-title="${escapeHtmlAttr(game.title || '')}" data-short="${escapeHtmlAttr((game.short_description || '').split(/\s+/).slice(0,20).join(' '))}">
                 <!-- Game Image -->
                 <div class="aspect-video bg-base-200 relative overflow-hidden">
                     ${imageHTML}
@@ -362,6 +367,8 @@ var GameListManager = class GameListManager {
             </a>
         `;
 
+	function escapeHtmlAttr(s) { return String(s).replace(/"/g, '&quot;').replace(/&/g, '&amp;'); }
+
 		return card;
 	}
 
@@ -378,24 +385,8 @@ var GameListManager = class GameListManager {
 	}
 
 	showError(message) {
-		// Create error toast
-		const errorToast = document.createElement("div");
-		errorToast.className = "toast toast-top toast-center";
-		errorToast.innerHTML = `
-            <div class="alert alert-error">
-                <span class="icon-[tabler--exclamation-circle]"></span>
-                <span>${message}</span>
-            </div>
-        `;
-
-		document.body.appendChild(errorToast);
-
-		// Remove after 5 seconds
-		setTimeout(() => {
-			if (errorToast.parentNode) {
-				errorToast.parentNode.removeChild(errorToast);
-			}
-		}, 5000);
+		// Use centralized message UI
+		try { showMessage('error', message); } catch (e) { console.error('showError fallback', e); }
 	}
 
 	updateURL() {
@@ -475,7 +466,7 @@ function updateSuggestionHighlight(suggestions) {
 		} else {
 			item.classList.remove("active");
 		}
-	});
+	}, true);
 }
 
 function displaySuggestions(suggestions, query) {
@@ -511,21 +502,24 @@ function displaySuggestions(suggestions, query) {
     currentSuggestionIndex = -1;
 
     // Create clean suggestion items with highlighted text
-    if (suggestionsList) {
-        suggestionsList.innerHTML = suggestions
-            .map(
-                (game, index) => `
-        <div class="suggestion-item cursor-pointer flex items-center gap-3" 
-             data-appid="${game.appid}" 
-             data-title="${game.name}"
-             onclick="selectSuggestion(this)">
-          <iconify-icon icon="tabler:device-gamepad-2" class="text-base-content/50 flex-shrink-0"></iconify-icon>
-          <span class="text-sm truncate">${highlightMatch(game.name, query)}</span>
-        </div>
-      `
-            )
-            .join("");
-    }
+	if (suggestionsList) {
+		suggestionsList.innerHTML = suggestions
+			.map(
+				(game, index) => {
+					const sugAppid = game.game_id || game.appid || game.id;
+					return `
+		<div class="suggestion-item cursor-pointer flex items-center gap-3" 
+			 data-appid="${sugAppid}" 
+			 data-title="${game.name}"
+			 onclick="selectSuggestion(this)">
+		  <iconify-icon icon="tabler:device-gamepad-2" class="text-base-content/50 flex-shrink-0"></iconify-icon>
+		  <span class="text-sm truncate">${highlightMatch(game.name, query)}</span>
+		</div>
+	  `
+				}
+			)
+			.join("");
+	}
     if (dropdown) dropdown.classList.remove("hidden");
 }
 
@@ -768,4 +762,333 @@ async function fetchSearchSuggestions(query) {
 	} catch (error) {
 		hideSearchSuggestions();
 	}
+}
+
+
+// -----------------------------
+// AJAX add-to-wishlist handler (appended)
+// -----------------------------
+
+// Helper to read Django csrftoken cookie
+function getCookie(name) {
+	const value = `; ${document.cookie}`;
+	const parts = value.split(`; ${name}=`);
+	if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
+const csrftoken = getCookie('csrftoken');
+
+// Helper: show a message using the Django messages container markup in base.html
+function showMessage(type, text) {
+	try {
+		let container = document.querySelector('.messages-container');
+		if (!container) {
+			// create one under the nav if missing
+			const nav = document.querySelector('nav');
+			container = document.createElement('div');
+			container.className = 'container mx-auto px-4 mt-4 messages-container';
+			if (nav && nav.parentNode) nav.parentNode.insertBefore(container, nav.nextSibling);
+			else document.body.insertBefore(container, document.body.firstChild);
+		}
+
+		const alert = document.createElement('div');
+		const typeClass = (type === 'error') ? 'alert-error' : (type === 'warning') ? 'alert-warning' : (type === 'success') ? 'alert-success' : 'alert-info';
+		alert.className = `alert mb-4 ${typeClass}`;
+		alert.setAttribute('role', 'status');
+		function _esc(s) { return String(s).replace(/[&<>"']/g, function(m) { return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]); }); }
+
+		alert.innerHTML = `
+			<div class="flex items-center text-center">
+				${type === 'error' ? '<span class="nf nf-oct-x mr-2"></span>' : type === 'warning' ? '<span class="nf nf-oct-alert mr-2"></span>' : type === 'success' ? '<span class="nf nf-oct-check_circle mr-2"></span>' : '<span class="nf nf-oct-info mr-2"></span>'}
+				<span>${_esc(text)}</span>
+			</div>
+			<button type="button" class="btn-xs ml-auto" onclick="this.closest('.alert').style.display='none'">
+				<span class="nf nf-oct-x"></span>
+			</button>
+		`;
+
+		container.appendChild(alert);
+
+		// auto-remove non-error messages after a short delay
+		if (type !== 'error') setTimeout(() => { if (alert.parentNode) alert.parentNode.removeChild(alert); }, 4000);
+	} catch (e) {
+		console.error('showMessage error', e);
+	}
+}
+
+// Delegated click handler for anchors that point to add-steam-game
+// Use capture phase so we observe clicks even if inner elements call stopPropagation()
+document.body.addEventListener('click', async (e) => {
+	const anchor = e.target.closest('a[href*="/wishlist/add-steam-game/"]');
+	if (!anchor) return;
+
+	// Allow middle-click / cmd/ctrl + click for new tab
+	if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return;
+
+	// Progressive enhancement: prevent default and perform AJAX POST
+	e.preventDefault();
+	e.stopPropagation();
+
+	// Extract appid from href and optional title param, then open the modal immediately
+	try {
+		const url = new URL(anchor.href, window.location.origin);
+		const title = url.searchParams.get('title') || '';
+		const parts = url.pathname.split('/').filter(Boolean);
+		const appid = parts[parts.length - 1];
+
+		// Gather title/short description from data attributes or DOM as fallbacks
+		const card = anchor.closest('.game-card');
+		let domTitle = '';
+		if (card) domTitle = (card.querySelector('h3')?.textContent || '').trim();
+		if (!domTitle) domTitle = anchor.dataset?.title || anchor.getAttribute('title') || '';
+		let shortDesc = '';
+		if (card) {
+			const sel = card.querySelector('.short-description, .game-short, .description, p');
+			if (sel && (sel.textContent || '').trim()) shortDesc = sel.textContent.trim();
+		}
+
+		const finalTitle = title || domTitle || '';
+		await openWishlistPickerAndAdd(url.pathname, finalTitle, shortDesc, anchor, csrftoken, appid);
+		return;
+	} catch (err) {
+		// If anything goes wrong (network error, CSP blocking fetch, etc.),
+		// fall back to the server full-page flow by navigating to the anchor href.
+		try {
+			window.location.href = anchor.href;
+		} catch (navErr) {
+			    showMessage('error', 'Network error. Try again.');
+		}
+	}
+}, true);
+
+
+// --- Wishlist picker modal helpers ---
+async function fetchUserWishlists(game_id) {
+	try {
+		let url = '/wishlist/api/wishlists/';
+		if (game_id) url += `?game_id=${encodeURIComponent(game_id)}`;
+		const resp = await fetch(url, { credentials: 'same-origin', headers: { 'Accept': 'application/json' } });
+		if (!resp.ok) return [];
+		const data = await resp.json();
+		return { wishlists: data.wishlists || [], game: data.game || null };
+	} catch (e) {
+		return { wishlists: [], game: null };
+	}
+}
+
+function buildWishlistModal(wishlists, game) {
+	const modal = document.createElement('div');
+	// unique id so ARIA attributes can reference the title
+	const modalId = 'wishlist-modal-' + Date.now();
+	modal.setAttribute('id', modalId);
+	modal.className = 'wishlist-modal fixed inset-0 flex items-center justify-center z-50';
+	modal.style.background = 'rgba(0,0,0,0.4)';
+	// Accessibility
+	modal.setAttribute('role', 'dialog');
+	modal.setAttribute('aria-modal', 'true');
+	modal.setAttribute('aria-labelledby', modalId + '-title');
+
+ 	const box = document.createElement('div');
+ 	box.className = 'max-w-2xl mx-auto mt-8 p-6 bg-base-content rounded-lg shadow-md dark:bg-base-200 w-full';
+ 	box.setAttribute('tabindex', '-1');
+ 	box.innerHTML = `
+ 		<h1 id="${modalId}-title" class="text-2xl font-bold mb-4">Add to Wishlist</h1>
+
+		<div class="mb-6 p-4 bg-base-content dark:bg-base-200 rounded">
+			<h2 class="font-semibold text-lg">${escapeHtml(game.title || '')}</h2>
+			${game.short_description ? `<p class="text-gray-600 mt-1">${escapeHtml(truncateWords(game.short_description, 20))}</p>` : ''}
+		</div>
+
+		<div class="mb-6">
+			<label class="block text-sm font-medium mb-3"> Select Wishlist: </label>
+			<div class="space-y-3 wishlist-list"></div>
+		</div>
+
+		<div class="flex gap-4">
+			<button type="button" class="flex-1 bg-green-500 hover:bg-green-600 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline dark:bg-green-700 dark:hover:bg-green-800 modal-add-btn" disabled>Add to Wishlist</button>
+			<button type="button" class="flex-1 text-center bg-red-500 hover:bg-red-600 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline dark:bg-red-700 dark:hover:bg-red-800 modal-cancel">Cancel</button>
+		</div>
+
+		<div class="mt-6 text-center dark:text-blue-300">
+			<a href="/wishlist/create/" class="text-blue-600 hover:text-blue-800 underline"> Create New Wishlist </a>
+		</div>
+	`;
+
+	// Helper insertion of wishlist rows
+	const list = box.querySelector('.wishlist-list');
+	wishlists.forEach(w => {
+		const wrapper = document.createElement('div');
+		if (w.has_game) {
+			wrapper.className = 'border border-orange-200 dark:border-orange-400 bg-orange-50 dark:bg-orange-900 rounded-lg p-3 wishlist-row disabled';
+			wrapper.setAttribute('tabindex', '-1');
+			wrapper.innerHTML = `
+				<div class="flex items-center justify-between">
+					<label class="flex items-center text-gray-500 dark:text-gray-300 cursor-not-allowed">
+						<input type="radio" name="wishlist_id" value="${w.pk}" disabled class="mr-3 text-gray-400" />
+						<div>
+							<span class="font-medium dark:text-white">${escapeHtml(w.name)}</span>
+							<div class="text-sm text-gray-400">${w.items_count} game${w.items_count === 1 ? '' : 's'}</div>
+						</div>
+					</label>
+					<span class="text-orange-600 text-sm font-medium flex items-center">
+						<span class="icon-[tabler--check] mr-1"></span>
+						Already added
+					</span>
+				</div>
+			`;
+		} else {
+			wrapper.className = 'border border-gray-200 dark:border-blue-400 bg-white dark:bg-base-300 rounded-lg p-3 hover:border-blue-300 dark:hover:border-blue-400 transition-colors wishlist-row';
+			wrapper.setAttribute('tabindex', '0');
+			wrapper.innerHTML = `
+				<label class="flex items-center cursor-pointer">
+					<input type="radio" name="wishlist_id" value="${w.pk}" required class="mr-3 text-blue-500" />
+					<div>
+						<span class="font-medium">${escapeHtml(w.name)}</span>
+						<div class="text-sm text-gray-500">${w.items_count} game${w.items_count === 1 ? '' : 's'}</div>
+					</div>
+				</label>
+			`;
+		}
+		list.appendChild(wrapper);
+	});
+
+	// Utilities for truncation and escaping
+	function truncateWords(str, n) { return str.split(/\s+/).slice(0, n).join(' '); }
+	function escapeHtml(unsafe) { return String(unsafe).replace(/[&<>\"']/g, function(m) { return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]); }); }
+
+	// Expose for focus management
+	modal.appendChild(box);
+	return modal;
+}
+
+async function openWishlistPickerAndAdd(pathname, title, short_description, anchor, csrftoken, game_id) {
+	const res = await fetchUserWishlists(game_id);
+	const wishlists = res.wishlists || [];
+	// Prefer server-provided game metadata when available
+	const serverGame = res.game || null;
+	const modalGame = serverGame || { title: title || '', short_description: short_description || '' };
+	const modal = buildWishlistModal(wishlists, modalGame);
+	// Accessibility: hide the rest of the app from screen readers while modal is open
+	const appRoot = document.querySelector('body > div') || document.body;
+	if (appRoot && appRoot !== modal) appRoot.setAttribute('aria-hidden', 'true');
+	document.body.appendChild(modal);
+
+	// Focus management: trap focus inside modal
+	const previouslyFocused = document.activeElement;
+	const dialog = modal.querySelector('[tabindex="-1"]') || modal;
+	setTimeout(() => dialog.focus(), 0);
+
+	const focusableSelector = 'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
+	function getFocusableElements(container) {
+		return Array.from(container.querySelectorAll(focusableSelector)).filter(el => el.offsetParent !== null);
+	}
+
+	function trapTabKey(e) {
+		if (e.key !== 'Tab') return;
+		const focusable = getFocusableElements(modal);
+		if (focusable.length === 0) {
+			e.preventDefault();
+			return;
+		}
+		const first = focusable[0];
+		const last = focusable[focusable.length - 1];
+		if (!e.shiftKey && document.activeElement === last) {
+			e.preventDefault();
+			first.focus();
+		} else if (e.shiftKey && document.activeElement === first) {
+			e.preventDefault();
+			last.focus();
+		}
+	}
+	modal.addEventListener('keydown', trapTabKey);
+
+	const addBtn = modal.querySelector('.modal-add-btn');
+	const cancelBtn = modal.querySelector('.modal-cancel');
+	const list = modal.querySelector('.wishlist-list');
+
+	function close() { modal.remove(); }
+
+	function closeAndRestore() {
+		modal.removeEventListener('keydown', trapTabKey);
+		if (appRoot && appRoot !== modal) appRoot.removeAttribute('aria-hidden');
+		modal.remove();
+		try { if (previouslyFocused && previouslyFocused.focus) previouslyFocused.focus(); } catch (e) {}
+	}
+
+	// Selection management: enable Add when a non-disabled radio is selected
+	list.addEventListener('click', (ev) => {
+		const wrapper = ev.target.closest('.wishlist-row');
+		if (!wrapper || wrapper.classList.contains('disabled')) return;
+		// mark the radio inside
+		const radio = wrapper.querySelector('input[type="radio"]');
+		if (radio) radio.checked = true;
+		// enable add button
+		addBtn.disabled = false;
+		// store selected wishlist id on addBtn dataset
+		addBtn.dataset.wishlistId = radio ? radio.value : '';
+	});
+
+	// Cancel behavior
+	cancelBtn.addEventListener('click', () => close());
+
+	// Add button behavior: POST with chosen wishlist_id
+	addBtn.addEventListener('click', async () => {
+		const wishlistId = addBtn.dataset.wishlistId;
+		if (!wishlistId) return;
+		const originalInner = anchor.innerHTML;
+		anchor.innerHTML = '<iconify-icon icon="tabler:loader" class="animate-spin"></iconify-icon>';
+		try {
+			const resp = await fetch(pathname, {
+				method: 'POST',
+				credentials: 'same-origin',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-CSRFToken': csrftoken,
+					'X-Requested-With': 'XMLHttpRequest',
+					'Accept': 'application/json'
+				},
+				body: JSON.stringify({ title: title, wishlist_id: wishlistId })
+			});
+			const data = await resp.json().catch(() => ({}));
+			if (resp.ok && data.success) {
+				anchor.classList.add('added');
+				anchor.innerHTML = '<iconify-icon icon="tabler:heart-filled"></iconify-icon>';
+				if (data.message) {
+					showMessage('success', data.message);
+				}
+			} else {
+				const msg = data.error || data.message || 'Failed to add to wishlist.';
+				showMessage('error', msg);
+				anchor.innerHTML = originalInner;
+			}
+		} catch (e) {
+			anchor.innerHTML = originalInner;
+		} finally {
+			close();
+		}
+	});
+
+	// Close on backdrop click
+	modal.addEventListener('click', (ev) => {
+		if (ev.target === modal) close();
+	});
+
+	// Keyboard: Enter triggers Add if enabled; Escape closes
+	modal.addEventListener('keydown', (ev) => {
+		if (ev.key === 'Escape') close();
+		if ((ev.key === 'Enter' || ev.key === ' ') && !addBtn.disabled) addBtn.click();
+	});
+
+	// Keyboard accessibility: allow Enter/Space to select a row
+	modal.addEventListener('keydown', (ev) => {
+		if (ev.key === 'Enter' || ev.key === ' ') {
+			const active = document.activeElement.closest && document.activeElement.closest('.wishlist-row');
+			if (active && !active.classList.contains('disabled')) {
+				active.click();
+				ev.preventDefault();
+			}
+		} else if (ev.key === 'Escape') {
+			close();
+		}
+	});
 }

@@ -9,4 +9,6 @@ urlpatterns = [
     path('<int:pk>/delete/', views.wishlist_delete, name='wishlist_delete'),
     path('item/<int:pk>/delete/', views.wishlist_item_delete, name='wishlist_item_delete'),
     path('add-steam-game/<int:appid>/', views.add_steam_game_to_wishlist, name='add_steam_game_to_wishlist'),
+    # API: return user's wishlists as JSON (used by AJAX modal picker)
+    path('api/wishlists/', views.user_wishlists_json, name='api_wishlists'),
 ]

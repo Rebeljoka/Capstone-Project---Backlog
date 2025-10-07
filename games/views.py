@@ -348,6 +348,14 @@ def game_detail(request, pk):
         # Convert genres and tags to list of dicts with 'description' key for template compatibility
         genres = [{'description': genre.genre} for genre in db_game.genres.all()]
         tags = [{'description': tag.name} for tag in db_game.tags.all()]
+        # Convert stored platform string to the dict shape the template expects
+        platform_str = (db_game.platform or '')
+        platforms_dict = {
+            'windows': 'windows' in platform_str.lower(),
+            'mac': 'mac' in platform_str.lower(),
+            'linux': 'linux' in platform_str.lower(),
+        }
+
         game = {
             'appid': db_game.game_id,
             'title': db_game.title,
@@ -357,7 +365,7 @@ def game_detail(request, pk):
             'description': db_game.short_description,
             'genres': genres,
             'tags': tags,
-            'platforms': db_game.platform,
+            'platforms': platforms_dict,
             'pc_requirements_minimum': db_game.pc_requirements_minimum,
             'mac_requirements_minimum': db_game.mac_requirements_minimum,
             'linux_requirements_minimum': db_game.linux_requirements_minimum,

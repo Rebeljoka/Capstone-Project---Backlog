@@ -249,12 +249,12 @@
 							View Details
 						</div>
 						{% if user.is_authenticated %}
-							{% if game.appid %}
-								<a href="{% url 'add_steam_game_to_wishlist' game.appid %}" class="btn btn-outline btn-secondary btn-sm" onclick="event.stopPropagation();">
+							{% if game.game_id %}
+								<a href="{% url 'add_steam_game_to_wishlist' game.game_id %}?title={{ game.title|urlencode }}" class="btn btn-outline btn-secondary btn-sm wishlist-btn" data-title="{{ game.title }}" data-short="{{ game.short_description|truncatewords:20 }}">
 									<iconify-icon icon="tabler:heart"></iconify-icon>
 								</a>
-							{% elif game.game_id %}
-								<a href="{% url 'add_steam_game_to_wishlist' game.game_id %}" class="btn btn-outline btn-secondary btn-sm" onclick="event.stopPropagation();">
+							{% elif game.appid %}
+								<a href="{% url 'add_steam_game_to_wishlist' game.appid %}?title={{ game.title|urlencode }}" class="btn btn-outline btn-secondary btn-sm wishlist-btn" data-title="{{ game.title }}" data-short="{{ game.short_description|truncatewords:20 }}">
 									<iconify-icon icon="tabler:heart"></iconify-icon>
 								</a>
 							{% endif %}

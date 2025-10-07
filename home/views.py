@@ -5,6 +5,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib import messages
 from django.utils import timezone
 from django.db import transaction
+from django.db.models import Count
 
 
 def custom_404_view(request, exception):
@@ -17,7 +18,34 @@ def custom_500_view(request):
 
 # Create your views here.
 def index(request):
-    return render(request, 'home/index.html')
+    # Show 5 random games that appear in user wishlists (popular wishlisted games)
+    try:
+        from wishlist.models import WishlistItem
+        from games.models import Game
+
+        # Get games that appear in wishlists
+        wish_game_ids = WishlistItem.objects.values_list('game_id', flat=True)
+        popular_qs = Game.objects.filter(pk__in=wish_game_ids).distinct()
+
+        # Randomly sample up to 5 games (ok for small/dev DBs); make a list so we can attach counts
+        selected = list(popular_qs.order_by('?')[:5])
+
+        # Compute wishlist counts for the selected games and attach as attribute for template use
+        counts_qs = (
+            WishlistItem.objects
+            .filter(game__in=selected)
+            .values('game')
+            .annotate(count=Count('pk'))
+        )
+        counts = {item['game']: item['count'] for item in counts_qs}
+        for g in selected:
+            setattr(g, 'wishlist_count', counts.get(g.pk, 0))
+
+        popular_games = selected
+    except Exception:
+        popular_games = []
+
+    return render(request, 'home/index.html', {'popular_games': popular_games})
 
 
 @login_required

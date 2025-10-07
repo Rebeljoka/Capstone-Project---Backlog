@@ -100,6 +100,8 @@ def map_steam_to_game(info, user=None):
             age_rating = str(raw_age_rating)[:50]
 
     return {
+        # Include steam appid as game_id when present so we can create DB records with Steam PK
+        'game_id': int(info.get('steam_appid')) if info.get('steam_appid') else None,
         'submitted_by': user,
         'title': info.get('name', ''),
         'image': info.get('header_image', ''),
