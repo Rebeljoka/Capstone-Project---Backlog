@@ -15,7 +15,7 @@ import logging
 from bokeh.models import ColumnDataSource
 from bokeh.plotting import figure
 from bokeh.resources import CDN
-from bokeh.transform import cumsum
+# cumsum transform no longer used; angles computed server-side
 
 from .models import SiteTrafficSnapshot
 
@@ -49,20 +49,26 @@ def _build_donut_chart(data_map, title, *, center_text=None):
 
     total = sum(filtered.values())
     source_data = []
+    cumulative = 0.0
     for idx, (label, value) in enumerate(filtered.items()):
+        angle = (value / total * 2 * pi) if total else 0
+        start_angle = cumulative
+        end_angle = cumulative + angle
+        cumulative = end_angle
         percentage = (value / total * 100) if total else 0
         source_data.append(
             {
                 "category": label,
                 "value": value,
-                "angle": (value / total * 2 * pi) if total else 0,
+                "start": start_angle,
+                "end": end_angle,
                 "color": PALETTE[idx % len(PALETTE)],
                 "percentage": percentage,
             }
         )
 
     source = ColumnDataSource({
-        key: [row[key] for row in source_data]
+        key: [row.get(key) for row in source_data]
         for key in source_data[0].keys()
     })
 
@@ -81,8 +87,8 @@ def _build_donut_chart(data_map, title, *, center_text=None):
         y=1,
         inner_radius=0.25,
         outer_radius=0.45,
-        start_angle=cumsum('angle', include_zero=True),
-        end_angle=cumsum('angle'),
+        start_angle='start',
+        end_angle='end',
         line_color="white",
         fill_color='color',
         source=source,
