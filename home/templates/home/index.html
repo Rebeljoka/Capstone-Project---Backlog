@@ -229,16 +229,38 @@
 				// Strip surrounding <script> tags if components() returned them
 				s = s.replace(/^\s*<script[^>]*>/i, '').replace(/<\/script>\s*$/i, '');
 
-				// Evaluate the Bokeh embed script in a try/catch so we can capture deep stacks
 				try {
-					// Use Function constructor to keep same global scope as normal script execution
-					var fn = new Function(s);
-					fn();
-				} catch (innerErr) {
-					console.error('Bokeh embed execution error', innerErr, innerErr && innerErr.stack);
-					if (window.__showClientError) {
-						window.__showClientError('Bokeh embed error: ' + (innerErr && innerErr.stack ? innerErr.stack : String(innerErr)));
+					// Quick diagnostics: log script size and target element ids
+					try {
+						var ids = Array.from(s.matchAll(/#[a-f0-9\-]{8,36}/gi)).map(m => m[0].replace('#',''));
+						console.log('[diag] bokeh-raw-script length', s.length);
+						console.log('[diag] bokeh-raw-script target ids', ids);
+						ids.forEach(function(id) {
+							var el = document.getElementById(id);
+							console.log('[diag] target element present for', id, !!el);
+						});
+					} catch (dErr) { console.warn('diag id parse failed', dErr); }
+
+					// Delay execution until next frame so DOM insertion completes
+					var exec = function () {
+						try {
+							var fn = new Function(s);
+							fn();
+						} catch (innerErr) {
+							console.error('Bokeh embed execution error', innerErr, innerErr && innerErr.stack);
+							if (window.__showClientError) {
+								window.__showClientError('Bokeh embed error: ' + (innerErr && innerErr.stack ? innerErr.stack : String(innerErr)));
+							}
+						}
+					};
+
+					if (window.requestAnimationFrame) {
+						window.requestAnimationFrame(function() { setTimeout(exec, 8); });
+					} else {
+						setTimeout(exec, 50);
 					}
+				} catch (inner) {
+					console.error('Bokeh embed pre-exec diagnostics failed', inner);
 				}
 			} catch (e) {
 				console.error('Failed to run guarded Bokeh embed', e, e && e.stack);
