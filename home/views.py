@@ -193,6 +193,11 @@ def index(request):
         "Wishlist Creation Pace",
     )
 
+    # Provide a tiny minimal chart for debugging: visit ?onlychart=minimal
+    from bokeh.plotting import figure as _figure
+    minimal_chart = _figure(height=200, width=300, toolbar_location=None)
+    minimal_chart.circle([1], [1], size=20, color="#14B8A6")
+
     # Engagement donut
     users_with_wishlist = (
         Wishlist.objects.values('user').distinct().count()
@@ -220,6 +225,7 @@ def index(request):
         'traffic': traffic_chart,
         'wishlist': wishlist_chart,
         'engagement': engagement_chart,
+        'minimal': minimal_chart,
     }
     # Allow testing by embedding only a subset of charts using ?onlychart=traffic,wishlist
     onlychart_param = None
@@ -238,14 +244,36 @@ def index(request):
     else:
         selected_charts = charts
 
+    # Embed each chart separately to avoid creating a single Bokeh document that
+    # (in some environments) can trigger recursive initialization in the browser.
+    chart_script_parts = []
+    chart_divs = {}
+    chart_error = False
+    chart_error_msg = ""
     try:
-        chart_script, chart_divs = components(selected_charts)
-        chart_error = False
-        chart_error_msg = ""
+        for key, fig in selected_charts.items():
+            try:
+                s, d = components(fig)
+                # s is a script string, d is a div or mapping when components() is used
+                # When components() is called with a single figure it returns (script, div)
+                chart_script_parts.append(s)
+                # d may be a string or a dict; ensure we store the correct div
+                if isinstance(d, dict):
+                    # components returned a dict mapping keys to divs
+                    # grab the first available value
+                    any_key = next(iter(d.keys())) if d else None
+                    chart_divs[key] = d.get(any_key) if any_key else None
+                else:
+                    chart_divs[key] = d
+            except Exception:
+                # Log per-chart failures but continue attempting other charts
+                logging.getLogger(__name__).exception("Failed to build components for chart %s", key)
+                chart_divs[key] = None
+
+        chart_script = "\n".join(part for part in chart_script_parts if part)
     except Exception as e:
         logger = logging.getLogger(__name__)
-        logger.exception("Failed to generate Bokeh components: %s", e)
-        # Fall back to safe values so the page still renders; surface a message
+        logger.exception("Failed to generate Bokeh components (batch): %s", e)
         chart_script = ""
         chart_divs = {}
         chart_error = True
