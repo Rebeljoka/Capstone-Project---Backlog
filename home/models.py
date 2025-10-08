@@ -84,3 +84,17 @@ class Activity(models.Model):
 
     def __str__(self):
         return f"{self.user.username}: {self.text[:30]}... ({self.timestamp})"
+
+
+class SiteTrafficSnapshot(models.Model):
+    """Aggregated visitor analytics captured per day."""
+
+    date = models.DateField(unique=True)
+    unique_visitors = models.PositiveIntegerField(default=0)
+    returning_visitors = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ('-date',)
+
+    def __str__(self):
+        return f"Traffic {self.date}: {self.unique_visitors} visitors"

@@ -1,10 +1,34 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import update_session_auth_hash
+from datetime import timedelta
+from math import pi
+
 from django.contrib import messages
-from django.utils import timezone
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.db import transaction
-from django.db.models import Count
+from django.db.models import Count, Sum
+from django.shortcuts import redirect, render
+from django.utils import timezone
+
+from bokeh.embed import components
+from bokeh.models import ColumnDataSource
+from bokeh.plotting import figure
+from bokeh.resources import CDN
+from bokeh.transform import cumsum
+
+from .models import SiteTrafficSnapshot
+
+
+PALETTE = [
+    "oklch(78% 0.22 80)",  # Gold
+    "oklch(45% 0.18 30)",  # Sad Red
+    "oklch(80% 0.25 20)",  # green-500
+    "#EC4899",  # pink-500
+    "#14B8A6",  # teal-500
+    "#FACC15",  # yellow-400
+    "#8B5CF6",  # violet-500
+    "#0EA5E9",  # sky-500
+]
 
 
 def custom_404_view(request, exception):
@@ -15,7 +39,76 @@ def custom_500_view(request):
     return render(request, '500.html', status=500)
 
 
-# Create your views here.
+def _build_donut_chart(data_map, title, *, center_text=None):
+    """Create a reusable Bokeh donut chart."""
+
+    filtered = {label: value for label, value in data_map.items() if value > 0}
+    if not filtered:
+        filtered = {"No Data": 1}
+
+    total = sum(filtered.values())
+    source_data = []
+    for idx, (label, value) in enumerate(filtered.items()):
+        percentage = (value / total * 100) if total else 0
+        source_data.append(
+            {
+                "category": label,
+                "value": value,
+                "angle": (value / total * 2 * pi) if total else 0,
+                "color": PALETTE[idx % len(PALETTE)],
+                "percentage": percentage,
+            }
+        )
+
+    source = ColumnDataSource({
+        key: [row[key] for row in source_data]
+        for key in source_data[0].keys()
+    })
+
+    plot = figure(
+        height=555,
+        width=555,
+        toolbar_location=None,
+        tools="hover",
+        tooltips="@category: @value (@percentage{0.0}%)",
+        x_range=(-0.6, 0.6),
+        y_range=(0.4, 1.6),
+    )
+
+    plot.annular_wedge(
+        x=0,
+        y=1,
+        inner_radius=0.25,
+        outer_radius=0.45,
+        start_angle=cumsum('angle', include_zero=True),
+        end_angle=cumsum('angle'),
+        line_color="white",
+        fill_color='color',
+        source=source,
+    )
+
+    plot.axis.visible = False
+    plot.grid.grid_line_color = None
+    plot.outline_line_color = None
+    plot.min_border = 0
+    plot.background_fill_alpha = 0
+    plot.border_fill_alpha = 0
+    plot.sizing_mode = "fixed"
+
+    if center_text:
+        plot.text(
+            x=0,
+            y=1,
+            text=[center_text],
+            text_align="center",
+            text_baseline="middle",
+            text_font_size="13pt",
+            text_color="#22C55E",
+        )
+
+    return plot
+
+
 def index(request):
     # Show 5 random games that appear in user wishlists (popular wishlisted games)
     try:
@@ -44,7 +137,122 @@ def index(request):
     except Exception:
         popular_games = []
 
-    return render(request, 'home/index.html', {'popular_games': popular_games})
+    now = timezone.now()
+    today = now.date()
+    seven_days_ago = now - timedelta(days=7)
+    thirty_days_ago = now - timedelta(days=30)
+
+    # Traffic donut: Registered users vs visitor metrics
+    total_users = User.objects.count()
+    new_users_last_week = User.objects.filter(date_joined__gte=seven_days_ago).count()
+
+    visitors_last_week = (
+        SiteTrafficSnapshot.objects
+        .filter(date__gte=seven_days_ago.date())
+        .aggregate(total=Sum('unique_visitors'))
+        .get('total')
+        or 0
+    )
+    visitors_all_time = (
+        SiteTrafficSnapshot.objects
+        .aggregate(total=Sum('unique_visitors'))
+        .get('total')
+        or 0
+    )
+    visitors_prior = max(visitors_all_time - visitors_last_week, 0)
+
+    traffic_chart = _build_donut_chart(
+        {
+            "Registered Users": total_users,
+            "Visitors (Last 7 Days)": visitors_last_week,
+            "Visitors (Before Last 7 Days)": visitors_prior,
+        },
+        "Users & Visitors",
+        center_text=f"+{new_users_last_week} new"
+        if new_users_last_week > 0
+        else None,
+    )
+
+    # Wishlist creation rate donut
+    from wishlist.models import Wishlist
+
+    total_wishlists = Wishlist.objects.count()
+    wishlists_today = Wishlist.objects.filter(created_at__date=today).count()
+    wishlists_last_week = Wishlist.objects.filter(created_at__gte=seven_days_ago).count()
+    wishlists_last_month = Wishlist.objects.filter(created_at__gte=thirty_days_ago).count()
+
+    wishlist_segments = {
+        "Past 24 Hours": wishlists_today,
+        "Past 7 Days": max(wishlists_last_week - wishlists_today, 0),
+        "Past 30 Days": max(wishlists_last_month - wishlists_last_week, 0),
+    }
+
+    wishlist_chart = _build_donut_chart(
+        wishlist_segments,
+        "Wishlist Creation Pace",
+    )
+
+    # Engagement donut
+    users_with_wishlist = (
+        Wishlist.objects.values('user').distinct().count()
+    )
+    users_without_wishlist = max(total_users - users_with_wishlist, 0)
+    additional_wishlists = max(total_wishlists - users_with_wishlist, 0)
+    avg_wishlists_per_user = (
+        total_wishlists / total_users if total_users else 0
+    )
+    adoption_percent = (
+        (users_with_wishlist / total_users) * 100 if total_users else 0
+    )
+
+    engagement_chart = _build_donut_chart(
+        {
+            "Users with Wishlists": users_with_wishlist,
+            "Users without Wishlists": users_without_wishlist,
+            "Additional Wishlists": additional_wishlists,
+        },
+        "Wishlist Engagement",
+        center_text=f"{avg_wishlists_per_user:.1f} avg",
+    )
+
+    charts = {
+        'traffic': traffic_chart,
+        'wishlist': wishlist_chart,
+        'engagement': engagement_chart,
+    }
+
+    chart_script, chart_divs = components(charts)
+
+    context = {
+        'popular_games': popular_games,
+        'bokeh_js': CDN.js_files,
+        'bokeh_css': CDN.css_files,
+        'chart_script': chart_script,
+        'traffic_chart_div': chart_divs.get('traffic'),
+        'wishlist_chart_div': chart_divs.get('wishlist'),
+        'engagement_chart_div': chart_divs.get('engagement'),
+        'traffic_summary': {
+            'total_users': total_users,
+            'new_users_last_week': new_users_last_week,
+            'visitors_last_week': visitors_last_week,
+            'visitors_all_time': visitors_all_time,
+        },
+        'wishlist_summary': {
+            'total_wishlists': total_wishlists,
+            'created_today': wishlists_today,
+            'created_last_week': wishlists_last_week,
+            'created_last_month': wishlists_last_month,
+        },
+        'engagement_summary': {
+            'average_wishlists': avg_wishlists_per_user,
+            'adoption_percent': adoption_percent,
+            'total_users': total_users,
+            'users_with_wishlist': users_with_wishlist,
+            'additional_wishlists': additional_wishlists,
+        },
+    }
+
+    return render(request, 'home/index.html', context)
 
 
 @login_required

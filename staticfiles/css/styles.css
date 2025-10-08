@@ -179,7 +179,6 @@ footer {
     backdrop-filter: blur(8px);
     background-color: var(--footer-bg);
     box-shadow: var(--reverse-shadow);
-    margin-top: 80px;
 }
 
 .footer {
@@ -282,6 +281,21 @@ section.filters-card {
     row-gap: 1.5rem;
 }
 
+.popular-grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-auto-rows: 1fr;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+.popular-grid > div {
+    display: none;
+}
+
+.popular-grid > div:nth-of-type(1) {
+    display: flex;
+}
+
 .game-card {
     background-color: var(--color-card-bg);
     min-height: fit-content;
@@ -339,6 +353,13 @@ section.filters-card {
 
 .section-content {
     animation: fadeIn 0.3s ease-in-out;
+}
+
+.bk-root {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
 }
 
 
@@ -612,6 +633,14 @@ section.filters-card {
     .games-grid {
         grid-template-columns: repeat(3, 1fr) !important;
     }
+
+    .popular-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .popular-grid > div:nth-of-type(-n + 3) {
+        display: flex;
+    }
 }
 
 @media (min-width: 1024px) {
@@ -628,6 +657,15 @@ section.filters-card {
     .games-grid {
         align-content: start;
         grid-template-columns: repeat(5, 1fr) !important;
+    }
+
+    .popular-grid {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+
+    .popular-grid > div {
+        display: flex;
+        height: 100%;
     }
 
     .game-card {

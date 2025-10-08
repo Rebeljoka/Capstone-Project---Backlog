@@ -14,44 +14,131 @@
 </section>
 
 <!-- Popular Wishlisted Games -->
-<section class="w-full py-12">
-	<h1 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-8 text-center">Popular Wishlisted Games</h1>
+<section class="w-full py-12 mb-12 mt-12">
+	<div class="mb-8 mt-8">
+		<h1 class="text-4xl md:text-4xl lg:text-5xl font-bold text-center">Popular Wishlisted Games</h1>
+	</div>
 
-	<div class="w-full flex justify-center">
-	<div class="flex flex-row items-center justify-center gap-6 flex-nowrap">
-			{% for game in popular_games|slice:":5" %}
-			<div class="w-full max-w-sm border border-gray-200 rounded-lg shadow-sm p-0" style="background-color:var(--color-card-bg);">
-				<a href="{% url 'game_detail' game.game_id %}" class="block">
-					<div class="relative">
-						{% if game.image %}
-						<img class="rounded-t-lg w-full h-44 object-cover" src="{{ game.image }}" alt="{{ game.title }} cover" />
-						{% else %}
-						<img class="rounded-t-lg w-full h-44 object-cover" src="{% static 'images/placeholder.png' %}" alt="placeholder cover" />
-						{% endif %}
-						<span class="absolute top-2 right-2 badge badge-primary badge-lg">POPULAR</span>
-					</div>
-				</a>
-				<div class="px-4 py-3">
+	<div class="popular-grid w-[75vw] mx-auto px-6">
+		{% for game in popular_games|slice:":5" %}
+		<div class="popular-card flex flex-col h-full rounded-xl shadow-lg gap-y-4" style="background-color:var(--color-card-bg);">
+			<a href="{% url 'game_detail' game.game_id %}" class="block overflow-hidden rounded-t-xl">
+				<div class="relative">
+					{% if game.image %}
+					<img class="w-full h-48 object-cover" src="{{ game.image }}" alt="{{ game.title }} cover" />
+					{% else %}
+					<img class="w-full h-48 object-cover" src="{% static 'images/placeholder.png' %}" alt="placeholder cover" />
+					{% endif %}
+					<span class="absolute top-2 right-2 badge badge-primary badge-lg">POPULAR</span>
+				</div>
+			</a>
+			<div class="flex flex-col flex-1 px-6 py-5 gap-4">
+				<div class="w-full max-w-full">
 					<a href="{% url 'game_detail' game.game_id %}">
-						<h5 class="text-lg font-semibold tracking-tight text-gray-900 dark:text-white truncate text-center">{{ game.title }}</h5>
+						<h5 class="text-2xl font-semibold tracking-tight text-gray-900 dark:text-white text-center leading-snug overflow-hidden text-ellipsis whitespace-nowrap">{{ game.title }}</h5>
 					</a>
-					<div class="flex items-center justify-between">
-						<a href="{% url 'game_detail' game.game_id %}" class="text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-md px-4 py-2">View details</a>
-						<!-- wishlist count with heart icon -->
-						<div class="flex items-center">
-							<span class="nf nf-oct-heart text-red-500 text-2xl md:text-3xl leading-none"></span>
-							<span class="ml-2 text-lg md:text-xl font-semibold">{{ game.wishlist_count|default:0 }}</span>
-						</div>
-						<a href="{% url 'add_steam_game_to_wishlist' game.game_id %}" class="btn btn-outline btn-secondary btn-md text-md">Add to Wishlist!</a>
-					</div>
+				</div>
+				<div class="flex items-center justify-center gap-2 text-xl font-semibold">
+					<span class="nf nf-oct-heart text-red-500 text-3xl"></span>
+					<span>{{ game.wishlist_count|default:0 }}</span>
+				</div>
+				<div class="mt-auto flex flex-col gap-3 pt-2 pb-4">
+					<a href="{% url 'game_detail' game.game_id %}" class="w-full text-center text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-lg py-2 whitespace-normal">View details</a>
+					<a href="{% url 'add_steam_game_to_wishlist' game.game_id %}" class="w-full text-center btn btn-outline btn-secondary btn-md text-lg whitespace-normal">Add to Wishlist!</a>
 				</div>
 			</div>
-			{% endfor %}
+		</div>
+		{% empty %}
+		<p class="text-center text-lg text-gray-500">No popular games yet — add some to your wishlist to see them here!</p>
+		{% endfor %}
+	</div>
+</section>
+
+<!-- Analytics Section -->
+<section class="w-full py-16">
+	<div class="w-[75vw] mx-auto px-6">
+		<div class="text-center mb-12">
+			<h1 class="text-4xl md:text-4xl lg:text-5xl font-bold mb-8 text-center">Community Insights</h1>
+			<p class="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+				Explore how players are building their libraries — from wishlist surges to rising engagement. These charts show what’s catching attention across the community.
+			</p>
+		</div>
+
+		<div class="flex justify-center">
+
+			<div class="">
+				<h2 class="text-2xl font-semibold">Users vs Visitors</h2>
+				<div class="w-full flex justify-center">
+					{% if traffic_chart_div %}
+					{{ traffic_chart_div|safe }}
+					{% else %}
+					<p class="text-center text-gray-500">Analytics data coming soon.</p>
+					{% endif %}
+				</div>
+				<ul class="w-full space-y-2 text-center text-base md:text-lg">
+					<li><span class="font-semibold">Registered users:</span> {{ traffic_summary.total_users }}</li>
+					<li><span class="font-semibold">New in last 7 days:</span> {{ traffic_summary.new_users_last_week }}</li>
+					<li><span class="font-semibold">Visitors (7 days):</span> {{ traffic_summary.visitors_last_week }}</li>
+					<li><span class="font-semibold">Visitors (all-time):</span> {{ traffic_summary.visitors_all_time }}</li>
+				</ul>
+			</div>
+
+			<div class="">
+				<h2 class="text-2xl font-semibold">Wishlist Engagement</h2>
+				<div class="w-full flex justify-center">
+					{% if engagement_chart_div %}
+					{{ engagement_chart_div|safe }}
+					{% else %}
+					<p class="text-center text-gray-500">Engagement metrics will appear once users start building wishlists.</p>
+					{% endif %}
+				</div>
+				<ul class="w-full space-y-2 text-center text-base md:text-lg">
+					<li><span class="font-semibold">Avg wishlists per user:</span> {{ engagement_summary.average_wishlists|floatformat:1 }}</li>
+					<li><span class="font-semibold">Users with wishlists:</span> {{ engagement_summary.users_with_wishlist }}</li>
+					<li><span class="font-semibold">Adoption rate:</span> {{ engagement_summary.adoption_percent|floatformat:1 }}%</li>
+					<li><span class="font-semibold">Extra wishlists:</span> {{ engagement_summary.additional_wishlists }}</li>
+				</ul>
+			</div>
+			
+			<div class="">
+				<h2 class="text-2xl font-semibold">Wishlist Velocity</h2>
+				<div class="w-full flex justify-center">
+					{% if wishlist_chart_div %}
+					{{ wishlist_chart_div|safe }}
+					{% else %}
+					<p class="text-center text-gray-500">No wishlist activity recorded yet.</p>
+					{% endif %}
+				</div>
+				<ul class="w-full space-y-2 text-center text-base md:text-lg">
+					<li><span class="font-semibold">Total wishlists:</span> {{ wishlist_summary.total_wishlists }}</li>
+					<li><span class="font-semibold">Created today:</span> {{ wishlist_summary.created_today }}</li>
+					<li><span class="font-semibold">Created last 7 days:</span> {{ wishlist_summary.created_last_week }}</li>
+					<li><span class="font-semibold">Created last 30 days:</span> {{ wishlist_summary.created_last_month }}</li>
+				</ul>
+			</div>
 		</div>
 	</div>
 </section>
 
+<section>
+	<img src="{% static 'images/form-bg.jpg' %}" alt="formbg" class="w-full" />
+</section>
 
+{% if bokeh_css %}
+	{% for css_url in bokeh_css %}
+	<link rel="stylesheet" href="{{ css_url }}" />
+	{% endfor %}
+{% endif %}
+
+{% if bokeh_js %}
+	{% for js_url in bokeh_js %}
+	<script src="{{ js_url }}"></script>
+	{% endfor %}
+{% endif %}
+
+{% if chart_script %}
+{{ chart_script|safe }}
+{% endif %}
 
 <script>
 	window.addEventListener("scroll", function () {
