@@ -287,6 +287,8 @@ def index(request):
         'traffic_chart_div': chart_divs.get('traffic'),
         'wishlist_chart_div': chart_divs.get('wishlist'),
         'engagement_chart_div': chart_divs.get('engagement'),
+        # expose full mapping so template can render any extra placeholders (e.g. 'minimal')
+        'chart_divs_all': chart_divs,
         'traffic_summary': {
             'total_users': total_users,
             'new_users_last_week': new_users_last_week,
