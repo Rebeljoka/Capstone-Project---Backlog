@@ -131,16 +131,23 @@
 	<img src="{% static 'images/form-bg.jpg' %}" alt="formbg" class="w-full" />
 </section>
 
-{% if bokeh_css %}
-	{% for css_url in bokeh_css %}
-	<link rel="stylesheet" href="{{ css_url }}" />
-	{% endfor %}
-{% endif %}
+{# Allow disabling Bokeh embeds for remote testing by appending ?nocharts=1 to the URL. #}
+{% if not request.GET.nocharts %}
+	{% if bokeh_css %}
+		{% for css_url in bokeh_css %}
+		<link rel="stylesheet" href="{{ css_url }}" />
+		{% endfor %}
+	{% endif %}
 
-{% if bokeh_js %}
-	{% for js_url in bokeh_js %}
-	<script src="{{ js_url }}"></script>
-	{% endfor %}
+	{% if bokeh_js %}
+		{% for js_url in bokeh_js %}
+		<script src="{{ js_url }}"></script>
+		{% endfor %}
+	{% endif %}
+{% else %}
+	<div class="w-[75vw] mx-auto mb-6 px-6 py-3 bg-yellow-100 text-yellow-900 rounded-lg border border-yellow-200">
+		<strong>Charts disabled for debugging:</strong> Bokeh assets and embed script were skipped because <code>?nocharts=1</code> is present in the URL. Use this to check whether Bokeh is the source of the client-side error.
+	</div>
 {% endif %}
 
 <!-- Diagnostics: register global error/unhandledrejection handlers BEFORE executing Bokeh embed -->
@@ -205,39 +212,41 @@
 </script>
 
 <!-- Execute Bokeh embed script inside a guarded evaluator so we can capture and display any stack traces and prevent re-entrant embed runs -->
-{% if chart_script %}
-<script id="bokeh-raw-script" type="text/plain">{{ chart_script|safe }}</script>
-<script>
-	(function () {
-		try {
-			// Prevent double execution
-			if (window.__bokeh_embed_executed) return;
-			window.__bokeh_embed_executed = true;
-
-			var raw = document.getElementById('bokeh-raw-script');
-			if (!raw) return;
-			var s = raw.textContent || raw.innerText || '';
-
-			// Strip surrounding <script> tags if components() returned them
-			s = s.replace(/^\s*<script[^>]*>/i, '').replace(/<\/script>\s*$/i, '');
-
-			// Evaluate the Bokeh embed script in a try/catch so we can capture deep stacks
+{% if not request.GET.nocharts %}
+	{% if chart_script %}
+	<script id="bokeh-raw-script" type="text/plain">{{ chart_script|safe }}</script>
+	<script>
+		(function () {
 			try {
-				// Use Function constructor to keep same global scope as normal script execution
-				var fn = new Function(s);
-				fn();
-			} catch (innerErr) {
-				console.error('Bokeh embed execution error', innerErr, innerErr && innerErr.stack);
-				if (window.__showClientError) {
-					window.__showClientError('Bokeh embed error: ' + (innerErr && innerErr.stack ? innerErr.stack : String(innerErr)));
+				// Prevent double execution
+				if (window.__bokeh_embed_executed) return;
+				window.__bokeh_embed_executed = true;
+
+				var raw = document.getElementById('bokeh-raw-script');
+				if (!raw) return;
+				var s = raw.textContent || raw.innerText || '';
+
+				// Strip surrounding <script> tags if components() returned them
+				s = s.replace(/^\s*<script[^>]*>/i, '').replace(/<\/script>\s*$/i, '');
+
+				// Evaluate the Bokeh embed script in a try/catch so we can capture deep stacks
+				try {
+					// Use Function constructor to keep same global scope as normal script execution
+					var fn = new Function(s);
+					fn();
+				} catch (innerErr) {
+					console.error('Bokeh embed execution error', innerErr, innerErr && innerErr.stack);
+					if (window.__showClientError) {
+						window.__showClientError('Bokeh embed error: ' + (innerErr && innerErr.stack ? innerErr.stack : String(innerErr)));
+					}
 				}
+			} catch (e) {
+				console.error('Failed to run guarded Bokeh embed', e, e && e.stack);
+				if (window.__showClientError) window.__showClientError('Guarded Bokeh embed failed: ' + (e && e.stack ? e.stack : String(e)));
 			}
-		} catch (e) {
-			console.error('Failed to run guarded Bokeh embed', e, e && e.stack);
-			if (window.__showClientError) window.__showClientError('Guarded Bokeh embed failed: ' + (e && e.stack ? e.stack : String(e)));
-		}
-	})();
-</script>
+		})();
+	</script>
+	{% endif %}
 {% endif %}
 
 <script>
