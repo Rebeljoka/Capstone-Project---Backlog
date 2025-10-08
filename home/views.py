@@ -11,11 +11,10 @@ from django.shortcuts import redirect, render
 from django.utils import timezone
 
 from bokeh.embed import components
-import logging
 from bokeh.models import ColumnDataSource
 from bokeh.plotting import figure
 from bokeh.resources import CDN
-# cumsum transform no longer used; angles computed server-side
+from bokeh.transform import cumsum
 
 from .models import SiteTrafficSnapshot
 
@@ -49,26 +48,20 @@ def _build_donut_chart(data_map, title, *, center_text=None):
 
     total = sum(filtered.values())
     source_data = []
-    cumulative = 0.0
     for idx, (label, value) in enumerate(filtered.items()):
-        angle = (value / total * 2 * pi) if total else 0
-        start_angle = cumulative
-        end_angle = cumulative + angle
-        cumulative = end_angle
         percentage = (value / total * 100) if total else 0
         source_data.append(
             {
                 "category": label,
                 "value": value,
-                "start": start_angle,
-                "end": end_angle,
+                "angle": (value / total * 2 * pi) if total else 0,
                 "color": PALETTE[idx % len(PALETTE)],
                 "percentage": percentage,
             }
         )
 
     source = ColumnDataSource({
-        key: [row.get(key) for row in source_data]
+        key: [row[key] for row in source_data]
         for key in source_data[0].keys()
     })
 
@@ -87,8 +80,8 @@ def _build_donut_chart(data_map, title, *, center_text=None):
         y=1,
         inner_radius=0.25,
         outer_radius=0.45,
-        start_angle='start',
-        end_angle='end',
+        start_angle=cumsum('angle', include_zero=True),
+        end_angle=cumsum('angle'),
         line_color="white",
         fill_color='color',
         source=source,
@@ -199,11 +192,6 @@ def index(request):
         "Wishlist Creation Pace",
     )
 
-    # Provide a tiny minimal chart for debugging: visit ?onlychart=minimal
-    from bokeh.plotting import figure as _figure
-    minimal_chart = _figure(height=200, width=300, toolbar_location=None)
-    minimal_chart.circle([1], [1], size=20, color="#14B8A6")
-
     # Engagement donut
     users_with_wishlist = (
         Wishlist.objects.values('user').distinct().count()
@@ -231,59 +219,9 @@ def index(request):
         'traffic': traffic_chart,
         'wishlist': wishlist_chart,
         'engagement': engagement_chart,
-        'minimal': minimal_chart,
     }
-    # Allow testing by embedding only a subset of charts using ?onlychart=traffic,wishlist
-    onlychart_param = None
-    try:
-        onlychart_param = request.GET.get('onlychart')
-    except Exception:
-        onlychart_param = None
 
-    selected_charts = None
-    if onlychart_param:
-        requested = [c.strip().lower() for c in onlychart_param.split(',') if c.strip()]
-        selected_charts = {k: v for k, v in charts.items() if k in requested}
-        # If no valid keys found, fall back to all
-        if not selected_charts:
-            selected_charts = charts
-    else:
-        selected_charts = charts
-
-    # Embed each chart separately to avoid creating a single Bokeh document that
-    # (in some environments) can trigger recursive initialization in the browser.
-    chart_script_parts = []
-    chart_divs = {}
-    chart_error = False
-    chart_error_msg = ""
-    try:
-        for key, fig in selected_charts.items():
-            try:
-                s, d = components(fig)
-                # s is a script string, d is a div or mapping when components() is used
-                # When components() is called with a single figure it returns (script, div)
-                chart_script_parts.append(s)
-                # d may be a string or a dict; ensure we store the correct div
-                if isinstance(d, dict):
-                    # components returned a dict mapping keys to divs
-                    # grab the first available value
-                    any_key = next(iter(d.keys())) if d else None
-                    chart_divs[key] = d.get(any_key) if any_key else None
-                else:
-                    chart_divs[key] = d
-            except Exception:
-                # Log per-chart failures but continue attempting other charts
-                logging.getLogger(__name__).exception("Failed to build components for chart %s", key)
-                chart_divs[key] = None
-
-        chart_script = "\n".join(part for part in chart_script_parts if part)
-    except Exception as e:
-        logger = logging.getLogger(__name__)
-        logger.exception("Failed to generate Bokeh components (batch): %s", e)
-        chart_script = ""
-        chart_divs = {}
-        chart_error = True
-        chart_error_msg = str(e)
+    chart_script, chart_divs = components(charts)
 
     context = {
         'popular_games': popular_games,
@@ -293,8 +231,6 @@ def index(request):
         'traffic_chart_div': chart_divs.get('traffic'),
         'wishlist_chart_div': chart_divs.get('wishlist'),
         'engagement_chart_div': chart_divs.get('engagement'),
-        # expose full mapping so template can render any extra placeholders (e.g. 'minimal')
-        'chart_divs_all': chart_divs,
         'traffic_summary': {
             'total_users': total_users,
             'new_users_last_week': new_users_last_week,
@@ -314,8 +250,6 @@ def index(request):
             'users_with_wishlist': users_with_wishlist,
             'additional_wishlists': additional_wishlists,
         },
-        'chart_error': chart_error,
-        'chart_error_msg': chart_error_msg,
     }
 
     return render(request, 'home/index.html', context)
