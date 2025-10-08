@@ -143,91 +143,118 @@
 	{% endfor %}
 {% endif %}
 
-{% if chart_script %}
-{{ chart_script|safe }}
-{% endif %}
-
-<!-- Diagnostic: capture JS errors and unhandled promise rejections and outline Bokeh roots -->
+<!-- Diagnostics: register global error/unhandledrejection handlers BEFORE executing Bokeh embed -->
 <script>
-	window.addEventListener('error', function (e) {
-		try {
-			console.error('Captured error:', e.error || e.message || e);
-		} catch (err) {}
-	});
-	window.addEventListener('unhandledrejection', function (e) {
-		try {
-			console.error('Unhandled rejection:', e.reason || e);
-		} catch (err) {}
-	});
-
-	// Small helper to outline Bokeh root elements and log Bokeh documents
-	setTimeout(function () {
-		try {
-			if (window.Bokeh) {
-				console.log('[diag] Bokeh version', Bokeh && Bokeh.version);
-				console.log('[diag] Bokeh.documents.length', Bokeh && Bokeh.documents && Bokeh.documents.length);
-				document.querySelectorAll('.bk-root').forEach(function (el) {
-					console.log('[diag] bk-root rect', el.getBoundingClientRect());
-					el.style.outline = '3px dashed lime';
-				});
-			} else {
-				console.log('[diag] Bokeh not present');
-			}
-		} catch (err) {
-			console.error('[diag] error running diagnostics', err);
-		}
-	}, 1000);
-</script>
-
-<!-- Visible client-side error panel (temporary debugging aid) -->
-<div id="client-error-log" style="display:none;position:fixed;left:1rem;bottom:1rem;right:1rem;max-height:40vh;overflow:auto;background:rgba(0,0,0,0.85);color:#fff;padding:1rem;border-radius:8px;z-index:999999;font-family:monospace;font-size:12px;white-space:pre-wrap;">
-	<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
-		<strong>Client error log</strong>
-		<button id="client-error-log-close" style="background:#fff;border:none;padding:0.2rem 0.4rem;border-radius:4px;cursor:pointer;">Close</button>
-	</div>
-	<pre id="client-error-log-pre" style="margin:0;white-space:pre-wrap;"></pre>
-</div>
-<script>
+	// Minimal safe visible logging helper for remote testers
 	(function () {
+		// Create or reuse an error panel so remote testers can copy stacks
+		if (!document.getElementById('client-error-log')) {
+			const panel = document.createElement('div');
+			panel.id = 'client-error-log';
+			panel.style.cssText = 'display:none;position:fixed;left:1rem;bottom:1rem;right:1rem;max-height:40vh;overflow:auto;background:rgba(0,0,0,0.85);color:#fff;padding:1rem;border-radius:8px;z-index:999999;font-family:monospace;font-size:12px;white-space:pre-wrap;';
+			panel.innerHTML = `\n                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">\n                    <strong>Client error log</strong>\n                    <button id="client-error-log-close" style="background:#fff;border:none;padding:0.2rem 0.4rem;border-radius:4px;cursor:pointer;">Close</button>\n                </div>\n                <pre id="client-error-log-pre" style="margin:0;white-space:pre-wrap;"></pre>`;
+			document.body.appendChild(panel);
+			document.getElementById('client-error-log-close').addEventListener('click', function () { panel.style.display = 'none'; });
+		}
+
 		const panel = document.getElementById('client-error-log');
 		const pre = document.getElementById('client-error-log-pre');
-		const closeBtn = document.getElementById('client-error-log-close');
 
-		function showError(msg) {
-			if (!panel || !pre) return;
-			pre.textContent = (pre.textContent ? pre.textContent + '\n\n' : '') + msg;
-			panel.style.display = 'block';
-		}
+		window.__showClientError = function (msg) {
+			try {
+				if (!panel || !pre) return;
+				pre.textContent = (pre.textContent ? pre.textContent + '\n\n' : '') + msg;
+				panel.style.display = 'block';
+			} catch (err) { console.error('showClientError failed', err); }
+		};
 
 		window.addEventListener('error', function (e) {
 			try {
 				const stack = (e.error && e.error.stack) || e.message || String(e);
-				console.error('Visible capture error:', stack);
-				showError(stack);
-			} catch (err) {
-				console.error('Error while capturing error', err);
-			}
+				console.error('Captured error:', stack);
+				window.__showClientError('Error: ' + stack);
+			} catch (err) { console.error('error handler failed', err); }
 		});
 
 		window.addEventListener('unhandledrejection', function (e) {
 			try {
 				const reason = e.reason && (e.reason.stack || e.reason.message) || JSON.stringify(e.reason) || String(e.reason);
-				console.error('Visible capture rejection:', reason);
-				showError('Unhandled rejection: ' + reason);
-			} catch (err) {
-				console.error('Error while capturing rejection', err);
-			}
+				console.error('Unhandled rejection:', reason);
+				window.__showClientError('Unhandled rejection: ' + reason);
+			} catch (err) { console.error('unhandledrejection handler failed', err); }
 		});
 
-		if (closeBtn) closeBtn.addEventListener('click', function () { panel.style.display = 'none'; });
+		// Small helper to outline Bokeh root elements and log Bokeh documents
+		setTimeout(function () {
+			try {
+				if (window.Bokeh) {
+					console.log('[diag] Bokeh version', Bokeh && Bokeh.version);
+					console.log('[diag] Bokeh.documents.length', Bokeh && Bokeh.documents && Bokeh.documents.length);
+					document.querySelectorAll('.bk-root').forEach(function (el) {
+						console.log('[diag] bk-root rect', el.getBoundingClientRect());
+						el.style.outline = '3px dashed lime';
+					});
+				} else {
+					console.log('[diag] Bokeh not present');
+				}
+			} catch (err) {
+				console.error('[diag] error running diagnostics', err);
+			}
+		}, 1000);
 	})();
 </script>
 
+<!-- Execute Bokeh embed script inside a guarded evaluator so we can capture and display any stack traces and prevent re-entrant embed runs -->
+{% if chart_script %}
+<script id="bokeh-raw-script" type="text/plain">{{ chart_script|safe }}</script>
 <script>
+	(function () {
+		try {
+			// Prevent double execution
+			if (window.__bokeh_embed_executed) return;
+			window.__bokeh_embed_executed = true;
+
+			var raw = document.getElementById('bokeh-raw-script');
+			if (!raw) return;
+			var s = raw.textContent || raw.innerText || '';
+
+			// Strip surrounding <script> tags if components() returned them
+			s = s.replace(/^\s*<script[^>]*>/i, '').replace(/<\/script>\s*$/i, '');
+
+			// Evaluate the Bokeh embed script in a try/catch so we can capture deep stacks
+			try {
+				// Use Function constructor to keep same global scope as normal script execution
+				var fn = new Function(s);
+				fn();
+			} catch (innerErr) {
+				console.error('Bokeh embed execution error', innerErr, innerErr && innerErr.stack);
+				if (window.__showClientError) {
+					window.__showClientError('Bokeh embed error: ' + (innerErr && innerErr.stack ? innerErr.stack : String(innerErr)));
+				}
+			}
+		} catch (e) {
+			console.error('Failed to run guarded Bokeh embed', e, e && e.stack);
+			if (window.__showClientError) window.__showClientError('Guarded Bokeh embed failed: ' + (e && e.stack ? e.stack : String(e)));
+		}
+	})();
+</script>
+{% endif %}
+
+<script>
+	// Keep the hero parallax but be defensive about missing element
 	window.addEventListener("scroll", function () {
-		const img = document.getElementById("hero-img");
-		const scrolled = window.scrollY;
-		img.style.transform = `translateY(${scrolled * 0.3}px) scale(1.05)`; // 0.3 = parallax speed
-	});
+		try {
+			const img = document.getElementById("hero-img");
+			if (!img) return;
+			const scrolled = window.scrollY || window.pageYOffset || 0;
+			img.style.transform = `translateY(${scrolled * 0.3}px) scale(1.05)`; // 0.3 = parallax speed
+		} catch (err) {
+			// Don't propagate errors from scroll handler
+			// they could cause repeated reflows leading to other issues
+			// Log to console and show to client panel for visibility
+			console.error('parallax handler error', err);
+			if (window.__showClientError) window.__showClientError('parallax handler error: ' + (err && err.stack ? err.stack : String(err)));
+		}
+	}, { passive: true });
 </script>
 {% endblock %}
