@@ -20,14 +20,10 @@ from .models import SiteTrafficSnapshot
 
 
 PALETTE = [
-    "oklch(78% 0.22 80)",  # Gold
-    "oklch(45% 0.18 30)",  # Sad Red
-    "oklch(80% 0.25 20)",  # green-500
+    "#f3a700",  # Gold
+    "#a20a01",  # Sad Red
+    "#79bae8",  # light blue
     "#EC4899",  # pink-500
-    "#14B8A6",  # teal-500
-    "#FACC15",  # yellow-400
-    "#8B5CF6",  # violet-500
-    "#0EA5E9",  # sky-500
 ]
 
 
