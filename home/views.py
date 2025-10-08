@@ -111,11 +111,21 @@ def index(request):
         from wishlist.models import WishlistItem
         from games.models import Game
 
-        # Get games that appear in wishlists
-        wish_game_ids = WishlistItem.objects.values_list('game_id', flat=True)
-        popular_qs = Game.objects.filter(pk__in=wish_game_ids).distinct()
+        # Get games that appear in wishlists, but only include games with at least
+        # MIN_WISHLISTS wishlists. Change MIN_WISHLISTS below to adjust the threshold.
+        MIN_WISHLISTS = 2  # <-- change this number to require more/fewer wishlists
 
-        # Randomly sample up to 5 games (ok for small/dev DBs); make a list so we can attach counts
+        popular_game_ids = (
+            WishlistItem.objects
+            .values('game')
+            .annotate(count=Count('pk'))
+            .filter(count__gte=MIN_WISHLISTS)
+            .values_list('game', flat=True)
+        )
+
+        popular_qs = Game.objects.filter(pk__in=popular_game_ids)
+
+        # Randomly sample up to 5 games; make a list so we can attach counts
         selected = list(popular_qs.order_by('?')[:5])
 
         # Compute wishlist counts for the selected games and attach as attribute for template use
