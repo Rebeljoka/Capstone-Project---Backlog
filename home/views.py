@@ -11,6 +11,7 @@ from django.shortcuts import redirect, render
 from django.utils import timezone
 
 from bokeh.embed import components
+import logging
 from bokeh.models import ColumnDataSource
 from bokeh.plotting import figure
 from bokeh.resources import CDN
@@ -221,7 +222,18 @@ def index(request):
         'engagement': engagement_chart,
     }
 
-    chart_script, chart_divs = components(charts)
+    try:
+        chart_script, chart_divs = components(charts)
+        chart_error = False
+        chart_error_msg = ""
+    except Exception as e:
+        logger = logging.getLogger(__name__)
+        logger.exception("Failed to generate Bokeh components: %s", e)
+        # Fall back to safe values so the page still renders; surface a message
+        chart_script = ""
+        chart_divs = {}
+        chart_error = True
+        chart_error_msg = str(e)
 
     context = {
         'popular_games': popular_games,
@@ -250,6 +262,8 @@ def index(request):
             'users_with_wishlist': users_with_wishlist,
             'additional_wishlists': additional_wishlists,
         },
+        'chart_error': chart_error,
+        'chart_error_msg': chart_error_msg,
     }
 
     return render(request, 'home/index.html', context)
