@@ -221,9 +221,25 @@ def index(request):
         'wishlist': wishlist_chart,
         'engagement': engagement_chart,
     }
+    # Allow testing by embedding only a subset of charts using ?onlychart=traffic,wishlist
+    onlychart_param = None
+    try:
+        onlychart_param = request.GET.get('onlychart')
+    except Exception:
+        onlychart_param = None
+
+    selected_charts = None
+    if onlychart_param:
+        requested = [c.strip().lower() for c in onlychart_param.split(',') if c.strip()]
+        selected_charts = {k: v for k, v in charts.items() if k in requested}
+        # If no valid keys found, fall back to all
+        if not selected_charts:
+            selected_charts = charts
+    else:
+        selected_charts = charts
 
     try:
-        chart_script, chart_divs = components(charts)
+        chart_script, chart_divs = components(selected_charts)
         chart_error = False
         chart_error_msg = ""
     except Exception as e:
