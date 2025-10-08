@@ -147,6 +147,82 @@
 {{ chart_script|safe }}
 {% endif %}
 
+<!-- Diagnostic: capture JS errors and unhandled promise rejections and outline Bokeh roots -->
+<script>
+	window.addEventListener('error', function (e) {
+		try {
+			console.error('Captured error:', e.error || e.message || e);
+		} catch (err) {}
+	});
+	window.addEventListener('unhandledrejection', function (e) {
+		try {
+			console.error('Unhandled rejection:', e.reason || e);
+		} catch (err) {}
+	});
+
+	// Small helper to outline Bokeh root elements and log Bokeh documents
+	setTimeout(function () {
+		try {
+			if (window.Bokeh) {
+				console.log('[diag] Bokeh version', Bokeh && Bokeh.version);
+				console.log('[diag] Bokeh.documents.length', Bokeh && Bokeh.documents && Bokeh.documents.length);
+				document.querySelectorAll('.bk-root').forEach(function (el) {
+					console.log('[diag] bk-root rect', el.getBoundingClientRect());
+					el.style.outline = '3px dashed lime';
+				});
+			} else {
+				console.log('[diag] Bokeh not present');
+			}
+		} catch (err) {
+			console.error('[diag] error running diagnostics', err);
+		}
+	}, 1000);
+</script>
+
+<!-- Visible client-side error panel (temporary debugging aid) -->
+<div id="client-error-log" style="display:none;position:fixed;left:1rem;bottom:1rem;right:1rem;max-height:40vh;overflow:auto;background:rgba(0,0,0,0.85);color:#fff;padding:1rem;border-radius:8px;z-index:999999;font-family:monospace;font-size:12px;white-space:pre-wrap;">
+	<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+		<strong>Client error log</strong>
+		<button id="client-error-log-close" style="background:#fff;border:none;padding:0.2rem 0.4rem;border-radius:4px;cursor:pointer;">Close</button>
+	</div>
+	<pre id="client-error-log-pre" style="margin:0;white-space:pre-wrap;"></pre>
+</div>
+<script>
+	(function () {
+		const panel = document.getElementById('client-error-log');
+		const pre = document.getElementById('client-error-log-pre');
+		const closeBtn = document.getElementById('client-error-log-close');
+
+		function showError(msg) {
+			if (!panel || !pre) return;
+			pre.textContent = (pre.textContent ? pre.textContent + '\n\n' : '') + msg;
+			panel.style.display = 'block';
+		}
+
+		window.addEventListener('error', function (e) {
+			try {
+				const stack = (e.error && e.error.stack) || e.message || String(e);
+				console.error('Visible capture error:', stack);
+				showError(stack);
+			} catch (err) {
+				console.error('Error while capturing error', err);
+			}
+		});
+
+		window.addEventListener('unhandledrejection', function (e) {
+			try {
+				const reason = e.reason && (e.reason.stack || e.reason.message) || JSON.stringify(e.reason) || String(e.reason);
+				console.error('Visible capture rejection:', reason);
+				showError('Unhandled rejection: ' + reason);
+			} catch (err) {
+				console.error('Error while capturing rejection', err);
+			}
+		});
+
+		if (closeBtn) closeBtn.addEventListener('click', function () { panel.style.display = 'none'; });
+	})();
+</script>
+
 <script>
 	window.addEventListener("scroll", function () {
 		const img = document.getElementById("hero-img");
