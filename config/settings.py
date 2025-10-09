@@ -187,7 +187,7 @@ if DEBUG:
     STATICFILES_DIRS = [BASE_DIR / 'static']
     STATIC_ROOT = BASE_DIR / 'staticfiles'
     TAILWIND_APP_NAME = 'theme'
-    NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"
+    NPM_BIN_PATH = 'npm.cmd'
 else:
     # Production settings
     STATIC_ROOT = BASE_DIR / 'staticfiles'

@@ -55,7 +55,7 @@
 </section>
 
 <!-- Analytics Section -->
-<section class="w-full py-16">
+<section class="flex w-full py-16">
 	<div class="w-[75vw] mx-auto px-6">
 		<div class="text-center mb-12">
 			<h1 class="text-4xl md:text-4xl lg:text-5xl font-bold mb-8 text-center">Community Insights</h1>
@@ -64,9 +64,12 @@
 			</p>
 		</div>
 
-		<div class="flex justify-center">
+		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
 
-			<div class="">
+			<!-- DEBUG: red outline = large-only panel (remove these debug classes when finished) -->
+			<!-- data-show-min: minimum viewport width in px to show this panel (LG = 1280) -->
+			<div data-show-min="1280" class="hidden lg:block w-full border-2 border-red-400 bg-red-50">
+				<!-- 1) Only show on large screens and up -->
 				<h2 class="text-2xl font-semibold">Users vs Visitors</h2>
 				<div class="w-full flex justify-center">
 					{% if traffic_chart_div %}
@@ -83,7 +86,9 @@
 				</ul>
 			</div>
 
-			<div class="">
+			<!-- DEBUG: green outline = always-visible panel -->
+			<div class="block w-full border-2 border-green-400 bg-green-50">
+				<!-- 2) Visible on all screen sizes -->
 				<h2 class="text-2xl font-semibold">Wishlist Engagement</h2>
 				<div class="w-full flex justify-center">
 					{% if engagement_chart_div %}
@@ -99,8 +104,11 @@
 					<li><span class="font-semibold">Extra wishlists:</span> {{ engagement_summary.additional_wishlists }}</li>
 				</ul>
 			</div>
-			
-			<div class="">
+
+			<!-- DEBUG: blue outline = md+ panel -->
+			<!-- data-show-min: minimum viewport width in px to show this panel (MD = 768) -->
+			<div data-show-min="768" class="hidden md:block w-full border-2 border-blue-400 bg-blue-50">
+				<!-- 3) Only show on tablet (md) and up -->
 				<h2 class="text-2xl font-semibold">Wishlist Velocity</h2>
 				<div class="w-full flex justify-center">
 					{% if wishlist_chart_div %}
@@ -139,6 +147,31 @@
 {% if chart_script %}
 {{ chart_script|safe }}
 {% endif %}
+
+<!-- JS shim: enforce visibility for debug panels by viewport width. Remove when Tailwind/responsive CSS is fixed. -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+	function applyPanelVisibility() {
+		document.querySelectorAll('[data-show-min]').forEach(function (el) {
+			var min = parseInt(el.getAttribute('data-show-min'), 10) || 0;
+			if (window.innerWidth >= min) {
+				el.style.display = 'block';
+			} else {
+				el.style.display = 'none';
+			}
+		});
+	}
+
+	// initial
+	applyPanelVisibility();
+	// update on resize (debounced)
+	var to;
+	window.addEventListener('resize', function () {
+		clearTimeout(to);
+		to = setTimeout(applyPanelVisibility, 120);
+	});
+});
+</script>
 
 <script>
 	window.addEventListener("scroll", function () {

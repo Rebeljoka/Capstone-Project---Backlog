@@ -1,5 +1,6 @@
-{% load static tailwind_tags %}
+{% load static %}
 {% load profile_extras %}
+
 <!DOCTYPE html>
 <html data-theme="light" lang="en">
     <head>
@@ -9,11 +10,9 @@
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <link rel="icon" type="image/svg+xml" href="{% static 'favicon.svg' %}">
 
-        <!-- Tailwind CSS -->
-        <link rel="stylesheet" href="{% static 'css/dist/styles.css' %}" />
+        <!-- Tailwind + DaisyUI (compiled from theme/static/css/dist/styles.css) -->
+        <link rel="stylesheet" href="{% static 'css/dist/styles.css' %}">
 
-        <!-- Custom styles (loaded in both dev and production) -->
-        <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
 
         <!-- NerdFonts -->
         <link rel="stylesheet" href="https://www.nerdfonts.com/assets/css/webfont.css">
