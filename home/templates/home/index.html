@@ -21,7 +21,7 @@
 
 	<div class="popular-grid w-[75vw] mx-auto px-6">
 		{% for game in popular_games|slice:":5" %}
-		<div class="popular-card flex flex-col h-full rounded-xl shadow-lg gap-y-4" style="background-color:var(--color-card-bg);">
+		<div class="popular-card flex flex-col h-full rounded-xl shadow-lg gap-y-4" style="background-color: var(--color-card-bg)">
 			<a href="{% url 'game_detail' game.game_id %}" class="block overflow-hidden rounded-t-xl">
 				<div class="relative">
 					{% if game.image %}
@@ -54,31 +54,25 @@
 	</div>
 </section>
 
-<!-- Analytics Section -->
-<section class="flex w-full py-16">
-	<div class="w-[75vw] mx-auto px-6">
+<section class="w-full py-16">
+	<div class="w-[90vw] max-w-7xl mx-auto px-6">
+		<!-- Header -->
 		<div class="text-center mb-12">
-			<h1 class="text-4xl md:text-4xl lg:text-5xl font-bold mb-8 text-center">Community Insights</h1>
-			<p class="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-				Explore how players are building their libraries — from wishlist surges to rising engagement. These charts show what’s catching attention across the community.
-			</p>
+			<h1 class="text-4xl lg:text-5xl font-bold mb-6">Community Insights</h1>
+			<p class="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">Explore how players are building their libraries — from wishlist surges to rising engagement. These charts show what’s catching attention across the community.</p>
 		</div>
 
-		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
-
-			<!-- DEBUG: red outline = large-only panel (remove these debug classes when finished) -->
-			<!-- data-show-min: minimum viewport width in px to show this panel (LG = 1280) -->
-			<div data-show-min="1280" class="hidden lg:block w-full border-2 border-red-400 bg-red-50">
-				<!-- 1) Only show on large screens and up -->
-				<h2 class="text-2xl font-semibold">Users vs Visitors</h2>
-				<div class="w-full flex justify-center">
-					{% if traffic_chart_div %}
-					{{ traffic_chart_div|safe }}
-					{% else %}
+		<!-- Grid of Panels -->
+		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+			<!-- 1️⃣ Users vs Visitors — large only -->
+			<div class="hidden lg:flex flex-col items-center w-full rounded-lg p-6 shadow-sm">
+				<h2 class="text-2xl font-semibold mb-4 w-full flex justify-center">Users vs Visitors</h2>
+				<div class="w-full flex justify-center mb-4">
+					{% if traffic_chart_div %} {{ traffic_chart_div|safe }} {% else %}
 					<p class="text-center text-gray-500">Analytics data coming soon.</p>
 					{% endif %}
 				</div>
-				<ul class="w-full space-y-2 text-center text-base md:text-lg">
+				<ul class="space-y-2 text-center text-base md:text-lg">
 					<li><span class="font-semibold">Registered users:</span> {{ traffic_summary.total_users }}</li>
 					<li><span class="font-semibold">New in last 7 days:</span> {{ traffic_summary.new_users_last_week }}</li>
 					<li><span class="font-semibold">Visitors (7 days):</span> {{ traffic_summary.visitors_last_week }}</li>
@@ -86,18 +80,15 @@
 				</ul>
 			</div>
 
-			<!-- DEBUG: green outline = always-visible panel -->
-			<div class="block w-full border-2 border-green-400 bg-green-50">
-				<!-- 2) Visible on all screen sizes -->
-				<h2 class="text-2xl font-semibold">Wishlist Engagement</h2>
-				<div class="w-full flex justify-center">
-					{% if engagement_chart_div %}
-					{{ engagement_chart_div|safe }}
-					{% else %}
+			<!-- 2️⃣ Wishlist Engagement — always visible -->
+			<div class="rounded-lg p-6">
+				<h2 class="text-2xl font-semibold mb-4 w-full flex justify-center">Wishlist Engagement</h2>
+				<div class="w-full flex justify-center mb-4">
+					{% if engagement_chart_div %} {{ engagement_chart_div|safe }} {% else %}
 					<p class="text-center text-gray-500">Engagement metrics will appear once users start building wishlists.</p>
 					{% endif %}
 				</div>
-				<ul class="w-full space-y-2 text-center text-base md:text-lg">
+				<ul class="space-y-2 text-center text-base md:text-lg">
 					<li><span class="font-semibold">Avg wishlists per user:</span> {{ engagement_summary.average_wishlists|floatformat:1 }}</li>
 					<li><span class="font-semibold">Users with wishlists:</span> {{ engagement_summary.users_with_wishlist }}</li>
 					<li><span class="font-semibold">Adoption rate:</span> {{ engagement_summary.adoption_percent|floatformat:1 }}%</li>
@@ -105,19 +96,15 @@
 				</ul>
 			</div>
 
-			<!-- DEBUG: blue outline = md+ panel -->
-			<!-- data-show-min: minimum viewport width in px to show this panel (MD = 768) -->
-			<div data-show-min="768" class="hidden md:block w-full border-2 border-blue-400 bg-blue-50">
-				<!-- 3) Only show on tablet (md) and up -->
-				<h2 class="text-2xl font-semibold">Wishlist Velocity</h2>
-				<div class="w-full flex justify-center">
-					{% if wishlist_chart_div %}
-					{{ wishlist_chart_div|safe }}
-					{% else %}
+			<!-- 3️⃣ Wishlist Velocity — tablet and up -->
+			<div class="hidden md:block rounded-lg p-6">
+				<h2 class="text-2xl font-semibold mb-4 w-full flex justify-center">Wishlist Velocity</h2>
+				<div class="w-full flex justify-center mb-4">
+					{% if wishlist_chart_div %} {{ wishlist_chart_div|safe }} {% else %}
 					<p class="text-center text-gray-500">No wishlist activity recorded yet.</p>
 					{% endif %}
 				</div>
-				<ul class="w-full space-y-2 text-center text-base md:text-lg">
+				<ul class="space-y-2 text-center text-base md:text-lg">
 					<li><span class="font-semibold">Total wishlists:</span> {{ wishlist_summary.total_wishlists }}</li>
 					<li><span class="font-semibold">Created today:</span> {{ wishlist_summary.created_today }}</li>
 					<li><span class="font-semibold">Created last 7 days:</span> {{ wishlist_summary.created_last_week }}</li>
@@ -132,45 +119,35 @@
 	<img src="{% static 'images/form-bg.jpg' %}" alt="formbg" class="w-full" />
 </section>
 
-{% if bokeh_css %}
-	{% for css_url in bokeh_css %}
-	<link rel="stylesheet" href="{{ css_url }}" />
-	{% endfor %}
-{% endif %}
-
-{% if bokeh_js %}
-	{% for js_url in bokeh_js %}
-	<script src="{{ js_url }}"></script>
-	{% endfor %}
-{% endif %}
-
-{% if chart_script %}
-{{ chart_script|safe }}
-{% endif %}
+{% if bokeh_css %} {% for css_url in bokeh_css %}
+<link rel="stylesheet" href="{{ css_url }}" />
+{% endfor %} {% endif %} {% if bokeh_js %} {% for js_url in bokeh_js %}
+<script src="{{ js_url }}"></script>
+{% endfor %} {% endif %} {% if chart_script %} {{ chart_script|safe }} {% endif %}
 
 <!-- JS shim: enforce visibility for debug panels by viewport width. Remove when Tailwind/responsive CSS is fixed. -->
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-	function applyPanelVisibility() {
-		document.querySelectorAll('[data-show-min]').forEach(function (el) {
-			var min = parseInt(el.getAttribute('data-show-min'), 10) || 0;
-			if (window.innerWidth >= min) {
-				el.style.display = 'block';
-			} else {
-				el.style.display = 'none';
-			}
-		});
-	}
+	document.addEventListener("DOMContentLoaded", function () {
+		function applyPanelVisibility() {
+			document.querySelectorAll("[data-show-min]").forEach(function (el) {
+				var min = parseInt(el.getAttribute("data-show-min"), 10) || 0;
+				if (window.innerWidth >= min) {
+					el.style.display = "block";
+				} else {
+					el.style.display = "none";
+				}
+			});
+		}
 
-	// initial
-	applyPanelVisibility();
-	// update on resize (debounced)
-	var to;
-	window.addEventListener('resize', function () {
-		clearTimeout(to);
-		to = setTimeout(applyPanelVisibility, 120);
+		// initial
+		applyPanelVisibility();
+		// update on resize (debounced)
+		var to;
+		window.addEventListener("resize", function () {
+			clearTimeout(to);
+			to = setTimeout(applyPanelVisibility, 120);
+		});
 	});
-});
 </script>
 
 <script>

@@ -211,3 +211,28 @@ LOGOUT_REDIRECT_URL = '/'  # Redirect to home page after logout
 # Django Allauth settings
 ACCOUNT_LOGIN_REDIRECT_URL = '/profile/'  # Allauth-specific login redirect
 ACCOUNT_LOGOUT_REDIRECT_URL = '/'  # Allauth-specific logout redirect
+
+# Caching configuration
+# By default use Django's local in-memory cache (good for development).
+# To use Redis in development/production set the environment variable
+# USE_REDIS_CACHE=true and provide REDIS_URL (e.g. redis://127.0.0.1:6379/1).
+USE_REDIS_CACHE = os.environ.get('USE_REDIS_CACHE', 'False').lower() == 'true'
+if USE_REDIS_CACHE:
+    # Requires `django-redis` package to be installed and REDIS_URL set in env
+    CACHES = {
+        'default': {
+            'BACKEND': 'django_redis.cache.RedisCache',
+            'LOCATION': os.environ.get('REDIS_URL', 'redis://127.0.0.1:6379/1'),
+            'OPTIONS': {
+                'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            }
+        }
+    }
+else:
+    # Simple local-memory cache (not shared between processes) - good for dev
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+            'LOCATION': 'unique-snowflake',
+        }
+    }
