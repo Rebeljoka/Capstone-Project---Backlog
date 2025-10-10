@@ -274,6 +274,12 @@ Ready to transform how you discover, track, and experience Steam games? Your per
    <img src="Assets/Documentation/readme-content/User-Stories/user-stories.png">
 </p>
 
+Throughout the development of my website, I applied Agile methodologies to maintain an iterative, adaptable, and user-centered workflow. I began by breaking down the project into epics - such as “User Authentication & Profiles” and “Wishlist Management”- and defining user stories within each to guide development. Using the MoSCoW prioritization method, I identified the most critical features required for launch and focused my initial sprints on those. Working in short, focused iterations allowed me to continuously test, refine, and improve the product. Regularly reviewing progress helped ensure that each sprint delivered tangible value, and I was able to pivot or optimize based on emerging needs and feedback.
+
+By following this Agile approach, I successfully achieved a Minimum Viable Product (MVP) within just three days, delivering a fully functional version of the site that included user registration, authentication, and wishlist creation. After reaching MVP, I continued to expand and enhance the project by completing additional epics, including real-time notifications, responsive design, and accessibility improvements. Each feature was implemented incrementally, tested thoroughly, and refined through iterative feedback loops. This process not only ensured continuous progress and high-quality output but also demonstrated the effectiveness of Agile principles in rapidly delivering and evolving a working product.
+
+[View User Stories Kanban](https://github.com/users/Rebeljoka/projects/12)
+
 ### Strategy
 
 - The primary strategy was to engage users by providing a streamlined and interactive way to organize their gaming interests using wishlists. Features like wishlist creation, real-time tracking, and community insights encourage users to actively maintain and share their game collections, fostering a sense of ownership and social engagement.
