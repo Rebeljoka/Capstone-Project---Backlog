@@ -6,7 +6,7 @@
 </p>
 
 <br>
-<h1 align="center">Backlog.</h1>
+<h1 align="center">Backlog.<br><br></h1>
 <br><br>
 
 <h1 align="center">Deployed Website</h1>
@@ -153,8 +153,22 @@
 - [Additional Technologies ](#additional-technologies-)
   - [Database](#database)
     - [Database Schema Documentation](#database-schema-documentation)
-      - [Overview](#overview)
-      - [Core Entities](#core-entities)
+    - [Overview](#overview)
+    - [**Core Entities**](#core-entities)
+    - [USER](#user)
+    - [GAME](#game)
+    - [WISHLIST \& WISHLIST\_ITEM](#wishlist--wishlist_item)
+    - [**Supporting Entities**](#supporting-entities)
+    - [Classification System](#classification-system)
+    - [User Experience Enhancement](#user-experience-enhancement)
+    - [**Analytics**](#analytics)
+    - [**Key Relationships \& Data Flow**](#key-relationships--data-flow)
+    - [User-Centric Design](#user-centric-design)
+    - [**Content Management**](#content-management)
+    - [**Personalization Layer**](#personalization-layer)
+    - [**Technical Implementation Notes**](#technical-implementation-notes)
+    - [Database Design Patterns](#database-design-patterns)
+    - [**Scalability Considerations**](#scalability-considerations)
 - [Deployment \& Setup ](#deployment--setup-)
   - [Prerequisites](#prerequisites)
     - [Software Needed for Setup \& Deployment](#software-needed-for-setup--deployment)
@@ -170,11 +184,6 @@
   - [Manual Testing](#manual-testing)
 
 </details>
-
-
-
-
-
 
 
   Bugs
@@ -229,11 +238,11 @@ Ready to transform how you discover, track, and experience Steam games? Your per
 ## Responsivity <br><br>
 
 <table>
-   <td width="500">
+   <td>
       <img src="Assets/Documentation/readme-content/Responsivity/homepage-responsive.gif" width="500" alt="Homepage Responsiveness">
       <sub><b>Figure 1.</b> Homepage Responsiveness</sub>
    </td>
-   <td width="500">
+   <td>
       <img src="Assets/Documentation/readme-content/Responsivity/games-responsive.gif" width="500" alt="Games Page Responsiveness">
       <sub><b>Figure 2.</b> Games Catalog Responsivness</sub>
    </td>
@@ -342,114 +351,105 @@ Ready to transform how you discover, track, and experience Steam games? Your per
 
 #### Database Schema Documentation
 
-##### Overview
+#### Overview
 This Entity Relationship Diagram (ERD) represents the database structure for a Steam game wishlist management platform. The schema is designed to handle user authentication, game catalog management, personalized wishlists, user profiles, and activity tracking.
 
-##### Core Entities
+#### **Core Entities**
 
-USER
-Primary Entity: Represents authenticated users in the system
+#### USER
 
-id (Primary Key): References Django's built-in authentication system
+- **Primary Entity**: Represents authenticated users in the system.
+- **id (Primary Key)**: References Django's built-in authentication system.
+- **username**: Unique identifier for user login.
+- **Relationships**: Central hub connecting to games, wishlists, profiles, and activities.
 
-username: Unique identifier for user login
+#### GAME
 
-Relationships: Central hub connecting to games, wishlists, profiles, and activities
+- **Content Entity**: Stores comprehensive game information.
+- **game_id (Primary Key)**: Unique game identifier.
+- **submitted_by (Foreign Key)**: Links to the user who added the game.
+- **Core Fields**: title, image, descriptions, release_date, developer, age_rating, platform.
+- **Purpose**: Maintains the complete catalog of Steam games available for wishlisting.
 
-GAME
-Content Entity: Stores comprehensive game information
+#### WISHLIST & WISHLIST_ITEM
+**Core Functionality**: Implements the wishlist system through a two-table approach.
 
-game_id (Primary Key): Unique game identifier
+- **WISHLIST**:
+  - Container for user's wishlist collections.
+  - Users can create multiple named wishlists.
+  - Tracks creation and modification timestamps.
 
-submitted_by (Foreign Key): Links to the user who added the game
+- **WISHLIST_ITEM**: Individual games within wishlists.
+  - **order**: Enables custom ordering of games within lists.
+  - **added_on**: Tracks when each game was wishlisted.
+  - **Relationship**: Many-to-many between games and wishlists.
 
-Core Fields: title, image, descriptions, release_date, developer, age_rating, platform
+#### **Supporting Entities**
+#### Classification System
 
-Purpose: Maintains the complete catalog of Steam games available for wishlisting
+- **TAG**: Flexible labeling system for games (e.g., "Indie", "Multiplayer", "Action").
+- **GENRE**: Formal genre classification (e.g., "RPG", "Strategy", "Simulation").
+- **PLATFORM**: Gaming platforms (Steam, Epic Games, etc.) with status tracking.
 
-WISHLIST & WISHLIST_ITEM
-Core Functionality: Implements the wishlist system through a two-table approach
+#### User Experience Enhancement
 
-WISHLIST: Container for user's wishlist collections
+- **USER_PROFILE**:
+  - Extended user information beyond basic authentication.
+  - Profile customization (picture, bio).
 
-Users can create multiple named wishlists
+- **FAVORITE_GENRE**: User's preferred game genres.
+- **PLATFORM**: User's gaming platform preferences.
 
-Tracks creation and modification timestamps
+**ACTIVITY**:
 
-WISHLIST_ITEM: Individual games within wishlists
+- User action tracking for engagement and recommendations.
+- Captures user interactions with timestamp and descriptive text.
+- Icons for visual activity feed representation.
 
-order: Enables custom ordering of games within lists
+#### **Analytics**
 
-added_on: Tracks when each game was wishlisted
+**SITE_TRAFFIC_SNAPSHOT**:
 
-Relationship: Many-to-many between games and wishlists
+- Daily analytics for platform monitoring.
+- Distinguishes between unique and returning visitors.
+- Enables growth tracking and usage pattern analysis.
 
-Supporting Entities
-Classification System
-TAG: Flexible labeling system for games (e.g., "Indie", "Multiplayer", "Action")
+#### **Key Relationships & Data Flow**
 
-GENRE: Formal genre classification (e.g., "RPG", "Strategy", "Simulation")
+#### User-Centric Design
 
-PLATFORM: Gaming platforms (Steam, Epic Games, etc.) with status tracking
+- USER → WISHLIST → WISHLIST_ITEM → GAME
+  - Each user can create multiple wishlists, populate them with games in custom order, and manage their collections over time.
 
-User Experience Enhancement
-USER_PROFILE: Extended user information beyond basic authentication
+#### **Content Management**
 
-Profile customization (picture, bio)
+- USER → GAME → (TAG/GENRE associations)
+  - Users can contribute to the game catalog, with games being categorized through multiple classification systems.
 
-FAVORITE_GENRE: User's preferred game genres
+#### **Personalization Layer**
 
-PLATFORM: User's gaming platform preferences
+- USER → USER_PROFILE → (FAVORITE_GENRE/PLATFORM preferences)
+  - Rich user profiles enable personalized recommendations and improved user experience.
 
-ACTIVITY: User action tracking for engagement and recommendations
+#### **Technical Implementation Notes**
 
-Captures user interactions with timestamp and descriptive text
+#### Database Design Patterns
 
-Icons for visual activity feed representation
+- **Foreign Key Relationships**: Maintain referential integrity across all entities.
+- **Many-to-Many Associations**: Games can have multiple tags/genres; users can have multiple platform/genre preferences.
+- **Timestamping**: Creation and modification tracking for wishlists, profiles, and activities.
+- **Ordering Support**: Custom game ordering within wishlists via the order field.
 
-Analytics
-SITE_TRAFFIC_SNAPSHOT: Daily analytics for platform monitoring
+#### **Scalability Considerations**
 
-Distinguishes between unique and returning visitors
-
-Enables growth tracking and usage pattern analysis
-
-Key Relationships & Data Flow
-User-Centric Design
-text
-USER → WISHLIST → WISHLIST_ITEM → GAME
-Each user can create multiple wishlists, populate them with games in custom order, and manage their collections over time.
-
-Content Management
-text
-USER → GAME → (TAG/GENRE associations)
-Users can contribute to the game catalog, with games being categorized through multiple classification systems.
-
-Personalization Layer
-text
-USER → USER_PROFILE → (FAVORITE_GENRE/PLATFORM preferences)
-Rich user profiles enable personalized recommendations and improved user experience.
-
-Technical Implementation Notes
-Database Design Patterns
-Foreign Key Relationships: Maintain referential integrity across all entities
-
-Many-to-Many Associations: Games can have multiple tags/genres; users can have multiple platform/genre preferences
-
-Timestamping: Creation and modification tracking for wishlists, profiles, and activities
-
-Ordering Support: Custom game ordering within wishlists via the order field
-
-Scalability Considerations
-Separation of Concerns: Distinct entities for different functional areas
-
-Flexible Categorization: Multiple classification systems (tags, genres) for comprehensive game organization
-
-Activity Tracking: Enables future features like recommendation engines and social features
-
-Analytics Ready: Built-in traffic monitoring for platform optimization
+- **Separation of Concerns**: Distinct entities for different functional areas.
+- **Flexible Categorization**: Multiple classification systems (tags, genres) for comprehensive game organization.
+- **Activity Tracking**: Enables future features like recommendation engines and social features.
+- **Analytics Ready**: Built-in traffic monitoring for platform optimization.
 
 This schema provides a robust foundation for a comprehensive Steam game wishlist platform, supporting everything from basic wishlist functionality to advanced user personalization and platform analytics.
+
+<p align="center">&nbsp;</p>
 
 ## Deployment & Setup <br><br>
 <p align="center">&nbsp;</p>
