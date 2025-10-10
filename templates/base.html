@@ -14,11 +14,19 @@
         <link rel="stylesheet" href="{% static 'css/dist/styles.css' %}">
 
 
-        <!-- NerdFonts -->
-        <link rel="stylesheet" href="https://www.nerdfonts.com/assets/css/webfont.css">
+        <!-- Preconnects for third-party resources to reduce connection setup time -->
+        <link rel="preconnect" href="https://www.nerdfonts.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="preconnect" href="https://cdn.bokeh.org" crossorigin>
 
-        <!-- Iconify for Tailwind icon support -->
-        <script src="https://code.iconify.design/iconify-icon/2.0.0/iconify-icon.min.js"></script>
+        <!-- NerdFonts (load non-blocking to avoid FOIT / render-blocking) -->
+        <link rel="stylesheet" href="https://www.nerdfonts.com/assets/css/webfont.css" media="print" onload="this.media='all'">
+        <noscript>
+            <link rel="stylesheet" href="https://www.nerdfonts.com/assets/css/webfont.css">
+        </noscript>
+
+        <!-- Iconify for Tailwind icon support (async so it doesn't block parsing) -->
+        <script async src="https://code.iconify.design/iconify-icon/2.0.0/iconify-icon.min.js"></script>
 
     </head>
 
@@ -222,8 +230,7 @@
             </aside>
         </footer>
 
-    <script src="{% static 'js/main.js' %}"></script>
-    <script src="{% static 'js/infinite-scroll.js' %}"></script>
+    <script defer src="{% static 'js/main.js' %}"></script>
 
     </body>
 </html>
