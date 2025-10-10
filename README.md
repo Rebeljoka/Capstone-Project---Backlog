@@ -1,7 +1,7 @@
 
 <p align="center">
    <a>
-      <img src="static\images\README-Banner.png" alt="Banner" height="250" width="1000">
+      <img src="static/images/README-Banner.png" alt="Banner" height="250" width="1000">
    </a>
 </p>
 
@@ -13,7 +13,7 @@
 
 <p align="center">
    <a href="https://backlog-wishlyst-70712188933f.herokuapp.com/">
-      <img src="static\images\logo.webp" alt="Backlog." width="200">
+      <img src="static/images/logo.webp" alt="Backlog." width="200">
    </a>
 </p>
 
@@ -354,7 +354,7 @@ This transparent selection process shows that design choices were informed by au
 
 | Logos | Hero Image | Form Background | ReadMe Banner | Steam Placeholder Images |
 |-----------|-----------|-----------|-----------|-----------|
-| ![AI Generated Log Image Evidence](Assets\Documentation\readme-content\Imagery\AI-Gen-Logo.png)<br>![Final Product of Logo](Assets\Documentation\readme-content\Imagery\logo.webp) | ![Hero Image Displayed on Homepage](Assets\Documentation\readme-content\Imagery\hero.jpg) | ![Form Background](Assets\Documentation\readme-content\Imagery\form-bg.jpg) | ![Banner Image](Assets\Documentation\readme-content\Imagery\README-Banner.png) | ![AI Generated Logo Image Evidence](Assets\Documentation\readme-content\Imagery\AI-Gen-Placeholder.png)<br>![Steam Game Placeholder Image](Assets\Documentation\readme-content\Imagery\placeholder.png) |
+| ![AI Generated Log Image Evidence](Assets/Documentation/readme-content/Imagery/AI-Gen-Logo.png)<br>![Final Product of Logo](Assets/Documentation/readme-content/Imagery/logo.webp) | ![Hero Image Displayed on Homepage](Assets/Documentation/readme-content/Imagery/hero.jpg) | ![Form Background](Assets/Documentation/readme-content/Imagery/form-bg.jpg) | ![Banner Image](Assets/Documentation/readme-content/Imagery/README-Banner.png) | ![AI Generated Logo Image Evidence](Assets/Documentation/readme-content/Imagery/AI-Gen-Placeholder.png)<br>![Steam Game Placeholder Image](Assets/Documentation/readme-content/Imagery/placeholder.png) |
 | _Custom logo designs were generated using AI tools, resulting in original graphics tailored for the project’s theme. Image had to be edited due to the fact that AI did not end up providing me with an image that has a transparent background._ | _The hero section photo was sourced from Unsplash, chosen after searching and filtering for images related to the website’s theme._ | _The top banner for this README was generated using an AI tool to create a welcoming header._ | _For the forms section, an aurora image from Unsplash was used to provide visual interest and break up the homepage layout._ | _AI-generated placeholder images were created for Steam games that were missing official images._ |
 
 #### Image Credits
@@ -444,6 +444,23 @@ Tag-based filters allow narrowing down games by gameplay features or themes. Thi
 ### Database
 
 #### Database Schema Documentation
+
+<table>
+   <td width="500">
+      <p align="center">Initial Database ERD</p>
+   </td>
+   <td width="500">
+      <p align="center">Final Database ERD</p>
+   </td>
+   <tr>
+      <td>
+         <img src="Assets/Documentation/readme-content/ERD/InitialERD.svg" alt="Initial DB ERD">
+      </td>
+      <td>
+         <img src="Assets/Documentation/readme-content/ERD/ERD-Diagram.svg" alt="Final DB ERD">
+      </td>
+   </tr>
+</table>
 
 #### Overview
 This Entity Relationship Diagram (ERD) represents the database structure for a Steam game wishlist management platform. The schema is designed to handle user authentication, game catalog management, personalized wishlists, user profiles, and activity tracking.
