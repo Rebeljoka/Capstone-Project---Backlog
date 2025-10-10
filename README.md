@@ -237,16 +237,10 @@ Ready to transform how you discover, track, and experience Steam games? Your per
 
 ## Responsivity <br><br>
 
-<table>
-   <td>
-      <img src="Assets/Documentation/readme-content/Responsivity/homepage-responsive.gif" width="500" alt="Homepage Responsiveness">
-      <sub><b>Figure 1.</b> Homepage Responsiveness</sub>
-   </td>
-   <td>
-      <img src="Assets/Documentation/readme-content/Responsivity/games-responsive.gif" width="500" alt="Games Page Responsiveness">
-      <sub><b>Figure 2.</b> Games Catalog Responsivness</sub>
-   </td>
-</table>
+| ![Homepage Responsiveness](Assets/Documentation/readme-content/Responsivity/homepage-responsive.gif) | ![Games Page Responsiveness](Assets/Documentation/readme-content/Responsivity/games-responsive.gif) |
+|:--:|:--:|
+| **Figure 1.** Homepage Responsiveness | **Figure 2.** Games Catalog Responsiveness |
+
 
 <p align="center">&nbsp;</p>
 
