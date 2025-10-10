@@ -134,20 +134,20 @@
   - [Imagery](#imagery)
 - [Website Features ](#website-features-)
   - [Wishlist](#wishlist)
-    - [Create Wishlists](#create-wishlists)
-    - [Add Games to Wishlist](#add-games-to-wishlist)
-    - [Reorder Games in Wishlist](#reorder-games-in-wishlist)
-    - [Remove Games | Wishlist/s](#remove-games--wishlists)
+    - [**Create Wishlists**](#create-wishlists)
+    - [**Add Games to Wishlist**](#add-games-to-wishlist)
+    - [**Reorder Games in Wishlist**](#reorder-games-in-wishlist)
+    - [**Remove Games | Wishlist/s**](#remove-games--wishlists)
   - [Profile](#profile)
-    - [Real Time Tracking of Your Wishlists](#real-time-tracking-of-your-wishlists)
-    - [Real Time Tracking of Games Added in Total](#real-time-tracking-of-games-added-in-total)
-    - [Update Username, Email, First and Last Name](#update-username-email-first-and-last-name)
-    - [Account Deletion](#account-deletion)
+    - [**Real Time Tracking of Your Wishlists**](#real-time-tracking-of-your-wishlists)
+    - [**Real Time Tracking of Games Added in Total**](#real-time-tracking-of-games-added-in-total)
+    - [**Update Username, Email, First and Last Name**](#update-username-email-first-and-last-name)
+    - [**Account Deletion**](#account-deletion)
   - [Games Catalog](#games-catalog)
-    - [View Games](#view-games)
-    - [Search Suggestions](#search-suggestions)
-    - [Genre Filtering](#genre-filtering)
-    - [Category Filtering](#category-filtering)
+    - [**View Games**](#view-games)
+    - [**Search Suggestions**](#search-suggestions)
+    - [**Genre Filtering**](#genre-filtering)
+    - [**Category Filtering**](#category-filtering)
 - [Tablet | Mobile View ](#tablet--mobile-view-)
 - [Future Features ](#future-features-)
 - [Additional Technologies ](#additional-technologies-)
@@ -302,35 +302,63 @@ Ready to transform how you discover, track, and experience Steam games? Your per
 ### Wishlist
 <p align="center">&nbsp;</p>
 
-#### Create Wishlists
+#### **Create Wishlists**
 
-#### Add Games to Wishlist
+Users can create and name multiple wishlists to organize their favorite games. This allows for a personalized way to keep track of future purchases or games of interest.
 
-#### Reorder Games in Wishlist
+#### **Add Games to Wishlist**
 
-#### Remove Games | Wishlist/s
+Any game from the catalog can be easily added to a wishlist with a single click. This helps users quickly store games they might want to buy later.  
+
+#### **Reorder Games in Wishlist**
+
+Users can drag and drop titles to reorder their wishlist based on preference or importance. This ensures their most desired games appear at the top for quick access.
+
+#### **Remove Games | Wishlist/s**
+
+Entire wishlists or individual games can be deleted whenever the user wants. This provides full control over their saved content.
+
+<p align="center">&nbsp;</p>
 
 ### Profile
+
+#### **Real Time Tracking of Your Wishlists**
+
+Changes to wishlists update instantly across the site without the need to reload pages. This makes tracking new additions seamless and responsive.
+
+#### **Real Time Tracking of Games Added in Total**
+
+A count of games added to each wishlist is shown for quick reference. This gives users a clear overview of the size and scope of their collections.
+
+#### **Update Username, Email, First and Last Name**
+
+Editable profile settings allow users to update personal information at any time. This helps keep their account details accurate and up to date.
+
+#### **Account Deletion**
+
+Users can completely delete their accounts along with all stored data. This ensures privacy and complies with data protection best practices.
+
 <p align="center">&nbsp;</p>
-
-#### Real Time Tracking of Your Wishlists
-
-#### Real Time Tracking of Games Added in Total
-
-#### Update Username, Email, First and Last Name
-
-#### Account Deletion
 
 ### Games Catalog
+
+#### **View Games**
+
+The game catalog provides detailed information such as title, genre, tags, and release date. This makes browsing for new games intuitive and informative.
+
+#### **Search Suggestions**
+
+When typing in the search bar, users are shown suggested game titles in real-time. This speeds up searches and helps discover relevant games.
+
+#### **Genre Filtering**
+
+Users can filter the games list by specific genres to match their preferences. This makes finding games of a certain style quicker and more efficient.
+
+#### **Category Filtering**
+
+Tag-based filters allow narrowing down games by gameplay features or themes. This enables more precise searches tailored to unique interests.
+
 <p align="center">&nbsp;</p>
-
-#### View Games
-
-#### Search Suggestions
-
-#### Genre Filtering
-
-#### Category Filtering
 
 ## Tablet | Mobile View <br><br>
 <p align="center">&nbsp;</p>
