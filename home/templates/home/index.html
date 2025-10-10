@@ -1,13 +1,7 @@
 {% extends 'base.html' %} {% load static %} {% block content %}
 <section class="text-center hero-section overflow-hidden">
 	<!-- Hero image: keep eager load for LCP but hint priority and reserve aspect ratio to avoid CLS -->
-	<img src="{% static 'images/hero.webp' %}"
-		 alt="Logo"
-		 id="hero-img"
-		 class="mx-auto blur-md scale-105 bg-center hero-img"
-		 decoding="async"
-		 fetchpriority="high"
-		 style="width:100%;height:auto;aspect-ratio:16/9;" />
+	<img src="{% static 'images/hero.webp' %}" alt="Logo" id="hero-img" class="mx-auto blur-md scale-105 bg-center hero-img" decoding="async" fetchpriority="high" style="width: 100%; height: auto; aspect-ratio: 16/9" />
 	<div class="grid place-items-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
 		<h1 class="text-4xl md:text-5xl font-bold text-white mb-4">Welcome to Backlog.</h1>
 		<h2 class="text-xl md:text-2xl text-white mb-6">Organize your gaming journey.</h2>
@@ -51,9 +45,9 @@
 				</div>
 				<div class="mt-auto flex flex-col gap-3 pt-2 pb-4">
 					<a href="{% url 'game_detail' game.game_id %}" class="w-full text-center text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-lg py-2 whitespace-normal">View details</a>
-						{% if user.is_authenticated %}
-						<a href="{% url 'add_steam_game_to_wishlist' game.game_id %}" class="w-full text-center btn btn-outline btn-secondary btn-md text-lg whitespace-normal">Add to Wishlist!</a>
-						{% endif %}
+					{% if user.is_authenticated %}
+					<a href="{% url 'add_steam_game_to_wishlist' game.game_id %}" class="w-full text-center btn btn-outline btn-secondary btn-md text-lg whitespace-normal">Add to Wishlist!</a>
+					{% endif %}
 				</div>
 			</div>
 		</div>
@@ -126,13 +120,7 @@
 
 <section>
 	<!-- Decorative form background: lazy-load to defer large image bytes until needed -->
-	<img src="{% static 'images/form-bg.webp' %}"
-		 alt="formbg"
-		 class="w-full"
-		 loading="lazy"
-		 decoding="async"
-		 importance="low"
-		 style="width:100%;height:auto;aspect-ratio:16/9;" />
+	<img src="{% static 'images/form-bg.webp' %}" alt="formbg" class="w-full" loading="lazy" decoding="async" importance="low" style="width: 100%; height: auto; aspect-ratio: 4/3" />
 </section>
 
 {% if bokeh_css %} {% for css_url in bokeh_css %}
