@@ -358,9 +358,14 @@ section.filters-card {
 .bk-root {
     margin: 0;
     padding: 0;
-    width: 100%;
+    width: auto;
     height: 100%;
 }
+
+.bk-layer {
+        width: 555px !important;
+        height: 555px;
+    }
 
 
 /* =========================================================
@@ -675,6 +680,5 @@ section.filters-card {
     .bk-layer {
         width: 555px !important;
         height: 555px;
-        
     }
 }
