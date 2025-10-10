@@ -8,10 +8,9 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
-    "../../**/*.{html,js,py}",
-    "../../../**/*.{html,js,py}",
-    "../../../../templates/**/*.html",
-  ],
+  "./templates/**/*.html",
+  "./**/*.{js,py,html}",
+],
   theme: {
     extend: {},
   },
