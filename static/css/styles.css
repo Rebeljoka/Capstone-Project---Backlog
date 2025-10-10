@@ -671,4 +671,10 @@ section.filters-card {
     .game-card {
         max-height: 202px !important;
     }
+
+    .bk-layer {
+        width: 555px !important;
+        height: 555px;
+        
+    }
 }
