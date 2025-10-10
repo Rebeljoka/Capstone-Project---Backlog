@@ -31,16 +31,16 @@
    </tr>
    <tr>
       <td colspan="2" align="center">
-         <img src="https://cdn.simpleicons.org/html5" width="60" height="60" alt="HTML">
+         <img src="https://cdn.simpleicons.org/html5" width="65" height="65" alt="HTML">
       </td>
       <td colspan="2" align="center">
-         <img src="https://cdn.simpleicons.org/css" width="60" height="60" alt="CSS">
+         <img src="https://cdn.simpleicons.org/css" width="65" height="65" alt="CSS">
       </td>
       <td colspan="2" align="center">
-         <img src="https://cdn.simpleicons.org/javascript" width="60" height="60" alt="JavaScript">
+         <img src="https://cdn.simpleicons.org/javascript" width="65" height="65" alt="JavaScript">
       </td>
       <td colspan="2" align="center">
-        <img src="https://cdn.simpleicons.org/python" width="60" height="60" alt="Python">
+        <img src="https://cdn.simpleicons.org/python" width="65" height="65" alt="Python">
       </td>
    </tr>
    <tr>
@@ -48,16 +48,16 @@
    </tr>
    <tr>
       <td colspan="2" align="center">
-         <img src="https://cdn.simpleicons.org/tailwindcss" width="60" height="60" alt="Tailwind CSS">
+         <img src="https://cdn.simpleicons.org/tailwindcss" width="65" height="65" alt="Tailwind CSS">
       </td>
       <td colspan="2" align="center">
-         <img src="https://cdn.simpleicons.org/django" width="60" height="60" alt="Django">
+         <img src="https://cdn.simpleicons.org/django" width="65" height="65" alt="Django">
       </td>
       <td colspan="2" align="center">
-         <img src="https://cdn.simpleicons.org/nodedotjs" width="60" height="60" alt="Node.js">
+         <img src="https://cdn.simpleicons.org/nodedotjs" width="65" height="65" alt="Node.js">
       </td>
       <td colspan="2" align="center">
-         <img src="https://cdn.simpleicons.org/cloudinary" width="60" height="60" alt="Cloudinary">
+         <img src="https://cdn.simpleicons.org/cloudinary" width="65" height="65" alt="Cloudinary">
       </td>
    </tr>
    <tr>
@@ -65,16 +65,16 @@
    </tr>
    <tr>
       <td colspan="2" align="center">
-         <img src="https://cdn.simpleicons.org/googlefonts" width="60" height="60" alt="Google Fonts">
+         <img src="https://cdn.simpleicons.org/googlefonts" width="65" height="65" alt="Google Fonts">
       </td>
       <td colspan="2" align="center">
-         <img src="https://www.nerdfonts.com/assets/img/nerd-fonts-logo.svg" width="60" height="60" alt="Nerd Fonts">
+         <img src="https://www.nerdfonts.com/assets/img/nerd-fonts-logo.svg" width="65" height="65" alt="Nerd Fonts">
       </td>
       <td colspan="2" align="center">
-         <img src="https://cdn.simpleicons.org/steam" width="60" height="60" alt="Steam API">
+         <img src="https://cdn.simpleicons.org/steam" width="65" height="65" alt="Steam API">
       </td>
       <td colspan="2" align="center">
-         <img src="https://cdn.simpleicons.org/iconify" width="60" height="60" alt="Iconify">
+         <img src="https://cdn.simpleicons.org/iconify" width="65" height="65" alt="Iconify">
       </td>
    </tr>
    <tr>
@@ -82,28 +82,28 @@
    </tr>
    <tr>
       <td align="center">
-         <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Visual_Studio_Code_1.35_icon.svg/330px-Visual_Studio_Code_1.35_icon.svg.png" width="60" height="60" alt="VS Code">
+         <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Visual_Studio_Code_1.35_icon.svg/330px-Visual_Studio_Code_1.35_icon.svg.png" width="65" height="65" alt="VS Code">
       </td>
       <td align="center">
-         <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Balsamiq_2025_logo.svg/500px-Balsamiq_2025_logo.svg.png" width="60" height="60" alt="Balsamiq">
+         <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Balsamiq_2025_logo.svg/500px-Balsamiq_2025_logo.svg.png" width="65" height="65" alt="Balsamiq">
       </td>
       <td align="center">
-         <img src="https://cdn.simpleicons.org/miro" width="60" height="60" alt="Miro">
+         <img src="https://cdn.simpleicons.org/miro" width="65" height="65" alt="Miro">
       </td>
       <td align="center">
-         <img src="https://cdn.simpleicons.org/github" width="60" height="60" alt="GitHub">
+         <img src="https://cdn.simpleicons.org/github" width="65" height="65" alt="GitHub">
       </td>
       <td align="center">
-         <img src="https://upload.wikimedia.org/wikipedia/en/thumb/a/aa/Microsoft_Copilot_Icon.svg/210px-Microsoft_Copilot_Icon.svg.png" width="60" height="60" alt="Windows Copilot">
+         <img src="https://upload.wikimedia.org/wikipedia/en/thumb/a/aa/Microsoft_Copilot_Icon.svg/210px-Microsoft_Copilot_Icon.svg.png" width="65" height="65" alt="Windows Copilot">
       </td>
       <td align="center">
-         <img src="https://cdn.simpleicons.org/openai" width="60" height="60" alt="ChatGPT">
+         <img src="https://cdn.simpleicons.org/openai" width="65" height="65" alt="ChatGPT">
       </td>
       <td align="center">
-         <img src="https://cdn.simpleicons.org/heroku" width="60" height="60" alt="Heroku">
+         <img src="https://cdn.simpleicons.org/heroku" width="65" height="65" alt="Heroku">
       </td>
       <td align="center">
-         <img src="https://upload.wikimedia.org/wikipedia/en/thumb/f/f2/Lucidchart_logo_%28September_2021%29.svg/375px-Lucidchart_logo_%28September_2021%29.svg.png" width="60" height="60" alt="Lucidchart">
+         <img src="https://upload.wikimedia.org/wikipedia/en/thumb/f/f2/Lucidchart_logo_%28September_2021%29.svg/375px-Lucidchart_logo_%28September_2021%29.svg.png" width="65" height="65" alt="Lucidchart">
       </td>
    </tr>
    </tbody>
