@@ -39,8 +39,8 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link rel="preconnect" href="https://cdn.bokeh.org" crossorigin>
 
-    <!-- Preload LCP hero image (low-risk) -->
-    <link rel="preload" as="image" href="{% static 'images/hero.webp' %}" type="image/webp" fetchpriority="high">
+        <!-- Preload LCP hero image (low-risk) -->
+        <link rel="preload" as="image" href="{% static 'images/hero.webp' %}" type="image/webp" fetchpriority="high">
 
         <!-- NerdFonts (load non-blocking to avoid FOIT / render-blocking) -->
         <link rel="stylesheet" href="https://www.nerdfonts.com/assets/css/webfont.css" media="print" onload="this.media='all'">
@@ -54,13 +54,11 @@
     </head>
 
     <body class="min-h-screen flex flex-col leading-normal tracking-normal">
-        <nav class="navbar gap-4 shadow-base-300/20 shadow-sm sticky top-0 z-50 backdrop-blur-md" style="margin-bottom:0;padding-bottom:0;padding-left:3rem;padding-right:3rem;">
-            <div class="navbar-start flex items-center gap-2">
+        <nav class="navbar w-full min-w-0 gap-2 shadow-base-300/20 shadow-sm sticky top-0 z-50 backdrop-blur-md mb-0 pb-0 px-3 sm:px-4 lg:px-12">
+            <div class="navbar-start flex items-center gap-2 min-w-0">
                 <div class="dropdown">
-                    <label tabindex="0" class="btn btn-ghost transition-transform duration-200 hover:scale-105 rounded-full flex items-center justify-center w-25 h-25 lg:w-25 lg:h-25">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-25 w-25 lg:h-16 lg:w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                        </svg>
+                    <label tabindex="0" role="button" aria-label="Open menu" class="btn btn-ghost btn-circle w-14 h-14 p-3 text-2xl transition-transform duration-200 hover:scale-105 rounded-full flex items-center justify-center focus:outline-2 focus:outline-offset-2">
+                        <span class="nf nf-md-menu"></span> <span class="sr-only">Open menu</span>
                     </label>
                     <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 text-lg lg:text-xl">
                         <li><a href="{% url 'home' %}" class="lg:text-xl">Home</a></li>
@@ -71,19 +69,23 @@
                         <li><a href="{% url 'account_login' %}" class="lg:text-xl">Login to see Wishlists</a></li>
                         {% endif %}
                     </ul>
+                <!-- Skip link for keyboard users -->
+                <a href="#main-content" class="sr-only focus:not-sr-only focus:translate-y-0 focus:outline-none focus:bg-base-200 p-2 rounded">Skip to main content</a>
                 </div>
             </div>
-                <div class="flex-1 flex justify-center items-center">
-                    <a href="{% url 'home' %}">
-                        <h1 class="text-5xl font-bold siteName">
-                            <span>B</span><span>a</span><span>c</span><span>k</span><span>l</span><span>o</span><span>g</span><span>.</span>
-                        </h1>
-                    </a>
-                </div>
+
+            <!-- Logo -->
+            <div class="flex-1 flex justify-center items-center">
+                <a href="{% url 'home' %}">
+                    <h1 class="text-5xl font-bold siteName">
+                        <span>B</span><span>a</span><span>c</span><span>k</span><span>l</span><span>o</span><span>g</span><span>.</span>
+                    </h1>
+                </a>
+            </div>
 
                 <div class="navbar-end flex items-center gap-4">
                     {% if user.is_authenticated %}
-                    <!-- Authenticated User Avatar Dropdown -->
+                    <!-- Authenticated User Avatar Dropdown (unchanged) -->
                     <div class="dropdown dropdown-end">
                         <label tabindex="0" class="btn btn-ghost transition-transform duration-200 hover:scale-105 rounded-full avatar flex items-center justify-center w-25 h-25 lg:w-25 lg:h-25">
                             <div class="w-25 rounded-full lg:w-18">
@@ -105,24 +107,15 @@
                             <li><a href="{% url 'profile' %}" class="lg:text-xl"><span class="nf nf-fa-user_o"></span>My Profile</a></li>
                             <li><a href="{% url 'wishlist_list' %}" class="lg:text-xl"><span class="nf nf-oct-heart"></span>My Wishlists</a></li>
                             <li><a href="{% url 'edit_profile' %}" class="lg:text-xl"><span class="nf nf-md-cog"></span>Settings</a></li>
-
-                            <!-- Dark Mode Toggle -->
                             <li>
                                 <div class="flex items-center justify-between w-full px-4 py-2">
-                                    <span class="flex items-center gap-2 lg:text-xl">
-                                        <span class="nf nf-oct-moon">
-                                        </span>Dark Mode
-                                    </span>
+                                    <span class="flex items-center gap-2 lg:text-xl"><span class="nf nf-oct-moon"></span>Dark Mode</span>
                                     <input type="checkbox" class="toggle toggle-sm" id="theme-toggle" />
                                 </div>
                             </li>
-
-                            <!-- Language Selector -->
                             <li>
                                 <div class="flex items-center justify-between w-full px-4 py-2">
-                                    <span class="flex items-center gap-2 lg:text-xl">
-                                        <span class="nf nf-md-translate"></span>Language
-                                    </span>
+                                    <span class="flex items-center gap-2 lg:text-xl"><span class="nf nf-md-translate"></span>Language</span>
                                     <select class="select select-sm w-16" id="language-select">
                                         <option value="en">EN</option>
                                         <option value="es">ES</option>
@@ -132,14 +125,39 @@
                                     </select>
                                 </div>
                             </li>
-
                             <li><a class="btn btn-error btn-soft btn-block lg:text-xl" href="{% url 'account_logout' %}"><span class="icon-[tabler--logout]"></span>Sign out</a></li>
                         </ul>
                     </div>
                     {% else %}
-                    <!-- Guest User Login/Signup Links -->
-                    <div class="flex gap-6 items-center">
-                        <!-- Dark Mode Toggle for Guest Users -->
+                    <!-- Guest User Dropdown on Small Screens (below md) -->
+                    <div class="dropdown dropdown-end block md:hidden">
+                        <label tabindex="0" role="button" aria-label="Open menu" class="btn btn-ghost btn-circle w-14 h-14 p-3 text-2xl md:hidden focus:outline-2 focus:outline-offset-2">
+                            <span class="nf nf-md-login" aria-hidden="true"></span>
+                        </label>
+                        <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-56 text-lg space-y-2">
+                            <li>
+                                <div class="flex items-center gap-2">
+                                    <span class="nf nf-oct-moon"></span>
+                                    <input type="checkbox" class="toggle toggle-lg" id="theme-toggle" />
+                                    <span>Dark Mode</span>
+                                </div>
+                            </li>
+                            <li>
+                                <a href="{% url 'account_login' %}" class="btn btn-ghost btn-lg w-full flex justify-center gap-2">
+                                    <span class="nf nf-md-login"></span>Login
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'account_signup' %}" class="btn btn-primary btn-lg w-full flex justify-center gap-2 text-white">
+                                    <span class="nf nf-oct-plus text-white"></span>
+                                    <span class="text-white">Sign Up</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Guest User Inline on Medium Screens and Up -->
+                    <div class="hidden md:flex gap-6 items-center">
                         <div class="flex items-center gap-2 px-2 py-1">
                             <span class="nf nf-oct-moon"></span>
                             <input type="checkbox" class="toggle toggle-lg" id="theme-toggle" />
@@ -152,8 +170,9 @@
                             <span class="text-white">Sign Up</span>
                         </a>
                     </div>
-                {% endif %}
-            </div>
+                    {% endif %}
+                </div>
+
             <!-- Centered MacBook-style notch tab, hide all but notch until clicked, pure Tailwind -->
             <div class="flex flex-col items-center NotchContainer">
                 <input type="checkbox" id="notch-toggle" class="peer hidden" />
@@ -224,7 +243,7 @@
 		</div>
 		{% endif %}
 
-        <main class="flex-grow">
+        <main id="main-content" class="flex-grow">
         {% block content %}{% endblock %}
         </main>
 
@@ -239,7 +258,7 @@
                 <p>Copyright © Backlog. {% now "Y" %} - All right reserved</p>
             </aside>
             <aside>
-                <div class="grid grid-flow-col gap-4">
+                <div class="flex-grow">
                     <a href="https://www.github.com/Rebeljoka" target="_blank" rel="noopener noreferrer">
                         <span class="nf nf-cod-github_alt text-7xl"></span>
                     </a>
