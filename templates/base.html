@@ -6,7 +6,7 @@
     <head>
         <title>Backlog.</title>
         <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="theme-color" content="#a0c4ff" />
 
@@ -39,6 +39,9 @@
         <link rel="preconnect" href="https://www.nerdfonts.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link rel="preconnect" href="https://cdn.bokeh.org" crossorigin>
+
+    <!-- Preload LCP hero image (low-risk) -->
+    <link rel="preload" as="image" href="{% static 'images/hero.webp' %}" type="image/webp" fetchpriority="high">
 
         <!-- NerdFonts (load non-blocking to avoid FOIT / render-blocking) -->
         <link rel="stylesheet" href="https://www.nerdfonts.com/assets/css/webfont.css" media="print" onload="this.media='all'">
