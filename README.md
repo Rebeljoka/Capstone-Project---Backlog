@@ -153,6 +153,10 @@
     - [**Category Filtering**](#category-filtering)
 - [Tablet | Mobile View ](#tablet--mobile-view-)
 - [Future Features ](#future-features-)
+  - [Visual Improvements](#visual-improvements)
+  - [Better Javascript Functionality](#better-javascript-functionality)
+  - [Better UX](#better-ux)
+  - [Better Responsiveness](#better-responsiveness)
 - [Additional Technologies ](#additional-technologies-)
   - [Database](#database)
     - [Database Schema Documentation](#database-schema-documentation)
@@ -434,7 +438,29 @@ Tag-based filters allow narrowing down games by gameplay features or themes. Thi
 ## Tablet | Mobile View <br><br>
 <p align="center">&nbsp;</p>
 
+<p align="center">
+   <img src="Assets/Documentation/readme-content/Mobile%20Tablet%20View/All-Devices.png">
+</p>
+
 ## Future Features <br><br>
+<p align="center">&nbsp;</p>
+
+### Visual Improvements
+
+- Enhance the visual design of the wishlist page to make it more engaging and user-friendly. This includes improving the layout, adding appealing graphics, and ensuring a modern, cohesive style that aligns with the rest of the site.
+
+### Better Javascript Functionality
+
+- Implement JavaScript functionality to allow users to reorder games in their wishlist seamlessly without the need for a full page reload. This will provide a smoother, faster, and more dynamic user experience.
+
+### Better UX
+
+- Enable clickable links on wishlisted games that navigate directly to each respective game’s detailed information page. This makes it easier for users to explore more about the games they have added to their wishlist.
+
+### Better Responsiveness
+
+- Increase the padding around items in the navigation bar to improve spacing and touch target size. This adjustment will enhance both the aesthetics and usability, especially on touch devices.
+
 <p align="center">&nbsp;</p>
 
 ## Additional Technologies <br><br>

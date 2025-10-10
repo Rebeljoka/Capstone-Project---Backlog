@@ -236,5 +236,3 @@ else:
             'LOCATION': 'unique-snowflake',
         }
     }
-
-X_FRAME_OPTIONS = "ALLOWALL"
