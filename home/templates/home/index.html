@@ -1,6 +1,13 @@
 {% extends 'base.html' %} {% load static %} {% block content %}
 <section class="text-center hero-section overflow-hidden">
-	<img src="{% static 'images/hero.jpg' %}" alt="Logo" id="hero-img" class="mx-auto blur-md scale-105 bg-center hero-img" />
+	<!-- Hero image: keep eager load for LCP but hint priority and reserve aspect ratio to avoid CLS -->
+	<img src="{% static 'images/hero.jpg' %}"
+		 alt="Logo"
+		 id="hero-img"
+		 class="mx-auto blur-md scale-105 bg-center hero-img"
+		 decoding="async"
+		 fetchpriority="high"
+		 style="width:100%;height:auto;aspect-ratio:16/9;" />
 	<div class="grid place-items-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
 		<h1 class="text-4xl md:text-5xl font-bold text-white mb-4">Welcome to Backlog.</h1>
 		<h2 class="text-xl md:text-2xl text-white mb-6">Organize your gaming journey.</h2>
@@ -118,7 +125,14 @@
 </section>
 
 <section>
-	<img src="{% static 'images/form-bg.jpg' %}" alt="formbg" class="w-full" />
+	<!-- Decorative form background: lazy-load to defer large image bytes until needed -->
+	<img src="{% static 'images/form-bg.jpg' %}"
+		 alt="formbg"
+		 class="w-full"
+		 loading="lazy"
+		 decoding="async"
+		 importance="low"
+		 style="width:100%;height:auto;aspect-ratio:16/9;" />
 </section>
 
 {% if bokeh_css %} {% for css_url in bokeh_css %}
