@@ -4,10 +4,10 @@
 <!DOCTYPE html>
 <html data-theme="light" lang="en">
     <head>
-        <meta charset="UTF-8" />
+        <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="theme-color" content="#a0c4ff" />
+        <meta name="theme-color" content="#a0c4ff">
 
         <!-- Basic Meta Tags -->
         <title>Backlog - Organize Your Gaming Journey with Wishlists</title>
@@ -16,15 +16,15 @@
         <meta name="author" content="Rebeljoka">
 
         <!-- Open Graph / Facebook -->
-        <meta property="og:title" content="Backlog - Organize Your Gaming Journey" />
-        <meta property="og:description" content="Track your game collection, create custom wishlists, and discover new games today." />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://backlog-wishlyst-70712188933f.herokuapp.com/" />
-        <meta property="og:image" content="{% static 'favicon.svg' %}" />
+        <meta property="og:title" content="Backlog - Organize Your Gaming Journey">
+        <meta property="og:description" content="Track your game collection, create custom wishlists, and discover new games today.">
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="https://backlog-wishlyst-70712188933f.herokuapp.com">
+        <meta property="og:image" content="{% static 'favicon.svg' %}">
 
         <!-- Twitter Card -->
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Backlog - Organize Your Gaming Journey" />
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="Backlog - Organize Your Gaming Journey">
         <meta name="twitter:description" content="Track your game collection, create custom wishlists, and discover new games today." />
         <meta name="twitter:image" content="{% static 'favicon.svg' %}" />
 
@@ -57,7 +57,7 @@
         <nav class="navbar w-full min-w-0 gap-2 shadow-base-300/20 shadow-sm sticky top-0 z-50 backdrop-blur-md mb-0 pb-0 px-3 sm:px-4 lg:px-12">
             <div class="navbar-start flex items-center gap-2 min-w-0">
                 <div class="dropdown">
-                    <label tabindex="0" role="button" aria-label="Open menu" class="btn btn-ghost btn-circle w-14 h-14 p-3 text-2xl transition-transform duration-200 hover:scale-105 rounded-full flex items-center justify-center focus:outline-2 focus:outline-offset-2">
+                    <label tabindex="0" aria-label="Open menu" class="btn btn-ghost btn-circle w-14 h-14 p-3 text-2xl transition-transform duration-200 hover:scale-105 rounded-full flex items-center justify-center focus:outline-2 focus:outline-offset-2">
                         <span class="nf nf-md-menu"></span> <span class="sr-only">Open menu</span>
                     </label>
                     <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 text-lg lg:text-xl">
@@ -83,95 +83,95 @@
                 </a>
             </div>
 
-                <div class="navbar-end flex items-center gap-4">
-                    {% if user.is_authenticated %}
-                    <!-- Authenticated User Avatar Dropdown (unchanged) -->
-                    <div class="dropdown dropdown-end">
-                        <label tabindex="0" class="btn btn-ghost transition-transform duration-200 hover:scale-105 rounded-full avatar flex items-center justify-center w-25 h-25 lg:w-25 lg:h-25">
-                            <div class="w-25 rounded-full lg:w-18">
-                                <img src="{{ user|profile_picture_url }}" alt="avatar" onerror="this.src='https://ui-avatars.com/api/?name={{ user|user_initials }}&background=667eea&color=ffffff&size=200&bold=true'" />
-                            </div>
-                        </label>
-                        <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-64 text-lg lg:text-xl">
-                            <li class="flex gap-2 items-center p-2">
-                                <div class="avatar">
-                                    <div class="w-10 rounded-full">
-                                        <img src="{{ user|profile_picture_url }}" alt="avatar" onerror="this.src='https://ui-avatars.com/api/?name={{ user|user_initials }}&background=667eea&color=ffffff&size=200&bold=true'" />
-                                    </div>
-                                </div>
-                                <div class="min-w-0 flex-1">
-                                    <h6 class="text-xl lg:text-2xl font-semibold truncate">{{ user.username|default:"User" }}</h6>
-                                    <small class="text-base-content/50 truncate block lg:text-lg">{{ user.email|default:"Member" }}</small>
-                                </div>
-                            </li>
-                            <li><a href="{% url 'profile' %}" class="lg:text-xl"><span class="nf nf-fa-user_o"></span>My Profile</a></li>
-                            <li><a href="{% url 'wishlist_list' %}" class="lg:text-xl"><span class="nf nf-oct-heart"></span>My Wishlists</a></li>
-                            <li><a href="{% url 'edit_profile' %}" class="lg:text-xl"><span class="nf nf-md-cog"></span>Settings</a></li>
-                            <li>
-                                <div class="flex items-center justify-between w-full px-4 py-2">
-                                    <span class="flex items-center gap-2 lg:text-xl"><span class="nf nf-oct-moon"></span>Dark Mode</span>
-                                    <input type="checkbox" class="toggle toggle-sm" id="theme-toggle" />
-                                </div>
-                            </li>
-                            <li>
-                                <div class="flex items-center justify-between w-full px-4 py-2">
-                                    <span class="flex items-center gap-2 lg:text-xl"><span class="nf nf-md-translate"></span>Language</span>
-                                    <select class="select select-sm w-16" id="language-select">
-                                        <option value="en">EN</option>
-                                        <option value="es">ES</option>
-                                        <option value="fr">FR</option>
-                                        <option value="de">DE</option>
-                                        <option value="ja">JP</option>
-                                    </select>
-                                </div>
-                            </li>
-                            <li><a class="btn btn-error btn-soft btn-block lg:text-xl" href="{% url 'account_logout' %}"><span class="icon-[tabler--logout]"></span>Sign out</a></li>
-                        </ul>
-                    </div>
-                    {% else %}
-                    <!-- Guest User Dropdown on Small Screens (below md) -->
-                    <div class="dropdown dropdown-end block md:hidden">
-                        <label tabindex="0" role="button" aria-label="Open menu" class="btn btn-ghost btn-circle w-14 h-14 p-3 text-2xl md:hidden focus:outline-2 focus:outline-offset-2">
-                            <span class="nf nf-md-login" aria-hidden="true"></span>
-                        </label>
-                        <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-56 text-lg space-y-2">
-                            <li>
-                                <div class="flex items-center gap-2">
-                                    <span class="nf nf-oct-moon"></span>
-                                    <input type="checkbox" class="toggle toggle-lg" id="theme-toggle" />
-                                    <span>Dark Mode</span>
-                                </div>
-                            </li>
-                            <li>
-                                <a href="{% url 'account_login' %}" class="btn btn-ghost btn-lg w-full flex justify-center gap-2">
-                                    <span class="nf nf-md-login"></span>Login
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{% url 'account_signup' %}" class="btn btn-primary btn-lg w-full flex justify-center gap-2 text-white">
-                                    <span class="nf nf-oct-plus text-white"></span>
-                                    <span class="text-white">Sign Up</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <!-- Guest User Inline on Medium Screens and Up -->
-                    <div class="hidden md:flex gap-6 items-center">
-                        <div class="flex items-center gap-2 px-2 py-1">
-                            <span class="nf nf-oct-moon"></span>
-                            <input type="checkbox" class="toggle toggle-lg" id="theme-toggle" />
+            <div class="navbar-end flex items-center gap-4">
+                {% if user.is_authenticated %}
+                <!-- Authenticated User Avatar Dropdown (unchanged) -->
+                <div class="dropdown dropdown-end">
+                    <label tabindex="0" class="btn btn-ghost transition-transform duration-200 hover:scale-105 rounded-full avatar flex items-center justify-center w-25 h-25 lg:w-25 lg:h-25">
+                        <div class="w-25 rounded-full lg:w-18">
+                            <img src="{{ user|profile_picture_url }}" alt="avatar" onerror="this.src='https://ui-avatars.com/api/?name={{ user|user_initials }}&background=667eea&color=ffffff&size=200&bold=true'" />
                         </div>
-                        <a href="{% url 'account_login' %}" class="btn btn-ghost btn-lg">
-                            <span class="nf nf-md-login"></span>Login
-                        </a>
-                        <a href="{% url 'account_signup' %}" class="btn btn-primary btn-lg">
-                            <span class="nf nf-oct-plus text-white"></span>
-                            <span class="text-white">Sign Up</span>
-                        </a>
-                    </div>
-                    {% endif %}
+                    </label>
+                    <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-64 text-lg lg:text-xl">
+                        <li class="flex gap-2 items-center p-2">
+                            <div class="avatar">
+                                <div class="w-10 rounded-full">
+                                    <img src="{{ user|profile_picture_url }}" alt="avatar" onerror="this.src='https://ui-avatars.com/api/?name={{ user|user_initials }}&background=667eea&color=ffffff&size=200&bold=true'" />
+                                </div>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <h6 class="text-xl lg:text-2xl font-semibold truncate">{{ user.username|default:"User" }}</h6>
+                                <small class="text-base-content/50 truncate block lg:text-lg">{{ user.email|default:"Member" }}</small>
+                            </div>
+                        </li>
+                        <li><a href="{% url 'profile' %}" class="lg:text-xl"><span class="nf nf-fa-user_o"></span>My Profile</a></li>
+                        <li><a href="{% url 'wishlist_list' %}" class="lg:text-xl"><span class="nf nf-oct-heart"></span>My Wishlists</a></li>
+                        <li><a href="{% url 'edit_profile' %}" class="lg:text-xl"><span class="nf nf-md-cog"></span>Settings</a></li>
+                        <li>
+                            <div class="flex items-center justify-between w-full px-4 py-2">
+                                <span class="flex items-center gap-2 lg:text-xl"><span class="nf nf-oct-moon"></span>Dark Mode</span>
+                                <input type="checkbox" class="toggle toggle-sm" id="theme-toggle" />
+                            </div>
+                        </li>
+                        <li>
+                            <div class="flex items-center justify-between w-full px-4 py-2">
+                                <span class="flex items-center gap-2 lg:text-xl"><span class="nf nf-md-translate"></span>Language</span>
+                                <select class="select select-sm w-16" id="language-select">
+                                    <option value="en">EN</option>
+                                    <option value="es">ES</option>
+                                    <option value="fr">FR</option>
+                                    <option value="de">DE</option>
+                                    <option value="ja">JP</option>
+                                </select>
+                            </div>
+                        </li>
+                        <li><a class="btn btn-error btn-soft btn-block lg:text-xl" href="{% url 'account_logout' %}"><span class="icon-[tabler--logout]"></span>Sign out</a></li>
+                    </ul>
                 </div>
+                {% else %}
+                <!-- Guest User Dropdown on Small Screens (below md) -->
+                <div class="dropdown dropdown-end block md:hidden">
+                    <label tabindex="0" aria-label="Open menu" class="btn btn-ghost btn-circle w-14 h-14 p-3 text-2xl md:hidden focus:outline-2 focus:outline-offset-2">
+                        <span class="nf nf-md-login" aria-hidden="true"></span>
+                    </label>
+                    <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-56 text-lg space-y-2">
+                        <li>
+                            <div class="flex items-center gap-2">
+                                <span class="nf nf-oct-moon"></span>
+                                <input type="checkbox" class="toggle toggle-lg" id="theme-toggle" />
+                                <span>Dark Mode</span>
+                            </div>
+                        </li>
+                        <li>
+                            <a href="{% url 'account_login' %}" class="btn btn-ghost btn-lg w-full flex justify-center gap-2">
+                                <span class="nf nf-md-login"></span>Login
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'account_signup' %}" class="btn btn-primary btn-lg w-full flex justify-center gap-2 text-white">
+                                <span class="nf nf-oct-plus text-white"></span>
+                                <span class="text-white">Sign Up</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Guest User Inline on Medium Screens and Up -->
+                <div class="hidden md:flex gap-6 items-center">
+                    <div class="flex items-center gap-2 px-2 py-1">
+                        <span class="nf nf-oct-moon"></span>
+                        <input type="checkbox" class="toggle toggle-lg" id="theme-toggle" />
+                    </div>
+                    <a href="{% url 'account_login' %}" class="btn btn-ghost btn-lg">
+                        <span class="nf nf-md-login"></span>Login
+                    </a>
+                    <a href="{% url 'account_signup' %}" class="btn btn-primary btn-lg">
+                        <span class="nf nf-oct-plus text-white"></span>
+                        <span class="text-white">Sign Up</span>
+                    </a>
+                </div>
+                {% endif %}
+            </div>
 
             <!-- Centered MacBook-style notch tab, hide all but notch until clicked, pure Tailwind -->
             <div class="flex flex-col items-center NotchContainer">
@@ -259,13 +259,13 @@
             </aside>
             <aside>
                 <div class="flex-grow">
-                    <a href="https://www.github.com/Rebeljoka" target="_blank" rel="noopener noreferrer">
+                    <a href="https://www.github.com/Rebeljoka" target="_blank" rel="noopener noreferrer" aria-label="GitHub Profile">
                         <span class="nf nf-cod-github_alt text-7xl"></span>
                     </a>
-                    <a href="https://github.com/Rebeljoka/Capstone-Project---Backlog/blob/main/README.md" target="_blank" rel="noopener noreferrer">
+                    <a href="https://github.com/Rebeljoka/Capstone-Project---Backlog/blob/main/README.md" target="_blank" rel="noopener noreferrer" aria-label="Project README">
                         <span class="nf nf-fa-readme text-7xl"></span>
                     </a>
-                    <a href="https://www.linkedin.com/in/your-next-jfssd-habib/" target="_blank" rel="noopener noreferrer">
+                    <a href="https://www.linkedin.com/in/your-next-jfssd-habib/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn Profile">
                         <span class="nf nf-fa-linkedin text-7xl"></span>
                     </a>
                 </div>

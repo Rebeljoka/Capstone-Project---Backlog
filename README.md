@@ -12,7 +12,7 @@
 <h1 align="center">Deployed Website</h1>
 
 <p align="center">
-   <a href="https://backlog-wishlyst-70712188933f.herokuapp.com/">
+   <a href="https://backlog-wishlyst-70712188933f.herokuapp.com">
       <img src="static/images/logo.webp" alt="Backlog." width="200">
    </a>
 </p>
@@ -190,6 +190,7 @@
   - [Lighthouse Audit Tests](#lighthouse-audit-tests)
   - [Manual Testing](#manual-testing)
   - [Bugs](#bugs)
+    - [Validation](#validation)
 - [Credits](#credits)
   - [Content References](#content-references)
 - [Media References](#media-references)
@@ -788,6 +789,8 @@ You now have your own wishlist website!
 </div>
 
 ### Bugs
+
+#### Validation
 
 ## Credits
 
