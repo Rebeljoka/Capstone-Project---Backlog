@@ -372,7 +372,6 @@ This transparent selection process shows that design choices were informed by au
 <p align="center">&nbsp;</p>
 
 ### Wishlist
-<p align="center">&nbsp;</p>
 
 #### **Create Wishlists**
 
