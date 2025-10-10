@@ -283,14 +283,18 @@ Ready to transform how you discover, track, and experience Steam games? Your per
 ### Typography
 
 <table>
+   <th>
+      <strong>Font Selection Process</strong>
+   </th>
+   <th>
+      <strong>Final Font Choices</strong>
+   </th>
    <tr>
       <td>
          <img src="Assets/Documentation/readme-content/UX-Design-Typography/fontjoy_help.png" width="500">
-         <sub><strong>Font Selection Process</strong></sub>
       </td>
       <td>
          <img src="Assets/Documentation/readme-content/UX-Design-Typography/final-fonts.png" width="500">
-         <sub><strong>Final Font Choices</strong></sub>
       </td>
    </tr>
    <tr>
@@ -309,18 +313,24 @@ This transparent selection process shows that design choices were informed by au
 ### Color Scheme
 
 <table>
+   <th>
+      <strong>Color Scheme Selection</strong>
+   </th>
+   <th>
+      <strong>Accessibility amd Semantic Roles</strong>
+   </th>
+   <th>
+      <strong>Implementation Notes</strong>
+   </th>
    <tr>
       <td width="333">
          <img src="Assets/Documentation/readme-content/Colour-Scheme/PastelRainbowFantasy.svg">
-         <sub><strong>Color Scheme Selection</strong></sub>
       </td>
       <td width="333">
          <img src="Assets/Documentation/readme-content/Colour-Scheme/AI_Tips_For_Color_Accessibility.png">
-         <sub><strong>Accessibility amd Semantic Roles</strong></sub>
       </td>
       <td width="333">
          <img src="Assets/Documentation/readme-content/Colour-Scheme/AI_Help_AssigningColors.png">
-         <sub><strong>Implementation Notes</strong></sub>
       </td>
    </tr>
    <tr>
