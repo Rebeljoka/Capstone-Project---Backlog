@@ -45,7 +45,7 @@
    </tr>
    <tr>
       <th colspan="8" align="center">Frameworks</th>
-   </tr>
+   </tr
    <tr>
       <td colspan="2" align="center">
          <img src="https://cdn.simpleicons.org/tailwindcss" width="75" height="75" alt="Tailwind CSS">
@@ -270,15 +270,33 @@ Ready to transform how you discover, track, and experience Steam games? Your per
 
 ### User Stories
 
+<p align="center">
+   <img src="Assets/Documentation/readme-content/User-Stories/user-stories.png">
+</p>
+
 ### Strategy
+
+- The primary strategy was to engage users by providing a streamlined and interactive way to organize their gaming interests using wishlists. Features like wishlist creation, real-time tracking, and community insights encourage users to actively maintain and share their game collections, fostering a sense of ownership and social engagement.
 
 ### Scope
 
+- The main goal for users on the website is to create and manage wishlists of games they want to play or purchase. Users can add games to multiple wishlists, reorder them for priority, and explore game details, making wishlisting an effective tool for game planning and discovery.
+
 ### Skeleton
+
+<p align="center">
+   <img src="Assets/Documentation/readme-content/Wireframes/Backlog_FinalWireframe.png" alt="Wireframe">
+</p>
+
+- The wireframe layout was designed to clearly separate core features such as wishlist management, profile customization, and game browsing. Key elements like the navigation bar and wishlist card grids provide intuitive access paths, while dashboard metrics give users quick insights into their and the community's engagement.
 
 ### Structural
 
+- The structure is user-centered, aiming for ease of use and efficient navigation between wishlists and game detail pages. Grouping the main interactive elements visually supports natural workflow — for example, placing popular wishlisted games and community charts prominently to inspire exploration and social proof.
+
 ### Surface
+
+- The final visual design uses pastel colors and a clean, modern typographic scheme to create a welcoming and warm atmosphere. Accessibility considerations such as high contrast text and carefully assigned color roles ensure readability and usability across devices, while thoughtful spacing ensures the UI feels uncluttered yet inviting.
 
 <p align="center">&nbsp;</p>
 

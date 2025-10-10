@@ -44,7 +44,9 @@
 				</div>
 				<div class="mt-auto flex flex-col gap-3 pt-2 pb-4">
 					<a href="{% url 'game_detail' game.game_id %}" class="w-full text-center text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-lg py-2 whitespace-normal">View details</a>
-					<a href="{% url 'add_steam_game_to_wishlist' game.game_id %}" class="w-full text-center btn btn-outline btn-secondary btn-md text-lg whitespace-normal">Add to Wishlist!</a>
+						{% if user.is_authenticated %}
+						<a href="{% url 'add_steam_game_to_wishlist' game.game_id %}" class="w-full text-center btn btn-outline btn-secondary btn-md text-lg whitespace-normal">Add to Wishlist!</a>
+						{% endif %}
 				</div>
 			</div>
 		</div>

@@ -556,3 +556,242 @@ As a user, I want to delete my account so I can remove my data from the platform
 - [ ] Remove or anonymize user data.
 
 
+
+
+
+
+# Responsiveness User Stories
+
+## Title  
+Responsive Layout for Mobile Devices
+
+### MoSCoW Priority  
+Must Have
+
+**As a** mobile user  
+**I want** the website layout to adapt to my small screen  
+**So I can** view all content without horizontal scrolling or broken sections.
+
+### Acceptance Criteria
+- Layout adjusts correctly on screens 320–768 px wide.
+- No horizontal scrollbar appears.
+- Content elements stack vertically or adjust proportionally.
+
+### Tasks
+1. Define CSS breakpoints for mobile screens.
+2. Use responsive units (%, vh/vw, rem) for containers.
+3. Test layout on common devices (iPhone SE, Galaxy S10, Pixel 6).
+4. Fix layout overflow or clipping issues.
+
+---
+
+## Title  
+Responsive Layout for Tablets
+
+### MoSCoW Priority  
+Should Have
+
+**As a** tablet user  
+**I want** the site to adapt gracefully to medium-sized screens  
+**So I can** comfortably browse content in portrait or landscape mode.
+
+### Acceptance Criteria
+- Layout adapts between 769–1024 px.
+- Grid/list views adjust column count appropriately.
+- Navigation and buttons scale correctly.
+
+### Tasks
+1. Add tablet-specific media queries.
+2. Adjust image and grid column behavior for tablet sizes.
+3. Verify responsiveness in both orientations.
+4. Resolve any text or element scaling issues.
+
+---
+
+## Title  
+Responsive Navigation Menu
+
+### MoSCoW Priority  
+Must Have
+
+**As a** user on mobile or tablet  
+**I want** a collapsible navigation menu  
+**So I can** access site links easily without cluttering the screen.
+
+### Acceptance Criteria
+- Navigation collapses into a hamburger menu under 1024 px width.
+- Menu opens/closes smoothly.
+- Focus remains within the menu when opened.
+- Menu items are easy to tap (minimum 44×44 px).
+
+### Tasks
+1. Implement a hamburger/offcanvas menu.
+2. Add animation or transition for open/close.
+3. Ensure touch-friendly spacing and accessibility.
+4. Test menu across browsers and screen sizes.
+
+---
+
+## Title  
+Responsive Images and Media
+
+### MoSCoW Priority  
+Should Have
+
+**As a** user on any device  
+**I want** images and media to resize automatically  
+**So I can** see clear, well-fitted visuals without distortion or overflow.
+
+### Acceptance Criteria
+- Images scale or crop correctly.
+- No media causes horizontal scrolling.
+- Lazy loading doesn’t break layout.
+
+### Tasks
+1. Add `max-width: 100%` to images.
+2. Implement responsive image tags (`srcset`, `sizes`).
+3. Test scaling on various breakpoints.
+4. Ensure videos/iframes use responsive wrappers.
+
+---
+
+# Accessibility User Stories
+
+## Title  
+Keyboard-Only Navigation Support
+
+### MoSCoW Priority  
+Must Have
+
+**As a** keyboard-only user  
+**I want** to navigate all pages using the Tab and Enter keys  
+**So I can** access all features without using a mouse.
+
+### Acceptance Criteria
+- Every interactive element is reachable via Tab.
+- Logical tab order is maintained.
+- No element traps focus.
+
+### Tasks
+1. Audit interactive elements for keyboard focusability.
+2. Fix missing `tabindex` or replace non-semantic elements with buttons/links.
+3. Verify navigation using keyboard only.
+4. Add automated accessibility tests for keyboard navigation.
+
+---
+
+## Title  
+Visible Focus Indicators
+
+### MoSCoW Priority  
+Must Have
+
+**As a** keyboard user  
+**I want** a visible focus indicator  
+**So I can** know which element I’m interacting with.
+
+### Acceptance Criteria
+- All focusable elements display a visible outline or highlight.
+- Focus indicator has sufficient color contrast.
+- Custom components also show focus states.
+
+### Tasks
+1. Create consistent CSS focus styles.
+2. Test with both light/dark backgrounds.
+3. Apply focus styles to all custom components.
+4. Validate contrast ratio (WCAG 2.1 AA minimum).
+
+---
+
+## Title  
+Skip to Main Content Link
+
+### MoSCoW Priority  
+Should Have
+
+**As a** screen reader or keyboard user  
+**I want** a "Skip to main content" link at the top  
+**So I can** bypass repetitive navigation links easily.
+
+### Acceptance Criteria
+- Skip link appears when focused via Tab.
+- Link jumps directly to main page content.
+- Works across all pages.
+
+### Tasks
+1. Add hidden skip link at page top.
+2. Style it to become visible when focused.
+3. Anchor link to main content section.
+4. Test functionality in multiple browsers.
+
+---
+
+## Title  
+Accessible Modals and Dialogs
+
+### MoSCoW Priority  
+Must Have
+
+**As a** keyboard or screen reader user  
+**I want** modals to manage focus properly  
+**So I can** interact with them without confusion or loss of context.
+
+### Acceptance Criteria
+- Focus moves into modal when opened.
+- Focus returns to triggering element when closed.
+- Modal content is announced to screen readers.
+- Modal can be closed with Esc key.
+
+### Tasks
+1. Implement focus trapping within modal.
+2. Add ARIA roles (`dialog`, `aria-labelledby`, `aria-modal`).
+3. Manage focus restore on close.
+4. Test with keyboard-only and screen readers.
+
+---
+
+## Title  
+Screen Reader Feedback for Actions
+
+### MoSCoW Priority  
+Should Have
+
+**As a** screen reader user  
+**I want** to hear confirmation when actions occur  
+**So I can** know if my input was successful (e.g., adding to wishlist).
+
+### Acceptance Criteria
+- Screen reader announces action outcomes.
+- ARIA live regions used for dynamic messages.
+- Messages do not interrupt current speech unless important.
+
+### Tasks
+1. Add ARIA live regions to UI for updates.
+2. Trigger status messages for key actions.
+3. Test announcements using NVDA and VoiceOver.
+4. Adjust verbosity and timing to prevent overlap.
+
+---
+
+## Title  
+Color Contrast Compliance
+
+### MoSCoW Priority  
+Should Have
+
+**As a** visually impaired user  
+**I want** text and interface elements with sufficient contrast  
+**So I can** read and interact without strain.
+
+### Acceptance Criteria
+- All text and UI elements meet WCAG 2.1 AA contrast ratios (4.5:1 for text, 3:1 for large text).
+- No essential information conveyed by color alone.
+
+### Tasks
+1. Use color contrast checker tools on all UI components.
+2. Update color palette or backgrounds where necessary.
+3. Test dark/light modes for consistency.
+4. Document accessible color usage in style guide.
+
+---
+

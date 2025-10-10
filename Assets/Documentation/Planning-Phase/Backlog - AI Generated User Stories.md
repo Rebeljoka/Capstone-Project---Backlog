@@ -1,55 +1,88 @@
 using the Entity Relationship Diagram please help me generate User Stories for this website using the format:
 
+
+
 Title
+
 MoSCoW Priority
+
 As a User.... I Want.... So I Can....
 
+
+
 Acceptance Criteria:
+
 Input Criteria here
 
+
+
 Tasks:
+
 Input Tasks Needed to do to achieve Acceptance Criteria
 
-Once user stories are generated I asked:
+
+
+Once user stories are generated I asked: 
+
 Using the User Stories that have been Generated please format them in a Markdown Language Format.
 
-### 🧍 Public User Stories
-
-#### Title: View All Games
-
-**Priority:** Must-Have  
-**Story:**  
-As a public visitor, I want to view all games so I can browse the catalogue without logging in.
-
-**Acceptance Criteria:**
-
-* \[ ]  Game list is publicly accessible.
-* \[ ]  Each game displays title, thumbnail, and brief info.
-
-**Tasks:**
-
-* \[ ]  Create public route for game list.
-* \[ ]  Fetch games from database.
-* \[ ]  Render game cards with basic info.
 
 
 
-#### Title: View Game Details
 
-**Priority:** Must-Have  
-**Story:**  
-As a public visitor, I want to view game details so I can learn more about each game.
 
-**Acceptance Criteria:**
 
-* \[ ]  Clicking a game opens its detail page.
-* \[ ]  Detail page shows full description, images, and tags.
 
-**Tasks:**
 
-* \[ ]  Create game detail view.
-* \[ ]  Link game cards to detail pages.
-* \[ ]  Display full game metadata.
+
+
+
+
+\# Responsiveness User Stories
+
+
+
+
+
+
+
+\## Title  
+
+Keyboard-Only Navigation Support
+
+
+
+\### MoSCoW Priority  
+
+Must Have
+
+
+
+\*\*Story:\*\*
+
+As a keyboard-only user I want to navigate all pages using the Tab and Enter keys so I can access all features without using a mouse.
+
+
+
+Acceptance Criteria
+
+\- \[ ]  Every interactive element is reachable via Tab.
+
+\- \[ ]  Logical tab order is maintained.
+
+\- \[ ]  No element traps focus.
+
+
+
+Tasks
+
+\- \[ ] Audit interactive elements for keyboard focusability.
+
+\- \[ ] Fix missing `tabindex` or replace non-semantic elements with buttons/links.
+
+\- \[ ] Verify navigation using keyboard only.
+
+\- \[ ] Add automated accessibility tests for keyboard navigation.
 
 
 
@@ -57,712 +90,137 @@ As a public visitor, I want to view game details so I can learn more about each 
 
 
 
-### 👤 Authenticated User Stories
+\## Title  
 
-#### Title: Register an Account
+Visible Focus Indicators
 
-**Priority:** Must-Have
 
-**Story:**  
-As a user, I want to register an account so I can submit games and manage my Wishlist.
 
-**Acceptance Criteria:**
+\### MoSCoW Priority  
 
-* \[ ]  Registration form accepts valid email and password.
-* \[ ]  Account is created and stored securely.
+Must Have
 
-**Tasks:**
 
-* \[ ]  Build registration form with validation.
-* \[ ]  Connect to Django auth system.
-* \[ ]  Hash and store credentials securely.
 
+\*\*Story:\*\*
 
+As a keyboard user I want a visible focus indicator so I can know which element I’m interacting with.
 
-#### Title: Log In and Log Out
 
-**Priority:** Must-Have
 
-**Story:**  
-As a user, I want to log in and out so I can access personalized features.
+Acceptance Criteria
 
-**Acceptance Criteria:**
+\- \[ ]  All focusable elements display a visible outline or highlight.
 
-* \[ ]  Login form accepts valid credentials.
-* \[ ]  Session is created and destroyed correctly.
+\- \[ ]  Focus indicator has sufficient color contrast.
 
-**Tasks:**
+\- \[ ]  Custom components also show focus states.
 
-* \[ ]  Implement login/logout views.
-* \[ ]  Handle session management.
-* \[ ]  Redirect appropriately after login/logout.
 
 
+Tasks
 
-#### Title: Submit a New Game
+\- \[ ] Create consistent CSS focus styles.
 
-**Priority:** Must-Have
+\- \[ ] Test with both light/dark backgrounds.
 
-**Story:**  
-As a user, I want to submit a new game so I can share it with others.
+\- \[ ] Apply focus styles to all custom components.
 
-**Acceptance Criteria:**
+\- \[ ] Validate contrast ratio (WCAG 2.1 AA minimum).
 
-* \[ ]  Form includes title, description, image, and tags.
-* \[ ]  Submission is stored and marked pending.
 
-**Tasks:**
 
-* \[ ]  Create submission form.
-* \[ ]  Validate and sanitize input.
-* \[ ]  Save to database with “pending” status.
+\- \[ ] --
 
 
 
-#### Title: Edit Own Submission
+\## Title  
 
-**Priority:** Should-Have
+Accessible Modals and Dialogs
 
-**Story:**  
-As a user, I want to edit my own game submission so I can fix mistakes.
 
-**Acceptance Criteria:**
 
-* \[ ]  Users can access and update their own submissions.
-* \[ ]  Changes are saved and re-reviewed if needed.
+\### MoSCoW Priority  
 
-**Tasks:**
+Must Have
 
-* \[ ]  Add edit view with form pre-filled.
-* \[ ]  Restrict access to owner only.
-* \[ ]  Update database entry.
 
-#### Title: Delete Own Submission
 
-**Priority:** Should-Have
+\*\*Story:\*\*
 
-**Story:**  
-As a user, I want to delete my own submission so I can remove outdated content.
+As a keyboard or screen reader user I want modals to manage focus properly so I can interact with them without confusion or loss of context.
 
-**Acceptance Criteria:**
 
-* \[ ]  Users can delete their own games.
-* \[ ]  Deletion is confirmed before action.
 
-**Tasks:**
+Acceptance Criteria
 
-* \[ ]  Add delete button with confirmation.
-* \[ ]  Restrict access to owner only.
-* \[ ]  Remove game from database.
+\- \[ ]  Focus moves into modal when opened.
 
+\- \[ ]  Focus returns to triggering element when closed.
 
+\- \[ ]  Modal content is announced to screen readers.
 
-#### Title: Add Game to Wishlist
+\- \[ ]  Modal can be closed with Esc key.
 
-**Priority:** Must-Have
 
-**Story:**  
-As a user, I want to add a game to my Wishlist so I can track my interests.
 
-**Acceptance Criteria:**
+Tasks
 
-* \[ ]  “Add to Wishlist” button is visible on game detail.
-* \[ ]  Game appears in user’s Wishlist.
+\- \[ ] Implement focus trapping within modal.
 
-**Tasks:**
+\- \[ ] Add ARIA roles (`dialog`, `aria-labelledby`, `aria-modal`).
 
-* \[ ]  Create Wishlist model.
-* \[ ]  Add button to game detail view.
-* \[ ]  Link game to user Wishlist.
+\- \[ ] Manage focus restore on close.
 
-
-
-#### Title: View Wishlist
-
-**Priority:** Must-Have
-
-**Story:**  
-As a user, I want to view my Wishlist so I can manage my saved games.
-
-**Acceptance Criteria:**
-
-* \[ ]  Wishlist page shows all saved games.
-* \[ ]  Each entry links to game detail.
-
-**Tasks:**
-
-* \[ ]  Build Wishlist view.
-* \[ ]  Query user’s saved games.
-* \[ ]  Render game cards.
-
-
-
-#### Title: Remove Game from Wishlist
-
-**Priority:** Should-Have
-
-**Story:**  
-As a user, I want to remove games from my Wishlist so I can keep it relevant.
-
-**Acceptance Criteria:**
-
-* \[ ]  “Remove” button is available on Wishlist entries.
-* \[ ]  Game is removed from Wishlist.
-
-**Tasks:**
-
-* \[ ]  Add remove button to Wishlist view.
-* \[ ]  Update database to unlink game.
-* \[ ]  Confirm removal with feedback.
+\- \[ ] Test with keyboard-only and screen readers.
 
 
 
 ---
 
-### 👤 Authenticated User Stories (Continued)
 
-#### Title: Search Games by Keyword
 
-**Priority:** Should-Have
+\## Title  
 
-**Story:**  
-As a user, I want to search for games by keyword so I can quickly find what I’m looking for.
+Color Contrast Compliance
 
-**Acceptance Criteria:**
 
-* \[ ]  Search bar is available on game list page.
-* \[ ]  Results match title or description.
 
-**Tasks:**
+\### MoSCoW Priority  
 
-* \[ ]  Implement search query logic.
-* \[ ]  Add search input to UI.
-* \[ ]  Display filtered results.
+Should Have
 
 
 
-#### Title: Filter Games by Genre
+\*\*Story:\*\*
 
-**Priority:** Could-Have
+As a visually impaired user I want text and interface elements with sufficient contrast so I can read and interact without strain.
 
-**Story:**  
-As a user, I want to filter games by genre so I can browse by interest.
 
-**Acceptance Criteria:**
 
-* \[ ]  Genre tags are available on each game.
-* \[ ]  Filter dropdown or buttons allow genre selection.
+\*\*Acceptance Criteria:\*\*
 
-**Tasks:**
+\- \[ ] All text and UI elements meet WCAG 2.1 AA contrast ratios (4.5:1 for text, 3:1 for large text).
 
-* \[ ]  Add genre field to game model.
-* \[ ]  Implement genre filter logic.
-* \[ ]  Update UI with genre controls.
+\- \[ ] No essential information conveyed by color alone.
 
 
 
-#### Title: Bookmark Games Without Adding to Wishlist
+&nbsp;\*\*Tasks:\*\*
 
-**Priority:** Could-Have
+\- \[ ] Use color contrast checker tools on all UI components.
 
-**Story:**  
-As a user, I want to bookmark games separately from my Wishlist so I can track games I’m curious about but not committed to.
+\- \[ ] Update color palette or backgrounds where necessary.
 
-**Acceptance Criteria:**
+\- \[ ] Test dark/light modes for consistency.
 
-* \[ ]  Bookmark button is distinct from Wishlist.
-* \[ ]  Bookmarked games appear in a separate view.
-
-**Tasks:**
-
-* \[ ]  Create bookmark model.
-* \[ ]  Add bookmark button to game detail.
-* \[ ]  Build bookmark view page.
-
-
-
-#### Title: View Submission History
-
-**Priority:** Should-Have
-
-**Story:**  
-As a user, I want to view my submission history so I can track what I’ve contributed.
-
-**Acceptance Criteria:**
-
-* \[ ]  History page shows all games submitted by the user.
-* \[ ]  Each entry links to edit/delete options.
-
-**Tasks:**
-
-* \[ ]  Query games by user ID.
-* \[ ]  Build submission history view.
-* \[ ]  Add links to edit/delete.
-
-
-
-#### Title: Receive Notifications on Submission Status
-
-**Priority:** Could-Have
-
-**Story:**  
-As a user, I want to receive notifications when my game is approved or rejected so I stay informed.
-
-**Acceptance Criteria:**
-
-* \[ ]  Notification appears on dashboard or via email.
-* \[ ]  Message includes status and optional feedback.
-
-**Tasks:**
-
-* \[ ]  Implement notification system.
-* \[ ]  Trigger on moderator action.
-* \[ ]  Display or send message.
-
-
-
-#### Title: Rate Games
-
-**Priority:** Could-Have
-
-**Story:**  
-As a user, I want to rate games so I can share my opinion and help others decide.
-
-**Acceptance Criteria:**
-
-* \[ ]  Rating system (e.g., 1–5 stars) is available on game detail.
-* \[ ]  Average rating is displayed.
-
-**Tasks:**
-
-* \[ ]  Add rating model.
-* \[ ]  Create UI for rating input.
-* \[ ]  Calculate and display average.
-
-
-
-#### Title: Flag Inappropriate Content
-
-**Priority:** Should-Have
-
-**Story:**  
-As a user, I want to flag inappropriate games so moderators can review them.
-
-**Acceptance Criteria:**
-
-* \[ ]  “Flag” button is available on game detail.
-* \[ ]  Flagged games are sent to moderator queue.
-
-**Tasks:**
-
-* \[ ]  Add flag model and button.
-* \[ ]  Notify moderators of flagged content.
-* \[ ]  Track flag count per game.
-
-
-
-#### Title: Sort Wishlist by Priority
-
-**Priority:** Could-Have
-
-**Story:**  
-As a user, I want to sort my Wishlist by priority so I can focus on what I want most.
-
-**Acceptance Criteria:**
-
-* \[ ]  Users can assign priority levels to Wishlist items.
-* \[ ]  Wishlist view supports sorting.
-
-**Tasks:**
-
-* \[ ]  Add priority field to Wishlist model.
-* \[ ]  Update UI to allow sorting.
-* \[ ]  Display sorted list.
-
-
-
-#### Title: View Most Wish-listed Games
-
-**Priority:** Should-Have
-
-**Story:**  
-As a user, I want to see the most wish-listed games so I can discover popular titles.
-
-**Acceptance Criteria:**
-
-* \[ ]  Public leader-board shows top wish-listed games.
-* \[ ]  Rankings update dynamically.
-
-**Tasks:**
-
-* \[ ]  Count Wishlist entries per game.
-* \[ ]  Build leader-board view.
-* \[ ]  Update rankings periodically.
-
-
-
-#### Title: Export Wishlist to CSV
-
-**Priority:** Could-Have
-
-**Story:**  
-As a user, I want to export my Wishlist to a CSV file so I can use it outside the site.
-
-**Acceptance Criteria:**
-
-* \[ ]  Export button downloads Wishlist as CSV.
-* \[ ]  File includes game title, genre, and priority.
-
-**Tasks:**
-
-* \[ ]  Implement CSV export logic.
-* \[ ]  Add export button to Wishlist view.
-* \[ ]  Format data for download.
-
-
-
-#### Title: Dark Mode Toggle
-
-**Priority:** Could-Have
-
-**Story:**  
-As a user, I want to toggle dark mode so I can browse comfortably at night.
-
-**Acceptance Criteria:**
-
-* \[ ]  UI theme can switch between light and dark.
-* \[ ]  Preference is saved per user.
-
-**Tasks:**
-
-* \[ ]  Implement theme switcher.
-* \[ ]  Store user preference.
-* \[ ]  Apply styles dynamically.
-
----
-
-### 🛡️ Moderator User Stories
-
-#### Title: View Pending Submissions
-
-**Priority:** Must-Have
-
-**Story:**  
-As a moderator, I want to view pending submissions so I can review new content.
-
-**Acceptance Criteria:**
-
-* \[ ]  Dashboard shows all unapproved games.
-* \[ ]  Each entry links to full submission.
-
-**Tasks:**
-
-* \[ ]  Build moderator dashboard.
-* \[ ]  Query games with “pending” status.
-* \[ ]  Display submission metadata.
-
-
-
-#### Title: Approve Game Submission
-
-**Priority:** Must-Have
-
-**Story:**  
-As a moderator, I want to approve a game so it becomes visible to users.
-
-**Acceptance Criteria:**
-
-* \[ ]  “Approve” button updates game status.
-* \[ ]  Game appears in public list.
-
-**Tasks:**
-
-* \[ ]  Add approve button to dashboard.
-* \[ ]  Update game status to “approved”.
-* \[ ]  Trigger system to add game to all users.
-
-
-
-
-
-#### Title: Reject Game Submission
-
-**Priority:** Must-Have
-
-**Story:**  
-As a moderator, I want to reject inappropriate games so I can maintain quality.
-
-**Acceptance Criteria:**
-
-* \[ ]  “Reject” button removes or flags game.
-* \[ ]  Optional feedback sent to user.
-
-**Tasks:**
-
-* \[ ]  Add reject button to dashboard.
-* \[ ]  Remove or flag game in database.
-* \[ ]  Notify user (optional).
-
-
-
-
-
-#### Title: Edit Any Submission
-
-**Priority:** Should-Have
-
-**Story:**  
-As a moderator, I want to edit any submission so I can correct errors.
-
-
-
-**Acceptance Criteria:**
-
-* \[ ]  Moderator can access and update any game.
-* \[ ]  Changes are saved and logged.
-
-
-
-**Tasks:**
-
-* \[ ]  Add edit access for moderators.
-* \[ ]  Log changes for audit trail.
-* \[ ]  Update game entry.
-
-
-
-
-
-#### Title: Delete Any Submission
-
-**Priority:** Should-Have
-
-**Story:**  
-As a moderator, I want to delete any submission so I can remove inappropriate content.
-
-
-
-**Acceptance Criteria:**
-
-* \[ ]  Moderator can delete any game.
-* \[ ]  Game is removed from all views.
-
-
-
-**Tasks:**
-
-* \[ ]  Add delete access for moderators.
-* \[ ]  Remove game from database.
-* \[ ]  Trigger system to remove from Wishlist's.
-
-
-
-
+\- \[ ] Document accessible color usage in style guide.
 
 
 
 ---
 
-### 
 
-### 
 
-### 🧑‍💼 Admin User Stories
 
-#### 
 
-#### Title: Detect Duplicate Submissions
-
-**Priority:** Should-Have
-
-**Story:**  
-As an admin, I want to detect duplicate games so I can prevent clutter.
-
-
-
-**Acceptance Criteria:**
-
-* \[ ]  Admin dashboard highlights potential duplicates.
-* \[ ]  Duplicates are flagged based on title or metadata.
-
-
-
-**Tasks:**
-
-* \[ ]  Implement duplicate detection logic.
-* \[ ]  Build admin interface for review.
-* \[ ]  Flag duplicates in database.
-
-#### 
-
-#### 
-
-#### Title: Block Duplicate Games
-
-**Priority:** Should-Have
-
-**Story:**  
-As an admin, I want to block duplicates so users don’t see redundant entries.
-
-
-
-**Acceptance Criteria:**
-
-* \[ ]  Admin can mark games as duplicates.
-* \[ ]  Duplicates are hidden from public view.
-
-
-
-**Tasks:**
-
-* \[ ]  Add “block” button to admin dashboard.
-* \[ ]  Update game visibility status.
-* \[ ]  Notify moderators if needed.
-
-
-
-
-
-
-
----
-
-### 
-
-### 
-
-### ⚙️ System Stories
-
-
-
-#### Title: Add Game to All Users
-
-**Priority:** Must-Have
-
-**Story:**  
-As the system, I want to add approved games to all users so they appear in the catalogue.
-
-
-
-**Acceptance Criteria:**
-
-* \[ ]  Approved games are visible to all users.
-* \[ ]  Game is indexed for search and Wishlist.
-
-
-
-**Tasks:**
-
-* \[ ]  Trigger on approval event.
-* \[ ]  Update game visibility.
-* \[ ]  Rebuild search index.
-
-
-
-
-
-#### 
-
-#### Title: Remove Game from All Users
-
-**Priority:** Must-Have
-
-**Story:**  
-As the system, I want to remove deleted games from all users so Wishlist's stay clean.
-
-
-
-**Acceptance Criteria:**
-
-* \[ ]  Deleted games are removed from Wishlist's'.
-* \[ ]  Game no longer appears in catalogue.
-
-
-
-**Tasks:**
-
-* \[ ]  Trigger on delete event.
-* \[ ]  Remove game from all Wishlist's.
-* \[ ]  Update public views.
-
-
-
-
-
-
-
-#### Title: Log Wishlist Changes
-
-**Priority:** Could-Have
-
-**Story:**  
-As the system, I want to log Wishlist changes so users can undo mistakes.
-
-
-
-**Acceptance Criteria:**
-
-* \[ ]  Add/remove actions are timestamped.
-* \[ ]  Undo option is available within session.
-
-
-
-**Tasks:**
-
-* \[ ]  Create Wishlist change log model.
-* \[ ]  Track user actions.
-* \[ ]  Implement undo logic.
-
-
-
-
-
-
-
-#### Title: Update Account Info
-
-**Priority:** Could-Have
-
-**Story:**
-As a user, I want to update my account details so I can keep my profile accurate.
-
-
-
-Acceptance Criteria:
-
-* \[ ] Users can change email, password, or display name.
-* 
-
-**Tasks:**
-
-* \[ ] Build account settings page.
-* \[ ] Implement update logic.
-* \[ ] Validate and save changes.
-
-
-
-
-
-
-
-#### Title: Delete Account
-
-**Priority:** Could-Have
-
-**Story:**
-As a user, I want to delete my account so I can remove my data from the platform.
-
-
-
-**Acceptance Criteria:**
-
-* \[ ] Users can request account deletion.
-* \[ ] All associated data is removed or anonymized.
-
-
-
-**Tasks:**
-
-* \[ ] Add delete account button.
-* \[ ] Confirm action with user.
-* \[ ] Remove or anonymize user data.
