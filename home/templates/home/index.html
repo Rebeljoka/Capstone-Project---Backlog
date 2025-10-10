@@ -1,7 +1,7 @@
 {% extends 'base.html' %} {% load static %} {% block content %}
 <section class="text-center hero-section overflow-hidden">
 	<!-- Hero image: keep eager load for LCP but hint priority and reserve aspect ratio to avoid CLS -->
-	<img src="{% static 'images/hero.jpg' %}"
+	<img src="{% static 'images/hero.webp' %}"
 		 alt="Logo"
 		 id="hero-img"
 		 class="mx-auto blur-md scale-105 bg-center hero-img"
@@ -126,7 +126,7 @@
 
 <section>
 	<!-- Decorative form background: lazy-load to defer large image bytes until needed -->
-	<img src="{% static 'images/form-bg.jpg' %}"
+	<img src="{% static 'images/form-bg.webp' %}"
 		 alt="formbg"
 		 class="w-full"
 		 loading="lazy"
