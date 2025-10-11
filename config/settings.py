@@ -198,7 +198,12 @@ else:
     ]
 
 # WhiteNoise configuration
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
+
 WHITENOISE_ADD_HEADERS_FUNCTION = set_custom_cache_headers
 
 # Default primary key field type

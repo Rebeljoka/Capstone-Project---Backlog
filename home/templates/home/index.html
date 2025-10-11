@@ -8,7 +8,7 @@
 		<h3 class="text-md md:text-lg text-white mb-6">Track your game collection, create custom wishlists, and discover new games.</h3>
 		<h4 class="text-md md:text-lg text-white mb-6">Browse our extensive library of games today and Sign up!</h4>
 		<div class="flex flex-row justify-center gap-4 mt-2">
-			<a href="{% url 'account_signup' %}" class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg text-lg font-medium transition-colors shadow-md hover:shadow-lg">Sign Up</a>
+			<a href="{% url 'account_signup' %}" class="px-6 py-3 bg-green-900 hover:bg-green-700 text-white rounded-lg text-lg font-medium transition-colors shadow-md hover:shadow-lg">Sign Up</a>
 			<a href="{% url 'game_list' %}" class="px-6 py-3 text-white rounded-lg text-lg font-medium shadow-md hover:shadow-lg rainbow-btn">Get Started</a>
 		</div>
 	</div>
@@ -44,7 +44,7 @@
 					<span>{{ game.wishlist_count|default:0 }}</span>
 				</div>
 				<div class="mt-auto flex flex-col gap-3 pt-2 pb-4">
-					<a href="{% url 'game_detail' game.game_id %}" class="w-full text-center text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-lg py-2 whitespace-normal">View details</a>
+					<a href="{% url 'game_detail' game.game_id %}" class="w-full text-center text-white bg-green-900 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-lg py-2 whitespace-normal">View details</a>
 					{% if user.is_authenticated %}
 					<a href="{% url 'add_steam_game_to_wishlist' game.game_id %}" class="w-full text-center btn btn-outline btn-secondary btn-md text-lg whitespace-normal">Add to Wishlist!</a>
 					{% endif %}
