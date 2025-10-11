@@ -1,6 +1,6 @@
 from datetime import timedelta
 from math import pi
-
+import json
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
@@ -231,8 +231,8 @@ def index(request):
 
     context = {
         'popular_games': popular_games,
-        'bokeh_js': CDN.js_files,
-        'bokeh_css': CDN.css_files,
+        'bokeh_js': json.dumps(CDN.js_files),
+        'bokeh_css': json.dumps(CDN.css_files),
         'chart_script': chart_script,
         'traffic_chart_div': chart_divs.get('traffic'),
         'wishlist_chart_div': chart_divs.get('wishlist'),

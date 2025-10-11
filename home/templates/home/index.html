@@ -65,8 +65,8 @@
 			<p class="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">Explore how players are building their libraries — from wishlist surges to rising engagement. These charts show what’s catching attention across the community.</p>
 		</div>
 
-		<!-- Grid of Panels -->
-		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 @container">
+	<!-- Grid of Panels -->
+	<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 @container" id="charts-grid">
 			<!-- 1️⃣ Users vs Visitors — large only -->
 			<div class="hidden lg:flex flex-col items-center w-full rounded-lg p-6 shadow-sm">
 				<h2 class="text-2xl font-semibold mb-4 w-full flex justify-center">Users vs Visitors</h2>
@@ -123,11 +123,17 @@
 	<img src="{% static 'images/form-bg.webp' %}" alt="formbg" class="w-full mx-auto blur-md bg-center form-bg" loading="lazy" decoding="async" />
 </section>
 
-{% if bokeh_css %} {% for css_url in bokeh_css %}
-<link rel="stylesheet" href="{{ css_url }}" />
-{% endfor %} {% endif %} {% if bokeh_js %} {% for js_url in bokeh_js %}
-<script src="{{ js_url }}"></script>
-{% endfor %} {% endif %} {% if chart_script %} {{ chart_script|safe }} {% endif %}
+{# Defer Bokeh assets and chart script for lazy loading #}
+<script id="bokeh-assets" type="application/json">
+{
+	"css": {{ bokeh_css|default:'[]'|safe }},
+	"js": {{ bokeh_js|default:'[]'|safe }}
+}
+</script>
+{% if chart_script %}
+<template id="bokeh-script-template">{{ chart_script|safe }}</template>
+{% endif %}
+<script defer src="{% static 'js/bokeh-loader.js' %}"></script>
 
 <!-- JS shim: enforce visibility for debug panels by viewport width. Remove when Tailwind/responsive CSS is fixed. -->
 <script>
