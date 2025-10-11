@@ -784,10 +784,10 @@ You now have your own wishlist website!
    </tr>
    <tr>
       <td>
-         <img src="Assets/Documentation/readme-content/lighthouse/Homepage-LH-Desktop.pg" alt="Desktop Audit">
+         <img src="Assets/Documentation/readme-content/lighthouse/Homepage-LH-Desktop.png" alt="Desktop Audit">
       </td>
       <td>
-         <img src="Assets/Documentation/readme-content/lighthouse/Homepage-LH-Mobile.pg" alt="Mobile Audit">
+         <img src="Assets/Documentation/readme-content/lighthouse/Homepage-LH-Mobile.png" alt="Mobile Audit">
       </td>
    </tr>
    <tr>
