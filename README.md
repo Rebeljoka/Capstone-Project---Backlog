@@ -124,7 +124,7 @@
 - [Responsivity ](#responsivity-)
 - [Contents ](#contents-)
 - [User Experience ](#user-experience-)
-  - [User Stories](#user-stories)
+  - [User Stories + Agile Methodology](#user-stories--agile-methodology)
   - [Strategy](#strategy)
   - [Scope](#scope)
   - [Skeleton](#skeleton)
@@ -272,7 +272,7 @@ Ready to transform how you discover, track, and experience Steam games? Your per
 ## User Experience <br><br>
 <p align="center">&nbsp;</p>
 
-### User Stories
+### User Stories + Agile Methodology
 
 <p align="center">
    <img src="Assets/Documentation/readme-content/User-Stories/user-stories.png">
