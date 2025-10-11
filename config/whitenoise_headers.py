@@ -1,7 +1,7 @@
 """
 Custom WhiteNoise headers hook to control cache lifetimes for selected assets.
 
-Applies a 7-day cache (604800 seconds) to image and font assets so browsers
+Applies a 6-month cache (15638400 seconds) to image and font assets so browsers
 keep them longer. Other assets keep WhiteNoise defaults (immutable for hashed
 files; WHITENOISE_MAX_AGE for others).
 """
@@ -10,7 +10,7 @@ from __future__ import annotations
 from typing import Dict
 
 
-SEVEN_DAYS = 604800
+SIX_MONTHS = 15638400
 
 
 IMAGE_EXTS = {
@@ -35,6 +35,7 @@ FONT_EXTS = {
 OTHER_EXTS = {
     ".js",
     ".css",
+    ".woff2"
 }
 
 
@@ -53,6 +54,6 @@ def set_custom_cache_headers(headers: Dict[str, str], path: str, url: str) -> No
         return
 
     lowered = path.lower()
-    # Apply 7-day cache to images and fonts
+    # Apply 6-month cache to images and fonts
     if any(lowered.endswith(ext) for ext in (IMAGE_EXTS | FONT_EXTS | OTHER_EXTS)):
-        headers["Cache-Control"] = f"public, max-age={SEVEN_DAYS}"
+        headers["Cache-Control"] = f"public, max-age={SIX_MONTHS}"
