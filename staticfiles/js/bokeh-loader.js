@@ -1,3 +1,4 @@
+/* jshint esversion: 11, esnext: false */
 (function () {
 	const grid = document.getElementById("charts-grid");
 	if (!grid) return;
