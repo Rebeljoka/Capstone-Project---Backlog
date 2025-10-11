@@ -25,8 +25,8 @@
         <!-- Twitter Card -->
         <meta name="twitter:card" content="summary_large_image">
         <meta name="twitter:title" content="Backlog - Organize Your Gaming Journey">
-        <meta name="twitter:description" content="Track your game collection, create custom wishlists, and discover new games today." />
-        <meta name="twitter:image" content="{% static 'favicon.svg' %}" />
+        <meta name="twitter:description" content="Track your game collection, create custom wishlists, and discover new games today.">
+        <meta name="twitter:image" content="{% static 'favicon.svg' %}">
 
         <!-- Favicon -->
         <link rel="icon" type="image/svg+xml" href="{% static 'favicon.svg' %}">
@@ -41,7 +41,7 @@
         <link rel="preconnect" href="https://cdn.bokeh.org" crossorigin>
 
         <!-- Preload LCP hero image (low-risk) -->
-        <link rel="preload" as="image" href="{% static 'images/hero.webp' %}" imagesrcset="{% static 'images/hero.webp' %}" type="image/webp" decoding="async" fetchpriority="high">
+        <link rel="preload" as="image" href="{% static 'images/hero.webp' %}" imagesrcset="{% static 'images/hero.webp' %}" type="image/webp" fetchpriority="high">
 
         <!-- NerdFonts (load non-blocking to avoid FOIT / render-blocking) -->
         <link rel="stylesheet" href="https://www.nerdfonts.com/assets/css/webfont.css" media="print" onload="this.media='all'">
@@ -70,8 +70,8 @@
                         <li><a href="{% url 'account_login' %}" class="lg:text-xl">Login to see Wishlists</a></li>
                         {% endif %}
                     </ul>
-                <!-- Skip link for keyboard users -->
-                <a href="#main-content" class="sr-only focus:not-sr-only focus:translate-y-0 focus:outline-none focus:bg-base-200 p-2 rounded">Skip to main content</a>
+                    <!-- Skip link for keyboard users -->
+                    <a href="#main-content" class="sr-only focus:not-sr-only focus:translate-y-0 focus:outline-none focus:bg-base-200 p-2 rounded">Skip to main content</a>
                 </div>
             </div>
 
@@ -85,8 +85,8 @@
             </div>
 
             <div class="navbar-end flex items-center gap-4">
-                {% if user.is_authenticated %}
-                <!-- Authenticated User Avatar Dropdown (unchanged) -->
+            {% if user.is_authenticated %}
+            <!-- Authenticated User Avatar Dropdown (unchanged) -->
                 <div class="dropdown dropdown-end">
                     <label tabindex="0" class="btn btn-ghost transition-transform duration-200 hover:scale-105 rounded-full avatar flex items-center justify-center w-25 h-25 lg:w-25 lg:h-25">
                         <div class="w-25 rounded-full lg:w-18">
@@ -139,7 +139,7 @@
                         <li>
                             <div class="flex items-center gap-2">
                                 <span class="nf nf-oct-moon"></span>
-                                <input type="checkbox" id="theme-toggle-guest" class="toggle toggle-lg theme-toggle" />
+                                <input type="checkbox" id="theme-toggle-guest" class="toggle toggle-lg theme-toggle">
                                 <label for="theme-toggle-guest" class="cursor-pointer">Dark Mode</label>
                             </div>
                         </li>
@@ -161,7 +161,7 @@
                 <div class="hidden md:flex gap-6 items-center">
                     <div class="flex items-center gap-2 px-2 py-1">
                         <span class="nf nf-oct-moon"></span>
-                        <input type="checkbox" id="theme-toggle-desktop" class="toggle toggle-lg theme-toggle" />
+                        <input type="checkbox" id="theme-toggle-desktop" class="toggle toggle-lg theme-toggle">
                         <label for="theme-toggle-desktop" class="sr-only">Dark Mode</label>
                     </div>
                     <a href="{% url 'account_login' %}" class="btn btn-ghost btn-lg">
@@ -177,7 +177,7 @@
 
             <!-- Centered MacBook-style notch tab, hide all but notch until clicked, pure Tailwind -->
             <div class="flex flex-col items-center NotchContainer">
-                <input type="checkbox" id="notch-toggle" class="peer hidden" />
+                <input type="checkbox" id="notch-toggle" class="peer hidden">
                 <label for="notch-toggle" class="bg-black rounded-b-2xl w-24 h-7 flex items-center justify-center shadow-lg hover:bg-gray-800 transition-colors duration-200 cursor-pointer order-1 peer-checked:order-2 peer-checked:translate-y-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
                 </label>
@@ -188,28 +188,18 @@
                         <form method="get" action="{% url 'game_list' %}" class="input w-90 rounded-full flex items-center mx-auto relative">
                             <span class="text-base-content/80 my-auto me-3 size-5 shrink-0"><i class="nf nf-oct-search"></i></span>
                             <label class="sr-only" for="searchInputNav">Search</label>
-                            <input type="search" 
-                            name="search" 
-                            class="grow bg-content border-0 outline-none" 
-                            placeholder="Search games..." 
-                            id="searchInputNav" 
-                            value="{{ search_query|default:'' }}"
-                            autocomplete="off"
-                            onkeyup="handleSearchInput(this)"
-                            onkeydown="handleSearchKeydown(event)" />
+                            <input type="search" name="search" class="grow bg-content border-0 outline-none" placeholder="Search games..." id="searchInputNav" value="{{ search_query|default:'' }}" autocomplete="off" onkeyup="handleSearchInput(this)" onkeydown="handleSearchKeydown(event)">
                             <button type="submit" class="sr-only">Search</button>
                         </form>
 
-                        <!-- Search suggestions dropdown for nav -->
-                        <div id="search-suggestions-nav" class="absolute top-full left-1/2 -translate-x-1/2 mt-1 bg-base-100 rounded-lg shadow-lg border border-base-200 hidden max-h-80 overflow-y-auto opacity-100 w-85 z-50">
-                                <div class="p-2 search-suggestions">
-                                <div class="loading loading-spinner loading-sm hidden" id="search-loading-nav"></div>
-                                    <div id="suggestions-list-nav"></div>
-                                        <div id="no-suggestions-nav" class="text-center py-4 text-base-content/50 hidden">
-                                            <iconify-icon icon="tabler:search-off" class="text-xl mb-1"></iconify-icon>
-                                            <p class="text-sm">No games found</p>
-                                        </div>
-                                    </div>
+                <!-- Search suggestions dropdown for nav -->
+                <div id="search-suggestions-nav" class="absolute top-full left-1/2 -translate-x-1/2 mt-1 bg-base-100 rounded-lg shadow-lg border border-base-200 hidden max-h-80 overflow-y-auto opacity-100 w-85 z-50">
+                    <div class="p-2 search-suggestions">
+                        <div class="loading loading-spinner loading-sm hidden" id="search-loading-nav"></div>
+                            <div id="suggestions-list-nav"></div>
+                                <div id="no-suggestions-nav" class="text-center py-4 text-base-content/50 hidden">
+                                    <iconify-icon icon="tabler:search-off" class="text-xl mb-1"></iconify-icon>
+                                    <p class="text-sm">No games found</p>
                                 </div>
                             </div>
                         </div>
@@ -251,10 +241,10 @@
 
         <footer class="footer footer-horizontal footer-center p-10 border-t border-base-200">
             <aside>
-                <img src="{% static 'favicon.svg' %}" alt="Backlog Logo" class="inline-block w-30 h-30" />
+                <img src="{% static 'favicon.svg' %}" alt="Backlog Logo" class="inline-block w-30 h-30">
                 <p class="font-bold">
                     Rebeljoka Co.
-                    <br />
+                    <br>
                     Providing reliable tech since 1992
                 </p>
                 <p>Copyright © Backlog. {% now "Y" %} - All right reserved</p>
