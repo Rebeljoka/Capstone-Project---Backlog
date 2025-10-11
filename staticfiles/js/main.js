@@ -1,33 +1,27 @@
-/* jshint esversion: 11, esnext: false */
-// Dark Mode Toggle Functionality
+// Dark Mode Toggle Functionality (supports multiple toggles)
 document.addEventListener('DOMContentLoaded', function() {
-    const themeToggle = document.getElementById('theme-toggle');
     const htmlElement = document.documentElement;
-    
-    if (themeToggle) {
-        // Check for saved theme preference or default to light mode
-        const currentTheme = localStorage.getItem('theme') || 'light';
-        
-        // Apply the current theme
-        if (currentTheme === 'dark') {
-            htmlElement.setAttribute('data-theme', 'dark');
-            themeToggle.checked = true;
-        } else {
-            htmlElement.setAttribute('data-theme', 'light');
-            themeToggle.checked = false;
-        }
-        
-        // Toggle theme when switch is clicked
-        themeToggle.addEventListener('change', function() {
-            if (this.checked) {
-                htmlElement.setAttribute('data-theme', 'dark');
-                localStorage.setItem('theme', 'dark');
-            } else {
-                htmlElement.setAttribute('data-theme', 'light');
-                localStorage.setItem('theme', 'light');
-            }
-        });
+    const toggles = Array.from(document.querySelectorAll('.theme-toggle'));
+
+    // Determine initial theme: saved preference or system preference
+    const saved = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialTheme = saved || (prefersDark ? 'dark' : 'light');
+
+    // Apply initial theme and sync toggles
+    htmlElement.setAttribute('data-theme', initialTheme);
+    toggles.forEach(t => { t.checked = initialTheme === 'dark'; });
+
+    // On change, update attribute, storage, and other toggles
+    function onToggleChange(e) {
+        const isDark = !!e.target.checked;
+        const newTheme = isDark ? 'dark' : 'light';
+        htmlElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        toggles.forEach(t => { if (t !== e.target) t.checked = isDark; });
     }
+
+    toggles.forEach(t => t.addEventListener('change', onToggleChange));
     
     // Language Selector Functionality
     const languageSelect = document.getElementById('language-select');
@@ -37,19 +31,19 @@ document.addEventListener('DOMContentLoaded', function() {
         const currentLanguage = localStorage.getItem('language') || 'en';
         
         // Function to update language options with checkmarks
-        const updateLanguageOptions = function(selectedLang) {
+        function updateLanguageOptions(selectedLang) {
             const options = languageSelect.querySelectorAll('option');
             options.forEach(option => {
                 const value = option.value;
                 const text = option.textContent.replace(' ✓', ''); // Remove existing checkmark
-
+                
                 if (value === selectedLang) {
                     option.textContent = text + ' ✓'; // Add checkmark to selected
                 } else {
                     option.textContent = text; // Remove checkmark from others
                 }
             });
-        };
+        }
         
         // Set initial language and update display
         languageSelect.value = currentLanguage;

@@ -15,6 +15,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 import os  # Add this import to use environment variables
 import dj_database_url  # Add this import to parse the database URL
+from .whitenoise_headers import set_custom_cache_headers
 
 if os.path.exists("env.py"):
     import env  # noqa: F401
@@ -198,6 +199,7 @@ else:
 
 # WhiteNoise configuration
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+WHITENOISE_ADD_HEADERS_FUNCTION = set_custom_cache_headers
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
