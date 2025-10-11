@@ -40,7 +40,7 @@
         <link rel="preconnect" href="https://cdn.bokeh.org" crossorigin>
 
         <!-- Preload LCP hero image (low-risk) -->
-        <link rel="preload" as="image" href="{% static 'images/hero.webp' %}" type="image/webp" fetchpriority="high">
+        <link rel="preload" as="image" href="{% static 'images/hero.webp' %}" imagesrcset="{% static 'images/hero.webp' %}" type="image/webp" decoding="async" fetchpriority="high">
 
         <!-- NerdFonts (load non-blocking to avoid FOIT / render-blocking) -->
         <link rel="stylesheet" href="https://www.nerdfonts.com/assets/css/webfont.css" media="print" onload="this.media='all'">

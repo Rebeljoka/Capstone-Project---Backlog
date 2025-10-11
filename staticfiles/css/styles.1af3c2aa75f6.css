@@ -253,12 +253,28 @@ footer {
 }
 
 .hero-section .hero-img {
+    aspect-ratio: 16/9;
     display: block;
     height: 800px;
     margin-top: 0;
     object-fit: cover;
     width: 100vw;
 }
+
+.form-section {
+    margin-top: 0;
+    position: relative;
+    z-index: 1;
+}
+
+.form-section .form-bg {
+    aspect-ratio: 4 / 3;
+    display: block;
+    height: 800px !important;
+    margin-bottom: 0;
+    object-fit: cover;
+}
+
 
 
 /* =========================================================

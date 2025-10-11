@@ -1,7 +1,7 @@
 {% extends 'base.html' %} {% load static %} {% block content %}
 <section class="text-center hero-section overflow-hidden">
 	<!-- Hero image: keep eager load for LCP but hint priority and reserve aspect ratio to avoid CLS -->
-	<img src="{% static 'images/hero.webp' %}" alt="Logo" id="hero-img" class="mx-auto blur-md scale-105 bg-center hero-img" decoding="async" fetchpriority="high" style="width: 100%; height: auto; aspect-ratio: 16/9" />
+	<img src="{% static 'images/hero.webp' %}" alt="Logo" id="hero-img" class="mx-auto blur-md scale-105 bg-center hero-img" />
 	<div class="grid place-items-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
 		<h1 class="text-4xl md:text-5xl font-bold text-white mb-4">Welcome to Backlog.</h1>
 		<h2 class="text-xl md:text-2xl text-white mb-6">Organize your gaming journey.</h2>
@@ -36,7 +36,7 @@
 			<div class="flex flex-col flex-1 px-6 py-5 gap-4">
 				<div class="w-full max-w-full">
 					<a href="{% url 'game_detail' game.game_id %}">
-						<h5 class="text-2xl font-semibold tracking-tight text-gray-900 dark:text-white text-center leading-snug overflow-hidden text-ellipsis whitespace-nowrap">{{ game.title }}</h5>
+						<h2 class="text-2xl font-semibold tracking-tight text-gray-900 dark:text-white text-center leading-snug overflow-hidden text-ellipsis whitespace-nowrap">{{ game.title }}</h2>
 					</a>
 				</div>
 				<div class="flex items-center justify-center gap-2 text-xl font-semibold">

@@ -253,6 +253,7 @@ footer {
 }
 
 .hero-section .hero-img {
+    aspect-ratio: 16/9;
     display: block;
     height: 800px;
     margin-top: 0;
