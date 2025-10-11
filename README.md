@@ -1050,4 +1050,4 @@ Cohort Testing Support
 
 Built with ❤️, lots of ☕, little 💤 and 🔍 by Habib 'Rebel Joka' Ullah - Your Next Full Stack Software Developer.
 
-*"Gaming is not just a hobby, it's a lifestyle."*
+*"Leave the world better than you found it."*
