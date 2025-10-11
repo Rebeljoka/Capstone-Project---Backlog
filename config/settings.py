@@ -43,6 +43,11 @@ cloudinary.config(
     secure=True  # 👈 Forces HTTPS for all Cloudinary URLs
 )
 
+CLOUDINARY_DEFAULT_TRANSFORMATIONS = {
+    'fetch_format': 'auto',
+    'quality': 'auto'
+}
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
 
