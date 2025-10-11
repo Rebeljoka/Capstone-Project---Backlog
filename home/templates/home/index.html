@@ -118,9 +118,9 @@
 	</div>
 </section>
 
-<section>
+<section class="text-center overflow-hidden form-section">
 	<!-- Decorative form background: lazy-load to defer large image bytes until needed -->
-	<img src="{% static 'images/form-bg.webp' %}" alt="formbg" class="w-full mx-auto blur-md scale-105 bg-center" loading="lazy" decoding="async" style="width: 100%; height: auto; aspect-ratio: 4/3" />
+	<img src="{% static 'images/form-bg.webp' %}" alt="formbg" class="w-full mx-auto blur-md bg-center form-bg" loading="lazy" decoding="async" />
 </section>
 
 {% if bokeh_css %} {% for css_url in bokeh_css %}
