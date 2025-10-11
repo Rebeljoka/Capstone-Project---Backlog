@@ -16,6 +16,7 @@ from pathlib import Path
 import os  # Add this import to use environment variables
 import dj_database_url  # Add this import to parse the database URL
 from .whitenoise_headers import set_custom_cache_headers
+import cloudinary  # Add this import for Cloudinary
 
 if os.path.exists("env.py"):
     import env  # noqa: F401
@@ -31,11 +32,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Read SECRET_KEY from environment, fallback to a default for development only
 SECRET_KEY = os.environ.get('SECRET_KEY')
 STEAM_API_KEY = os.environ.get('STEAM_API_KEY')
-CLOUDINARY_URL = {
-    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
-    'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
-    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
-}
+
+cloudinary.config(
+    cloud_name=os.environ.get('CLOUDINARY_CLOUD_NAME'),
+    api_key=os.environ.get('CLOUDINARY_API_KEY'),
+    api_secret=os.environ.get('CLOUDINARY_API_SECRET'),
+    secure=True  # 👈 Forces HTTPS for all Cloudinary URLs
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
