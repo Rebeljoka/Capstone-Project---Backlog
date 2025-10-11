@@ -823,7 +823,30 @@ You now have your own wishlist website!
    </tr>
 </table>
 
-*Results indicate that the Wishlist feature is functioning as intended across both desktop and mobile platforms. due to how cloudinary API requests images and end to end encryption, the communication between the frontend and backend is handled insecurely using http instead of https which may expose sensitive user data.*
+*Results indicate that the Wishlist feature is functioning as intended across both desktop and mobile platforms but due to how cloudinary API requests images and end to end encryption, the communication between the frontend and backend is handled insecurely using http instead of https which may expose sensitive user data. I will display the results of the Lighthouse audits below. This is the final version after implementing the patch.*
+
+<table align="center">
+   <tr>
+      <th>Wishlist Desktop Audit</th>
+      <th>Wishlist Mobile Audit</th>
+   </tr>
+   <tr>
+      <td>
+         <img src="Assets/Documentation/readme-content/lighthouse/Wishlist-LH-Desktop-AP.png" alt="Wishlist Desktop Audit">
+      </td>
+      <td>
+         <img src="Assets/Documentation/readme-content/lighthouse/Wishlist-LH-Mobile-AP.png" alt="Wishlist Mobile Audit">
+      </td>
+   </tr>
+   <tr>
+      <td align="center" width="500">
+         Wishlist Desktop Lighthouse Audit Results
+      </td>
+      <td align="center" width="500">
+         Wishlist Mobile Lighthouse Audit Results
+      </td>
+   </tr>
+</table>
 
 <p align="center">&nbsp;</p>
 
