@@ -198,7 +198,10 @@
   - [How AI Supercharged My Development Workflow](#how-ai-supercharged-my-development-workflow)
 - [Acknowledgements](#acknowledgements)
   - [💝 Special Thanks](#-special-thanks)
-  - [Mentors \& Reviewers](#mentors--reviewers)
+    - [Mentors \& Reviewers](#mentors--reviewers)
+    - [Personal Acknowledgements](#personal-acknowledgements)
+    - [Softwatre \& Tools](#softwatre--tools)
+  - [Final Words](#final-words)
 
 </details>
 
@@ -1041,11 +1044,60 @@ In essence, AI has become a multiplier for my existing skills rather than a subs
 
 ### 💝 Special Thanks
 
-
-
-### Mentors & Reviewers
+#### Mentors & Reviewers
 
 Cohort Testing Support
+Special Thanks to my Cohort for testing the website and providing valuable feedback and suggestions that helped improve the overall user experience.
+
+Thank you to my facilitators and mentors, including:
+Alexander Tastad
+Mark Briscoe
+Roman
+Tom Cowen
+
+#### Personal Acknowledgements
+
+Thank you to Code Institute for providing me with the knowledge and skills to complete this project.
+
+Thank you to my family and friends for their unwavering support and encouragement throughout this project.
+
+#### Softwatre & Tools
+
+- [ChatGPT](https://chat.openai.com/) - For assisting with code snippets, debugging, and providing explanations on complex topics.
+- [GitHub Copilot](https://github.com/features/copilot) - For providing AI-driven code suggestions and autocompletions.
+- [GitHub](https://github.com/) - For version control and collaboration on code.
+- [Heroku](https://www.heroku.com/) - For deploying and hosting the web application.
+- [Cloudinary](https://cloudinary.com/) - For managing and optimizing images and media assets.
+- [PostgreSQL](https://www.postgresql.org/) - For database management and storage.
+- [Django](https://www.djangoproject.com/) - For building the web application framework.
+- [Tailwind CSS](https://tailwindcss.com/) - For styling and responsive design.
+- [FontAwesome](https://fontawesome.com/) - For icons and visual enhancements.
+- [Google Fonts](https://fonts.google.com/) - For typography and font selection.
+- [Lighthouse](https://developers.google.com/web/tools/lighthouse) - For performance and accessibility auditing.
+- [W3C Markup Validation Service](https://validator.w3.org/) - For validating HTML and CSS code.
+- [PEP 8 Online](http://pep8online.com/) - For checking Python code style and adherence to PEP 8 guidelines.
+- [JS Hint](https://jshint.com/) - For validating JavaScript code quality and syntax.
+- [CSS Validation Service](https://jigsaw.w3.org/css-validator/) - For validating CSS code and stylesheets.
+- [Unsplash](https://unsplash.com/) - For sourcing high-quality, royalty-free images.
+- [Kaggle](https://www.kaggle.com/) - For datasets and data analysis resources.
+- [Stack Overflow](https://stackoverflow.com/) - For community support and coding solutions.
+- [MDN Web Docs](https://developer.mozilla.org/) - For web development documentation and references.
+- [W3Schools](https://www.w3schools.com/) - For web development tutorials and references.
+- [Django Documentation](https://docs.djangoproject.com/) - For official Django framework documentation.
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs) - For official Tailwind CSS documentation.
+- [FontAwesome Documentation](https://fontawesome.com/docs) - For official FontAwesome documentation.
+- [PostgreSQL Documentation](https://www.postgresql.org/docs/) - For official PostgreSQL documentation.
+- [Cloudinary Documentation](https://cloudinary.com/documentation) - For official Cloudinary documentation.
+- [Heroku Documentation](https://devcenter.heroku.com/) - For official Heroku documentation.
+-  and many more...
+
+
+For a full list of technologies used, please refer to the Technologies section above.
+
+### Final Words
+
+Thank you for taking the time to explore my project. I hope you found it informative and engaging. If you have any questions or feedback, please feel free to reach out.
+
 
 
 Built with ❤️, lots of ☕, little 💤 and 🔍 by Habib 'Rebel Joka' Ullah - Your Next Full Stack Software Developer.
