@@ -200,7 +200,7 @@
   - [💝 Special Thanks](#-special-thanks)
     - [Mentors \& Reviewers](#mentors--reviewers)
     - [Personal Acknowledgements](#personal-acknowledgements)
-    - [Softwatre \& Tools](#softwatre--tools)
+    - [Software \& Tools](#software--tools)
   - [Final Words](#final-words)
 
 </details>
@@ -1059,9 +1059,9 @@ Tom Cowen
 
 Thank you to Code Institute for providing me with the knowledge and skills to complete this project.
 
-Thank you to my family and friends for their unwavering support and encouragement throughout this project.
+Thank you to my friends for their unwavering support and encouragement throughout this project.
 
-#### Softwatre & Tools
+#### Software & Tools
 
 - [ChatGPT](https://chat.openai.com/) - For assisting with code snippets, debugging, and providing explanations on complex topics.
 - [GitHub Copilot](https://github.com/features/copilot) - For providing AI-driven code suggestions and autocompletions.
