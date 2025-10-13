@@ -1129,4 +1129,4 @@ Built with ❤️, lots of ☕, little 💤 and 🔍 by Habib 'Rebel Joka' Ullah
    </tr>
 </table>
 
-<p align="center">Connect With Me on LinkedIn!/p>
+<p align="center">Connect With Me on LinkedIn!</p>
