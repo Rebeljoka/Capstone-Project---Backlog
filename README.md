@@ -875,10 +875,10 @@ You now have your own wishlist website!
       <td rowspan="10" align="center"><strong>Visitor</strong></td>
       <td align="center">Visitor can Navigate Homepage</td><td align="center">Pass</td><td align="center">Passed</td>
       </tr>
-    <tr><td align="center">Visitor can browse games catalog and view details of individual games</td><td align="center">Pass</td><td align="center">Passed</td></tr>
+    <tr><td align="center">Visitor can browse games catalog and view all games in the catalog</td><td align="center">Pass</td><td align="center">Passed</td></tr>
     <tr><td align="center">Visitor can browse games catalog and view details of individual games</td><td align="center">Pass</td><td align="center">Passed</td></tr>
     <tr><td align="center">Visitor can Filter games/genres/categories using Filters</td><td align="center">Pass</td><td align="center">Passed</td></tr>
-    <tr><td align="center">Visitor can use search bar on both Games catalog page and Nav Ba</td><td align="center">Pass</td><td align="center">Passed</td></tr>
+    <tr><td align="center">Visitor can use search bar on both Games catalog page and Nav Bar</td><td align="center">Pass</td><td align="center">Passed</td></tr>
     <tr><td align="center">Visitor Can Sign up to site</td><td align="center">Pass</td><td align="center">Passed</td></tr>
     <tr><td align="center">Visitor Cant view Wishlist without an account</td><td align="center">Pass</td><td align="center">Passed</td></tr>
     <tr><td align="center">Visitor Cant view Profile without an account</td><td align="center">Pass</td><td align="center">Passed</td></tr>
