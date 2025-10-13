@@ -1111,6 +1111,22 @@ Thank you for taking the time to explore my project. I hope you found it informa
    </tr>
 </table>
 
+<p align="center">&nbsp;</p>
+
 Built with ❤️, lots of ☕, little 💤 and 🔍 by Habib 'Rebel Joka' Ullah - Your Next Full Stack Software Developer.
 
 *"Leave the world better than you found it."*
+
+<p align="center">&nbsp;</p>
+
+<table align="center">
+   <tr>
+      <td>
+         <a href="https://www.linkedin.com/in/your-next-jfssd-habib/" align="center">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/LinkedIn_2021.svg/250px-LinkedIn_2021.svg.png" alt="LinkedIn" width="250"/>
+         </a>
+      </td>
+   </tr>
+</table>
+
+<p align="center">Connect With Me on LinkedIn!/p>
