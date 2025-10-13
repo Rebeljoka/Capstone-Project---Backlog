@@ -938,6 +938,10 @@ You now have your own wishlist website!
       <td>Implemented a patch to ensure all external resources load over HTTPS, improving security and compliance with best practices.</td>
       <td>Resolved</td>
    </tr>
+   <tr>
+      <td>Category filter not working as intended</td>
+      <td>Planning to implement Javascript logic to update the category so that genres stay selected when removing a catergory filter. Issue - If Genre and Category filters are applied simultaneously, and you decide to remove one, the other filters are also removed.</td>
+      <td>Unresolved - Future Feature</td>
 </table>
 
 #### Additional bugs Found
