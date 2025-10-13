@@ -728,7 +728,7 @@ Click Generate New API Key, Confirm your email and give the API a nice name!
 1. In heroku go to deployment tab
 2. Connect your app to your Github Repository
 3. Click Deploy Branch to deploy your project to heroku
-4. Once deployed, visit the link and copy it and paste the URL into Config/Settings.py ALLOWED_HOSTS so it looks like this (Replace the last one in the '*.70712188933f.herokuapp.com' with your link)
+4. Once deployed, visit the link and copy it and paste the URL into Config/Settings.py ALLOWED_HOSTS so it looks like this (Replace the last one in the ALLOWED_HOSTS '*.herokuapp.com' with your link)
 5. once all of that is done and you have pasted both the secret key in env and deployment link ALLOWED_HOSTS push to github again and deploy to heroku again and you should have a working site!
 
 
